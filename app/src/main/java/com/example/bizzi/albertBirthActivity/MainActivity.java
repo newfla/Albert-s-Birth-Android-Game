@@ -59,7 +59,6 @@ public final class MainActivity extends AppCompatActivity{
         super.onPause();
         //stop accelerometer listner
         ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).unregisterListener(accelerometerListener);
-
         gameView.pause();
 
     }

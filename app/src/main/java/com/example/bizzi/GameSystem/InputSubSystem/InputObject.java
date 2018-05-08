@@ -14,13 +14,12 @@ public abstract class InputObject {
         public void recycle() {
            AccelerometerListener.pool.release(this);
         }
-
-        public void manipulate(){
-            //TODO
-        }
     }
 
     public static final class TouchObject extends InputObject{
+
+        public int type;
+
         @Override
         public void recycle() {
             TouchListener.pool.release(this);

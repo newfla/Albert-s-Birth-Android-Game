@@ -10,15 +10,19 @@ public final class AccelerometerListener implements SensorEventListener {
 
     static Pools.SynchronizedPool<InputObject.AccelerometerObject> pool;
     private final SparseArray<InputObject.AccelerometerObject> list;
+    private static final int MAXPOOLSIZE = 100;
 
      AccelerometerListener(GameInput gameInput){
-        pool=new Pools.SynchronizedPool<>(20);
+        pool=new Pools.SynchronizedPool<>(MAXPOOLSIZE);
         list=gameInput.accelerometerBuffer;
     }
 
     @Override
     public synchronized void onSensorChanged(SensorEvent event) {
         InputObject.AccelerometerObject accelerometerObject=pool.acquire();
+
+        //TODO manipulate
+
         accelerometerObject.x=event.values[0];
         accelerometerObject.y=event.values[1];
         accelerometerObject.manipulate();

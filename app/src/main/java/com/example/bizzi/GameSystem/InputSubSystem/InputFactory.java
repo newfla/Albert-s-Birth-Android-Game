@@ -1,8 +1,10 @@
 package com.example.bizzi.GameSystem.InputSubSystem;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.Factory;
 import com.example.bizzi.albertBirthActivity.MainActivity;
@@ -30,8 +32,12 @@ public final class InputFactory implements Factory{
         accelerometerListener=new AccelerometerListener(gameInput);
         Sensor sensor=manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         manager.registerListener(accelerometerListener,sensor,SensorManager.SENSOR_DELAY_GAME);
+
         //create and register Touch Listener
-        touchListener=new TouchListener(gameInput);
+        WindowManager windowManager= (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Point point=new Point();
+        windowManager.getDefaultDisplay().getSize(point);
+        touchListener=new TouchListener(gameInput,point);
         ((MainActivity)context).setTouchListener(touchListener);
         ((MainActivity)context).setAccelerometerListener(accelerometerListener);
     }

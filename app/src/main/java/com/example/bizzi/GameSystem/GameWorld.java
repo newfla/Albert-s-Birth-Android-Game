@@ -15,7 +15,7 @@ import com.google.fpl.liquidfun.World;
 public final class GameWorld {
 
     //Rendering variables
-    private static final int BUFFERWIDTH=1920,
+    public static final int BUFFERWIDTH=1920,
                                 BUFFERHEIGHT=1080;
     public final Bitmap frameBuffer;
     private final Canvas canvas;
