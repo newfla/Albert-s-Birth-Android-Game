@@ -1,4 +1,4 @@
-package com.example.bizzi.Game.Components;
+package com.example.bizzi.GameSystem.Components;
 
 public abstract class Component {
 

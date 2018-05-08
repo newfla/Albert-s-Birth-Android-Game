@@ -1,13 +1,14 @@
-package com.example.bizzi.Game;
+package com.example.bizzi.GameSystem;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.v4.util.ArraySet;
 
-import com.example.bizzi.Game.AudioSubSystem.GameAudio;
-import com.example.bizzi.Game.Entity.GameObject;
-import com.example.bizzi.Game.JLiquidFunListner.MyContactListener;
+import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
+import com.example.bizzi.GameSystem.Entity.GameObject;
+import com.example.bizzi.GameSystem.InputSubSystem.GameInput;
+import com.example.bizzi.GameSystem.JLiquidFunListener.MyContactListener;
 import com.google.fpl.liquidfun.ContactListener;
 import com.google.fpl.liquidfun.World;
 
@@ -34,6 +35,9 @@ public final class GameWorld {
     //Audio SubSystem ref
     private final GameAudio gameAudio;
 
+    //Input SubSystem ref
+    private final GameInput gameInput;
+
     public void updateWorld(){
         //TODO physics world simulation
         //TODO handle movements/touch
@@ -44,8 +48,9 @@ public final class GameWorld {
         //TODO Update frameBuffer
     }
 
-    public GameWorld(World world, Rect physicsSize, GameFactory gameFactory, GameAudio gameAudio){
+    public GameWorld(World world, Rect physicsSize, GameFactory gameFactory, GameAudio gameAudio, GameInput gameInput){
         this.gameAudio=gameAudio;
+        this.gameInput=gameInput;
         this.gameFactory=gameFactory;
         this.world=world;
         this.physicsSize=physicsSize;

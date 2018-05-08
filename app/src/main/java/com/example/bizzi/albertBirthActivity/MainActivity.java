@@ -1,17 +1,22 @@
 package com.example.bizzi.albertBirthActivity;
 
+import android.content.Context;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.bizzi.Game.GameFactory;
-import com.example.bizzi.Game.GameView;
-import com.example.bizzi.Game.GameWorld;
+import com.example.bizzi.GameSystem.GameFactory;
+import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
+import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerListener;
+import com.example.bizzi.GameSystem.InputSubSystem.TouchListener;
 
 public final class MainActivity extends AppCompatActivity{
 
     private GameView gameView;
+    private TouchListener touchListener;
+    private AccelerometerListener accelerometerListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +35,12 @@ public final class MainActivity extends AppCompatActivity{
         GameFactory gameFactory=new GameFactory(this);
 
         //Build basic GameWorld;
-        GameWorld gameWorld=gameFactory.factory();
+        gameFactory.init();
 
-        gameView=new GameView(gameWorld,this);
+        //Add TouchListener
+        setTouchListener();
+
+        gameView=new GameView(gameFactory.gameWorld,this);
         setContentView(gameView);
 
     }
@@ -49,7 +57,11 @@ public final class MainActivity extends AppCompatActivity{
     @Override
     protected void onPause() {
         super.onPause();
+        //stop accelerometer listner
+        ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).unregisterListener(accelerometerListener);
+
         gameView.pause();
+
     }
 
     @Override
@@ -57,4 +69,18 @@ public final class MainActivity extends AppCompatActivity{
         super.onResume();
         gameView.resume();
     }
+
+    public void setTouchListener(TouchListener touchListener){
+        this.touchListener=touchListener;
+    }
+
+    public void setTouchListener(){
+        if (touchListener!=null)
+            gameView.setOnTouchListener(touchListener);
+    }
+
+    public void setAccelerometerListener(AccelerometerListener accelerometerListner){
+        this.accelerometerListener=accelerometerListner;
+    }
+
 }

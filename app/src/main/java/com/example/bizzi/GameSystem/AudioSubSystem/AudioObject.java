@@ -1,4 +1,4 @@
-package com.example.bizzi.Game.AudioSubSystem;
+package com.example.bizzi.GameSystem.AudioSubSystem;
 
 import android.media.MediaPlayer;
 import android.media.SoundPool;

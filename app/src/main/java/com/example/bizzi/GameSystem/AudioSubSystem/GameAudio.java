@@ -1,4 +1,4 @@
-package com.example.bizzi.Game.AudioSubSystem;
+package com.example.bizzi.GameSystem.AudioSubSystem;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -10,7 +10,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
-import com.example.bizzi.Game.Entity.GameObject;
+import com.example.bizzi.GameSystem.Entity.GameObject;
 
 import java.io.IOException;
 import java.util.EnumMap;

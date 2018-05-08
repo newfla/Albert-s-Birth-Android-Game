@@ -1,17 +1,18 @@
-package com.example.bizzi.Game.AudioSubSystem;
+package com.example.bizzi.GameSystem.AudioSubSystem;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.example.bizzi.Game.Entity.GameObject;
-import com.example.bizzi.Game.Utility.JsonUtility;
+import com.example.bizzi.GameSystem.Entity.GameObject;
+import com.example.bizzi.GameSystem.Factory;
+import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public final class AudioFactory {
+public final class AudioFactory implements Factory{
 
     public final GameAudio gameAudio;
     private final AssetManager assets;
@@ -21,7 +22,7 @@ public final class AudioFactory {
         gameAudio=new GameAudio(context);
     }
 
-    public void initAudio(){
+    public void init(){
         try {
             JSONObject jsonObject=new JSONObject(JsonUtility.readJsonFromFile(assets,"audio.json"));
             String gameObject, type, sound;

@@ -1,6 +1,6 @@
-package com.example.bizzi.Game.Entity;
+package com.example.bizzi.GameSystem.Entity;
 
-import com.example.bizzi.Game.Components.Component;
+import com.example.bizzi.GameSystem.Components.Component;
 
 import java.util.EnumMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.example.bizzi.Game.Utility;
+package com.example.bizzi.GameSystem.Utility;
 
 import android.content.res.AssetManager;
 import android.util.Log;

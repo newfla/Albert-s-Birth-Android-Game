@@ -1,4 +1,4 @@
-package com.example.bizzi.Game;
+package com.example.bizzi.GameSystem.GraphicsSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,8 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.example.bizzi.GameSystem.GameWorld;
 
 public final class GameView extends SurfaceView implements Runnable {
 
