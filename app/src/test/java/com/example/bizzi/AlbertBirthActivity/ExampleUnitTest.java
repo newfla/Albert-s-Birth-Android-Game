@@ -1,4 +1,4 @@
-package com.example.bizzi.albertBirthActivity;
+package com.example.bizzi.AlbertBirthActivity;
 
 import org.junit.Test;
 

@@ -6,8 +6,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.view.WindowManager;
 
+import com.example.bizzi.AlbertBirthActivity.MainActivity;
 import com.example.bizzi.GameSystem.Factory;
-import com.example.bizzi.albertBirthActivity.MainActivity;
 
 public final class InputFactory implements Factory{
 

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.Entity.GameObject;
 import com.example.bizzi.GameSystem.Factory;
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
 import org.json.JSONArray;
@@ -33,9 +33,9 @@ public final class AudioFactory implements Factory{
                 type=jsonObject.getString("type");
                 sound=jsonObject.getString("sound");
                 if (type.equalsIgnoreCase("Sound"))
-                    gameAudio.audioLibrary.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
+                    gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
                 else
-                    gameAudio.audioLibrary.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addMusic(sound));
+                    gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addMusic(sound));
             }
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for audio");

@@ -12,8 +12,10 @@ public abstract class InputObject {
 
         @Override
         public void recycle() {
-           AccelerometerListener.pool.release(this);
+           AccelerometerListener.POOL.release(this);
         }
+
+        AccelerometerObject(){}
     }
 
     public static final class TouchObject extends InputObject{
@@ -22,7 +24,9 @@ public abstract class InputObject {
 
         @Override
         public void recycle() {
-            TouchListener.pool.release(this);
+            TouchListener.POOL.release(this);
         }
+
+        TouchObject(){}
     }
 }

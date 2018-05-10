@@ -10,23 +10,24 @@ import com.example.bizzi.GameSystem.GameWorld;
 
 public final class TouchListener implements View.OnTouchListener {
 
-    static Pools.SynchronizedPool<InputObject.TouchObject> pool;
-    private final SparseArray<InputObject.TouchObject> list;
     private static final int MAXPOOLSIZE = 100;
+    static final Pools.SynchronizedPool<InputObject.TouchObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);;
+    private final SparseArray<InputObject.TouchObject> list;
     private final float scaleX, scaleY;
 
     TouchListener (GameInput gameInput, Point point){
-        pool=new Pools.SynchronizedPool<>(MAXPOOLSIZE);
         list=gameInput.touchBuffer;
         scaleX= GameWorld.BUFFERWIDTH/point.x;
         scaleY=GameWorld.BUFFERHEIGHT/point.y;
     }
 
     @Override
-    public synchronized boolean onTouch(View v, MotionEvent event) {
+    public boolean onTouch(View v, MotionEvent event) {
 
         int action=event.getActionMasked();
-        InputObject.TouchObject touchObject=pool.acquire();
+        InputObject.TouchObject touchObject=POOL.acquire();
+        if (touchObject==null)
+            touchObject=new InputObject.TouchObject();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 touchObject.type=MotionEvent.ACTION_DOWN;
@@ -35,12 +36,13 @@ public final class TouchListener implements View.OnTouchListener {
                 touchObject.type=MotionEvent.ACTION_MOVE;
                 break;
             case MotionEvent.ACTION_UP:
+                v.performClick();
                 touchObject.type=MotionEvent.ACTION_UP;
                 break;
 
                 default:
                     action=-1;
-                    pool.release(touchObject);
+                    POOL.release(touchObject);
                     break;
         }
         if (action>-1) {

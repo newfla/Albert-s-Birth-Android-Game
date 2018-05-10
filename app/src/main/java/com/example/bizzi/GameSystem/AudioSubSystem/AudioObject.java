@@ -7,7 +7,7 @@ public interface AudioObject {
 
     void play();
 
-    void dispose();
+    void recycle();
 
 
 
@@ -23,7 +23,7 @@ public interface AudioObject {
         }
 
         @Override
-        public void dispose() {
+        public void recycle() {
             soundPool.unload(soundId);
         }
 
@@ -48,7 +48,7 @@ public interface AudioObject {
         }
 
         @Override
-        public void dispose() {
+        public void recycle() {
             if (player.isPlaying())
                 player.stop();
             player.release();

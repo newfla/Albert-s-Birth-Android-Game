@@ -10,7 +10,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
-import com.example.bizzi.GameSystem.Entity.GameObject;
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -19,13 +19,13 @@ import java.util.Map;
 public class GameAudio {
 
     //Map GO to Sound
-    public final Map<GameObject.GameObjectType,AudioObject> audioLibrary=new EnumMap<>(GameObject.GameObjectType.class);
+    public static final Map<GameObject.GameObjectType,AudioObject> AUDIOLIBRARY=new EnumMap<>(GameObject.GameObjectType.class);
 
 
     private final SoundPool soundPool;
     private final AssetManager assets;
     private static final int SIMULTANEOUS_CHANNELS = 5;
-    private static String SOUND="Sound/",
+    private static final String SOUND="Sound/",
                             MUSIC="Music/";
     private final SparseIntArray sounds=new SparseIntArray();
     private final SparseArray<AudioObject.MusicObject> musics=new SparseArray();

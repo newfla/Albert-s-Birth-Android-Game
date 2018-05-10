@@ -48,7 +48,6 @@ public final class GameView extends SurfaceView implements Runnable {
 
             canvas = surfaceHolder.lockCanvas();
             canvas.getClipBounds(dstRect);
-
             canvas.drawBitmap(frameBuffer,null,dstRect,null);
             surfaceHolder.unlockCanvasAndPost(canvas);
 
@@ -68,6 +67,7 @@ public final class GameView extends SurfaceView implements Runnable {
     }
 
     public void pause() {
+        game.pause();
         running = false;
         while(true) {
             try {

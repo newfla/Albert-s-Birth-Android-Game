@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bizzi.albertBirthActivity">
+    package="com.example.bizzi.AlbertBirthActivity">
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:resizeableActivity="false">
-        <activity android:name="com.example.bizzi.albertBirthActivity.MainActivity"
+        <activity android:name="com.example.bizzi.AlbertBirthActivity.MainActivity"
             android:screenOrientation="sensorLandscape"
             android:resizeableActivity="false">
             <intent-filter>

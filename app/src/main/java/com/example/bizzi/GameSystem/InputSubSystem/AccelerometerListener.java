@@ -8,24 +8,25 @@ import android.util.SparseArray;
 
 public final class AccelerometerListener implements SensorEventListener {
 
-    static Pools.SynchronizedPool<InputObject.AccelerometerObject> pool;
-    private final SparseArray<InputObject.AccelerometerObject> list;
     private static final int MAXPOOLSIZE = 100;
+    static final Pools.SynchronizedPool<InputObject.AccelerometerObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);
+    private final SparseArray<InputObject.AccelerometerObject> list;
 
      AccelerometerListener(GameInput gameInput){
-        pool=new Pools.SynchronizedPool<>(MAXPOOLSIZE);
+
         list=gameInput.accelerometerBuffer;
     }
 
     @Override
-    public synchronized void onSensorChanged(SensorEvent event) {
-        InputObject.AccelerometerObject accelerometerObject=pool.acquire();
+    public void onSensorChanged(SensorEvent event) {
+        InputObject.AccelerometerObject accelerometerObject=POOL.acquire();
+        if (accelerometerObject==null)
+            accelerometerObject=new InputObject.AccelerometerObject();
 
         //TODO manipulate
 
         accelerometerObject.x=event.values[0];
         accelerometerObject.y=event.values[1];
-        accelerometerObject.manipulate();
         list.append(list.size(),accelerometerObject);
     }
 

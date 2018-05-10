@@ -1,6 +1,6 @@
 package com.example.bizzi.GameSystem.JLiquidFunListener;
 
-import com.example.bizzi.GameSystem.Entity.GameObject;
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.Contact;
 import com.google.fpl.liquidfun.ContactListener;
