@@ -9,6 +9,7 @@ import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 
 public class AnimatedComponent extends Component {
 
+    float x,y;
     private int lastAnimation, lastFrame;
     private final Bitmap sheet;
     private final int frameWidth, frameHeight, animations, lenght;
@@ -25,11 +26,13 @@ public class AnimatedComponent extends Component {
 
     //https://stackoverflow.com/questions/22589322/what-does-top-left-right-and-bottom-mean-in-android-rect-object?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 
-    public void draw(Canvas canvas, int animation, float x, float y) {
+    public void draw(Canvas canvas, int animation) {
         if (animation!=lastAnimation || lastFrame+1>lenght)
             lastFrame=1;
         else
             lastFrame++;
+
+        //TODO check rotation
 
         RECTSHEET.left=1+(lastFrame-1)*frameWidth;
         RECTSHEET.top=1+(animation-1)*frameHeight;

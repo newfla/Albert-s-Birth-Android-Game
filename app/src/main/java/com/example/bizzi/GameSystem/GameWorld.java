@@ -2,7 +2,6 @@ package com.example.bizzi.GameSystem;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.support.v4.util.ArraySet;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
@@ -22,7 +21,6 @@ public final class GameWorld {
 
     private final World world;
     private static final float TIMESTEP=1/50f; //60FPS
-    private final Rect physicsSize;
 
     //GameObjects
     private final ArraySet<GameObject> gameObjects=new ArraySet<>();
@@ -53,13 +51,12 @@ public final class GameWorld {
 
     }
 
-    GameWorld(World world, Rect physicsSize, GameAudio gameAudio, GameGraphics gameGraphics,GameInput gameInput, GameObFactory gameObFactory){
+    GameWorld(World world, GameAudio gameAudio, GameGraphics gameGraphics,GameInput gameInput, GameObFactory gameObFactory){
         this.gameObFactory=gameObFactory;
         this.gameAudio=gameAudio;
         this.gameGraphics=gameGraphics;
         this.gameInput=gameInput;
         this.world=world;
-        this.physicsSize=physicsSize;
         frameBuffer=Bitmap.createBitmap(BUFFERWIDTH,BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
         canvas=new Canvas(frameBuffer);
     }

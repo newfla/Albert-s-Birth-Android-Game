@@ -4,7 +4,7 @@ import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 
 public abstract class Component {
 
-    public enum ComponentType{DRAWABLE, PHYSIC}
+    public enum ComponentType{DRAWABLE, PHYSIC, ANIMATED}
 
     protected GameObject owner;
 
