@@ -1,6 +1,7 @@
 package com.example.bizzi.AlbertBirthActivity;
 
 import android.content.Context;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +67,9 @@ public final class MainActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        registerAccelerometerListener();
         gameView.resume();
+
     }
 
     public void setTouchListener(TouchListener touchListener){
@@ -80,6 +83,13 @@ public final class MainActivity extends AppCompatActivity{
 
     public void setAccelerometerListener(AccelerometerListener accelerometerListner){
         this.accelerometerListener=accelerometerListner;
+    }
+
+    public void registerAccelerometerListener(){
+        SensorManager manager= (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor=manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        manager.registerListener(accelerometerListener,sensor,SensorManager.SENSOR_DELAY_GAME);
+
     }
 
 }

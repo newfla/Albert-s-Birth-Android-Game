@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class GameAudio {
+public final class GameAudio {
 
     //Map GO to Sound
     public static final Map<GameObject.GameObjectType,AudioObject> AUDIOLIBRARY=new EnumMap<>(GameObject.GameObjectType.class);

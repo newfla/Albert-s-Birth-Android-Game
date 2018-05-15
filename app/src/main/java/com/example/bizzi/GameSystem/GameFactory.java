@@ -53,9 +53,6 @@ public final  class GameFactory implements Factory {
         gameWorld=new GameWorld(world,audioFactory.gameAudio,graphicsfactory.gameGraphics,inputFactory.gameInput,gameObFactory);
 
 
-        //TODO create mainScreen
-
-        //TODO start RealGame
 
     }
 }

@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 
-public class AnimatedComponent extends Component {
+public final class AnimatedComponent extends Component {
 
     float x,y;
     private int lastAnimation, lastFrame;
