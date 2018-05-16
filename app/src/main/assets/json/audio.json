@@ -1,0 +1,9 @@
+{
+  "audio":[
+    {
+      "gameobject": "MENU",
+      "type": "music",
+      "file":"menu_music.mp3"
+    }
+  ]
+}

@@ -25,8 +25,8 @@ public final class GameAudio {
     private final SoundPool soundPool;
     private final AssetManager assets;
     private static final int SIMULTANEOUS_CHANNELS = 5;
-    private static final String SOUND="Sound/",
-                            MUSIC="Music/";
+    private static final String SOUND="sound/",
+                            MUSIC="music/";
     private final SparseIntArray sounds=new SparseIntArray();
     private final SparseArray<AudioObject.MusicObject> musics=new SparseArray();
 

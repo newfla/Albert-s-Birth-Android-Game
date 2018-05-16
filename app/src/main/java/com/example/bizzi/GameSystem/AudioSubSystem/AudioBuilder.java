@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.Factory;
+import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
@@ -12,17 +12,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public final class AudioFactory implements Factory{
+public final class AudioBuilder implements Builder {
 
     public final GameAudio gameAudio;
     private final AssetManager assets;
 
-    public AudioFactory(Context context){
+    public AudioBuilder(Context context){
         assets=context.getAssets();
         gameAudio=new GameAudio(context);
     }
 
-    public void init(){
+    @Override
+    public void build(){
         try {
             JSONObject jsonObject=new JSONObject(JsonUtility.readJsonFromFile(assets,"audio.json"));
             String gameObject, type, sound;
@@ -31,8 +32,8 @@ public final class AudioFactory implements Factory{
                 jsonObject=jsonArray.getJSONObject(i);
                 gameObject=jsonObject.getString("gameobject");
                 type=jsonObject.getString("type");
-                sound=jsonObject.getString("sound");
-                if (type.equalsIgnoreCase("Sound"))
+                sound=jsonObject.getString("file");
+                if (type.equalsIgnoreCase("sound"))
                     gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
                 else
                     gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addMusic(sound));

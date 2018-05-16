@@ -1,6 +1,4 @@
-package com.example.bizzi.GameSystem.GameObSubSystem.Components;
-
-import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
+package com.example.bizzi.GameSystem.GameObSubSystem;
 
 public abstract class Component {
 

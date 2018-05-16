@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.bizzi.GameSystem.GameFactory;
+import com.example.bizzi.GameSystem.GameBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
 import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerListener;
 import com.example.bizzi.GameSystem.InputSubSystem.TouchListener;
@@ -32,11 +32,11 @@ public final class MainActivity extends AppCompatActivity{
         //Toogle Sticky ImmersiveMode
         immersiveMode();
 
-        //SetUp GameFactory
-        GameFactory gameFactory=new GameFactory(this);
+        //SetUp GameBuilder
+        GameBuilder gameFactory=new GameBuilder(this);
 
         //Build basic GameWorld;
-        gameFactory.init();
+        gameFactory.build();
 
         //Add TouchListener
         setTouchListener();
@@ -77,7 +77,7 @@ public final class MainActivity extends AppCompatActivity{
     }
 
     public void setTouchListener(){
-        if (touchListener!=null)
+        if (touchListener!=null && gameView!=null)
             gameView.setOnTouchListener(touchListener);
     }
 

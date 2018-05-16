@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.Factory;
+import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
@@ -17,21 +17,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public final class GraphicsFactory implements Factory{
+public final class GraphicsBuilder implements Builder {
 
-    public final GameGraphics gameGraphics;
     private final AssetManager assets;
-    private static final String GRAPHIC="Graphic/";
+    private static final String GRAPHIC="graphic/";
 
-    public GraphicsFactory(Context context){
-        gameGraphics=new GameGraphics();
+    public GraphicsBuilder(Context context){
         assets=context.getAssets();
     }
 
 
 
     @Override
-    public void init() {
+    public void build() {
         try {
             JSONObject jsonObject=new JSONObject(JsonUtility.readJsonFromFile(assets,"graphic.json"));
             String gameObject, type, graphic;
@@ -40,10 +38,10 @@ public final class GraphicsFactory implements Factory{
                 jsonObject=jsonArray.getJSONObject(i);
                 gameObject=jsonObject.getString("gameobject");
                 type=jsonObject.getString("type");
-                graphic=jsonObject.getString("graphicfile");
+                graphic=jsonObject.getString("file");
                 Bitmap bitmap=loadFormFile(graphic);
-                if (type.equalsIgnoreCase("Sound"))
-                    gameGraphics.STATICSPRITE.put(GameObject.GameObjectType.valueOf(gameObject),bitmap);
+                if (type.equalsIgnoreCase("static"))
+                    GameGraphics.STATICSPRITE.put(GameObject.GameObjectType.valueOf(gameObject),bitmap);
                 else {
                     int frameWidth, frameHeight, animations, length;
                     frameWidth=jsonObject.getInt("frameWidth");
@@ -51,11 +49,11 @@ public final class GraphicsFactory implements Factory{
                     animations=jsonObject.getInt("animations");
                     length=jsonObject.getInt("length");
                     Spritesheet spritesheet=new Spritesheet(bitmap,frameWidth,frameHeight,animations,length);
-                    gameGraphics.ANIMATEDSPRITE.put(GameObject.GameObjectType.valueOf(gameObject), spritesheet);
+                    GameGraphics.ANIMATEDSPRITE.put(GameObject.GameObjectType.valueOf(gameObject), spritesheet);
                 }
             }
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for audio");
+            Log.d("Debug", "Unable to create JsonOB for graphic");
         }
     }
 
@@ -66,7 +64,7 @@ public final class GraphicsFactory implements Factory{
             in.close();
             return bitmap;
         } catch (IOException e) {
-            Log.d("Debug","Couldn't load graphics"+fileName);
+            Log.d("Debug","Couldn't load graphics "+fileName);
         }
         return null;
     }

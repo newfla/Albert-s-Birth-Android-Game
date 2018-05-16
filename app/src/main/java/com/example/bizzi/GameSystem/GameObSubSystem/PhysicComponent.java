@@ -1,10 +1,9 @@
-package com.example.bizzi.GameSystem.GameObSubSystem.Components;
+package com.example.bizzi.GameSystem.GameObSubSystem;
 
-import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.fpl.liquidfun.Body;
 
-public class PhysicComponent extends Component {
+public final class PhysicComponent extends Component {
 
     private static final int XMIN = -10,
             XMAX = 10, YMIN = -15, YMAX = 15,
@@ -21,8 +20,8 @@ public class PhysicComponent extends Component {
         PhysicComponent.frameWidth = frameWidth;
     }
 
-    PhysicComponent(ComponentType type, GameObject owner, Body body) {
-        super(type, owner);
+    PhysicComponent(GameObject owner, Body body) {
+        super(ComponentType.PHYSIC, owner);
         this.body = body;
     }
 
@@ -44,7 +43,7 @@ public class PhysicComponent extends Component {
         if (animated!=null){
             animated.x=x;
             animated.y=y;
-            drawable.rotation=rotation;
+            //animated.rotation=rotation;
         }
     }
 }

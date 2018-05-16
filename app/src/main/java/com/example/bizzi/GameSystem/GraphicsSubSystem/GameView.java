@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -53,7 +52,7 @@ public final class GameView extends SurfaceView implements Runnable {
 
             frameCounter++;
             if (fpsDeltaTime > 1) {
-                Log.d("GameView", "Current FPS = " + frameCounter);
+              //  Log.d("GameView", "Current FPS = " + frameCounter);
                 frameCounter = 0;
                 fpsTime = currentTime;
             }

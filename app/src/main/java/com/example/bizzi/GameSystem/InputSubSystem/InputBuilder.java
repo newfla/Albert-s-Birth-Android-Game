@@ -2,14 +2,12 @@ package com.example.bizzi.GameSystem.InputSubSystem;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.view.WindowManager;
 
 import com.example.bizzi.AlbertBirthActivity.MainActivity;
-import com.example.bizzi.GameSystem.Factory;
+import com.example.bizzi.GameSystem.Builder;
 
-public final class InputFactory implements Factory{
+public final class InputBuilder implements Builder {
 
     private AccelerometerListener accelerometerListener;
 
@@ -21,13 +19,14 @@ public final class InputFactory implements Factory{
 
     public final GameInput gameInput;
 
-    public InputFactory(Context context){
+    public InputBuilder(Context context){
         this.context=context;
 
         gameInput=new GameInput();
     }
 
-    public void init(){
+    @Override
+    public void build(){
         //create and register Accelerometer Listener
         accelerometerListener=new AccelerometerListener(gameInput);
         ((MainActivity)context).setAccelerometerListener(accelerometerListener);

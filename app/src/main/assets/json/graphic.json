@@ -1,0 +1,38 @@
+{
+  "graphic":[
+    {
+      "gameobject": "MENU",
+      "type": "static",
+      "file": "menu_background.png"
+    },
+
+    {
+      "gameobject": "STARTBUTTON",
+      "type": "static",
+      "file": "start_button.png"
+    },
+
+    {
+      "gameobject": "QUITBUTTON",
+      "type": "static",
+      "file": "quit_button.png"
+    },
+
+    {
+      "gameobject": "MENUTITLE",
+      "type": "static",
+      "file": "menu_title.png"
+    },
+
+    {
+      "gameobject": "SOUNDBUTTON",
+      "type": "animated",
+      "frameWidth": "96",
+      "frameHeight": "96",
+      "animations": "2",
+      "length": "1",
+      "file": "sound_button.png"
+    }
+
+  ]
+}

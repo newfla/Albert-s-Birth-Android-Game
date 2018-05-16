@@ -1,20 +1,20 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
-import com.example.bizzi.GameSystem.GameObSubSystem.Components.Component;
-
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
 public final class GameObject {
 
-    public enum GameObjectType{}
+    public enum GameObjectType{MENU, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON}
 
     private static int count=0;
 
     public final int id;
 
-    private final Map<Component.ComponentType,Component> components;
+    final Map<Component.ComponentType,Component> components;
+
+    GameObjectType type;
 
     @Override
     public boolean equals(Object o) {
@@ -42,7 +42,11 @@ public final class GameObject {
         components= new EnumMap<>(Component.ComponentType.class);
     }
 
+    public GameObjectType getType() {
+        return type;
+    }
+
     public void recycle(){
-        GameObFactory.POOL.release(this);
+        GameObBuilder.POOL.release(this);
     }
 }
