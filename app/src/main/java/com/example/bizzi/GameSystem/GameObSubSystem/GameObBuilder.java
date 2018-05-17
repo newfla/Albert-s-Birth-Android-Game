@@ -39,6 +39,7 @@ public final class GameObBuilder implements Builder {
         GameObject gameOB;
         Bitmap bitmap;
         DrawableComponent drawable;
+        ControllableComponent controllable;
 
         //Create background_menu
         gameOB=getGameOB();
@@ -48,6 +49,8 @@ public final class GameObBuilder implements Builder {
         drawable.x=1920/2;
         drawable.y=1080/2;
         gameOB.components.put(drawable.getType(),drawable);
+        controllable=new ControllableComponent(gameOB);
+        gameOB.components.put(controllable.getType(),controllable);
         array.append(array.size(),gameOB);
 
         //Create menuTitle
@@ -69,6 +72,8 @@ public final class GameObBuilder implements Builder {
         drawable.x=1920/2;
         drawable.y=previousY+ 70;
         gameOB.components.put(drawable.getType(),drawable);
+        controllable=new ControllableComponent(gameOB);
+        gameOB.components.put(controllable.getType(),controllable);
         array.append(array.size(),gameOB);
         previousY=drawable.y;
 
@@ -81,6 +86,8 @@ public final class GameObBuilder implements Builder {
         drawable.x=1920/2;
         drawable.y=previousY+ bitmap.getHeight()+70;
         gameOB.components.put(drawable.getType(),drawable);
+        controllable=new ControllableComponent(gameOB);
+        gameOB.components.put(controllable.getType(),controllable);
         array.append(array.size(),gameOB);
 
         //Create soundButton
@@ -91,6 +98,8 @@ public final class GameObBuilder implements Builder {
         animated.x=6.5f*1920/8;
         animated.y=1080/10;
         gameOB.components.put(animated.getType(),animated);
+        controllable=new ControllableComponent(gameOB);
+        gameOB.components.put(controllable.getType(),controllable);
         array.append(array.size(),gameOB);
 
 

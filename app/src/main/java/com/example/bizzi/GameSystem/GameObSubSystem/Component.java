@@ -2,7 +2,7 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 public abstract class Component {
 
-    public enum ComponentType{DRAWABLE, PHYSIC, ANIMATED}
+    public enum ComponentType{DRAWABLE, PHYSIC, ANIMATED, CONTROLLABLE}
 
     protected GameObject owner;
 

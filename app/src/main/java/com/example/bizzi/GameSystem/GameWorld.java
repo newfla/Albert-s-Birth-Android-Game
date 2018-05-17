@@ -8,10 +8,12 @@ import android.util.SparseArray;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.AnimatedComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.Component;
+import com.example.bizzi.GameSystem.GameObSubSystem.ControllableComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.DrawableComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObBuilder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.InputSubSystem.GameInput;
+import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
 import com.google.fpl.liquidfun.World;
 
 public final class GameWorld {
@@ -39,40 +41,55 @@ public final class GameWorld {
     private final GameObBuilder gameObFactory;
 
     private SparseArray<GameObject> mainMenu;
+    private SparseArray<GameObject>toBeRendered;
 
 
     public void updateWorld(){
-        //TODO handle movements/touch
+        SparseArray<InputObject.TouchObject> touchs=gameInput.getTouchEvents();
+        SparseArray<InputObject.AccelerometerObject>movements=gameInput.getAccelerometerEvents();
         if(home==true) {
             if (mainMenu == null)
                 mainMenu=gameObFactory.buildMenu();
-            //TODO create mainScreen
+            for (int i = 0; i < touchs.size(); i++) {
+                InputObject.TouchObject touch=touchs.get(i);
+                if (touch!=null) {
+                    for (int j = 0; j < mainMenu.size(); j++) {
+                        ControllableComponent controllableComponent = (ControllableComponent) mainMenu.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                        if (controllableComponent != null)
+                            controllableComponent.notifyTouch(touch);
+
+                    }
+                }
+            }
         }
         else{
             //TODO start RealGame
             //TODO physics world simulation
 
         }
+        gameAudio.checkAudio();
     }
 
     public void renderWorld(){
         canvas.drawARGB(255, 0, 0, 0);
-        if(home==true){
-            for (int i = 0; i < mainMenu.size(); i++) {
-                GameObject gameObject= mainMenu.get(i);
-                DrawableComponent drawableComponent=(DrawableComponent)gameObject.getComponent(Component.ComponentType.DRAWABLE);
-                if (drawableComponent!=null)
-                    drawableComponent.draw(canvas);
+        GameObject gameObject;
 
-                AnimatedComponent animatedComponent=(AnimatedComponent)gameObject.getComponent(Component.ComponentType.ANIMATED);
-                if(animatedComponent!=null)
-                    animatedComponent.draw(canvas);
-            }
-        }
+        if(home==true)
+            toBeRendered=mainMenu;
         else {
             //TODO Update frameBuffer
         }
 
+        for (int i = 0; i < toBeRendered.size(); i++) {
+            gameObject= toBeRendered.get(i);
+            DrawableComponent drawableComponent=(DrawableComponent)gameObject.getComponent(Component.ComponentType.DRAWABLE);
+            if (drawableComponent!=null)
+                drawableComponent.draw(canvas);
+
+            AnimatedComponent animatedComponent=(AnimatedComponent)gameObject.getComponent(Component.ComponentType.ANIMATED);
+            if(animatedComponent!=null)
+                animatedComponent.draw(canvas);
+        }
 
 
     }
@@ -88,6 +105,7 @@ public final class GameWorld {
     }
 
     public void pause(){
-        gameAudio.mute();
+        GameAudio.SILENCE=true;
+        gameAudio.checkAudio();
     }
 }

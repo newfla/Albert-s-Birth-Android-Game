@@ -38,10 +38,14 @@ public final class MainActivity extends AppCompatActivity{
         //Build basic GameWorld;
         gameFactory.build();
 
-        //Add TouchListener
-        setTouchListener();
-
         gameView=new GameView(gameFactory.gameWorld,this);
+
+        //Add touchListener
+        registerTouchListener();
+
+        //Add accelerometerListener
+        registerAccelerometerListener();
+
         setContentView(gameView);
 
     }
@@ -76,7 +80,7 @@ public final class MainActivity extends AppCompatActivity{
         this.touchListener=touchListener;
     }
 
-    public void setTouchListener(){
+    public void registerTouchListener(){
         if (touchListener!=null && gameView!=null)
             gameView.setOnTouchListener(touchListener);
     }

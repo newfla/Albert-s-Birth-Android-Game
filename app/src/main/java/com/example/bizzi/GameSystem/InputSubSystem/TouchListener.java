@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem.InputSubSystem;
 
 import android.graphics.Point;
 import android.support.v4.util.Pools;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +12,7 @@ import com.example.bizzi.GameSystem.GameWorld;
 public final class TouchListener implements View.OnTouchListener {
 
     private static final int MAXPOOLSIZE = 100;
-    static final Pools.SynchronizedPool<InputObject.TouchObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);;
+    static final Pools.SynchronizedPool<InputObject.TouchObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);
     private final SparseArray<InputObject.TouchObject> list;
     private final float scaleX, scaleY;
 
@@ -23,7 +24,7 @@ public final class TouchListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
+        Log.d("Debug", "captured in onTouch: "+String.valueOf(event.getAction()));
         int action=event.getActionMasked();
         InputObject.TouchObject touchObject=POOL.acquire();
         if (touchObject==null)
@@ -35,8 +36,8 @@ public final class TouchListener implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE:
                 touchObject.type=MotionEvent.ACTION_MOVE;
                 break;
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                v.performClick();
                 touchObject.type=MotionEvent.ACTION_UP;
                 break;
 

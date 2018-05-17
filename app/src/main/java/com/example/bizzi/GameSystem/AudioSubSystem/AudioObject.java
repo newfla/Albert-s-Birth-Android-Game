@@ -3,11 +3,15 @@ package com.example.bizzi.GameSystem.AudioSubSystem;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
+import java.io.IOException;
+
 public interface AudioObject {
 
     void play();
 
     void recycle();
+
+    void stop();
 
 
 
@@ -31,6 +35,11 @@ public interface AudioObject {
             this.soundPool=soundPool;
             this.soundId=soundId;
         }
+
+        @Override
+        public void stop() {
+
+        }
     }
 
     final class MusicObject implements AudioObject{
@@ -52,6 +61,17 @@ public interface AudioObject {
             if (player.isPlaying())
                 player.stop();
             player.release();
+        }
+
+        @Override
+        public void stop() {
+            if (player.isPlaying())
+                player.stop();
+            try {
+                player.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

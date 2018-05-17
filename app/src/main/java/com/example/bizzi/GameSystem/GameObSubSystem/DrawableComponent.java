@@ -10,8 +10,7 @@ public final class DrawableComponent extends Component {
 
     private final static Rect DEST = new Rect();
 
-    private final Bitmap bitmap;
-
+    final Bitmap bitmap;
 
     DrawableComponent(GameObject owner, Bitmap bitmap) {
         super(ComponentType.DRAWABLE, owner);
