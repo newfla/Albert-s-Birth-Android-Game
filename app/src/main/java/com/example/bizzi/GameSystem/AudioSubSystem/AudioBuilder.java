@@ -41,6 +41,7 @@ public final class AudioBuilder implements Builder {
             gameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for audio");
+            Log.d("Debug",e.toString());
         }
     }
 }

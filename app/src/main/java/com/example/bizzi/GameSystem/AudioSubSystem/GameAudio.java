@@ -74,7 +74,8 @@ public final class GameAudio {
         for (int i = 0; i < sounds.size(); i++) {
             soundPool.setVolume(sounds.get(i),0,0);
         }
-        for (int i = 0; i < sounds.size(); i++) {
+        for (int i = 0; i < musics.size(); i++) {
+            Log.d("Debug","MUTE: "+String.valueOf(i));
             musics.get(i).player.setVolume(0,0);
         }
     }
@@ -83,8 +84,8 @@ public final class GameAudio {
         for (int i = 0; i < sounds.size(); i++) {
             soundPool.setVolume(sounds.get(i),AudioObject.SoundObject.VOLUME,AudioObject.SoundObject.VOLUME);
         }
-        for (int i = 0; i < sounds.size(); i++) {
-            musics.get(i).player.setVolume(1,1);
+        for (int i = 0; i < musics.size(); i++) {
+            musics.get(i).player.setVolume(AudioObject.MusicObject.VOLUME, AudioObject.MusicObject.VOLUME);
         }
     }
 
@@ -95,6 +96,7 @@ public final class GameAudio {
         }
         else if(SILENCE==false && lastSilence==true){
             unMute();
+            lastSilence=false;
         }
     }
 

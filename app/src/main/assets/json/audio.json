@@ -6,17 +6,12 @@
       "file":"menu_music.mp3"
     },
     {
-      "gameObject": "STARTBUTTON" ,
+      "gameobject": "STARTBUTTON" ,
       "type" :"sound" ,
       "file" :"button_sound.wav"
     },
     {
-      "gameObject": "QUITBUTTON" ,
-      "type" :"sound" ,
-      "file" :"button_sound.wav"
-    },
-    {
-      "gameObject": "SOUNDBUTTON" ,
+      "gameobject": "QUITBUTTON" ,
       "type" :"sound" ,
       "file" :"button_sound.wav"
     }

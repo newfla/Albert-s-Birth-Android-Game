@@ -34,11 +34,12 @@ public final class ControllableComponent extends Component{
             rect.bottom = (int) animated.y + (animated.frameHeight / 2);
         }
         if (touch.type==MotionEvent.ACTION_UP && rect.contains((int)touch.x, (int)touch.y)) {
+            AudioObject audio;
             switch (owner.type) {
                 case STARTBUTTON:
-                    AudioObject audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU);
+                    audio=GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                     if (audio != null)
-                        audio.stop();
+                        audio.play();
                     Log.d("Debug","Start");
                     break;
 
@@ -52,6 +53,9 @@ public final class ControllableComponent extends Component{
                     break;
 
                 case QUITBUTTON:
+                    audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.QUITBUTTON);
+                    if (audio != null)
+                        audio.play();
                     Log.d("Debug","quit");
                     System.exit(0);
                     break;

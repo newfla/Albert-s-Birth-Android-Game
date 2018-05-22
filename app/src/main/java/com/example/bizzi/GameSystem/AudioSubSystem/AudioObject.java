@@ -19,11 +19,12 @@ public interface AudioObject {
 
         private final SoundPool soundPool;
         final int soundId;
-        static float VOLUME=0.7f;
+        static float VOLUME=1;
 
         @Override
         public void play() {
-            soundPool.play(soundId,VOLUME,VOLUME,0,0,1);
+            if (!GameAudio.SILENCE)
+                soundPool.play(soundId,VOLUME,VOLUME,0,0,1);
         }
 
         @Override
@@ -44,16 +45,19 @@ public interface AudioObject {
 
     final class MusicObject implements AudioObject{
         final MediaPlayer player;
-
+        static float VOLUME=0.6f;
         public MusicObject(MediaPlayer player){
             this.player=player;
         }
 
         @Override
         public void play() {
-            if (player.isPlaying())
-                return;
-            player.start();
+            player.setVolume(VOLUME,VOLUME);
+            if (!GameAudio.SILENCE) {
+                if (player.isPlaying())
+                    return;
+                player.start();
+            }
         }
 
         @Override
