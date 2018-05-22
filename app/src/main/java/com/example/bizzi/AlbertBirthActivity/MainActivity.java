@@ -29,8 +29,7 @@ public final class MainActivity extends AppCompatActivity{
         //Keep screen ON
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        //Toogle Sticky ImmersiveMode
-        immersiveMode();
+
 
         //SetUp GameBuilder
         GameBuilder gameFactory=new GameBuilder(this);
@@ -71,6 +70,7 @@ public final class MainActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        immersiveMode();
         registerAccelerometerListener();
         gameView.resume();
 
