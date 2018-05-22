@@ -4,6 +4,21 @@
       "gameobject": "MENU",
       "type": "music",
       "file":"menu_music.mp3"
+    },
+    {
+      "gameObject": "STARTBUTTON" ,
+      "type" :"sound" ,
+      "file" :"button_sound.wav"
+    },
+    {
+      "gameObject": "QUITBUTTON" ,
+      "type" :"sound" ,
+      "file" :"button_sound.wav"
+    },
+    {
+      "gameObject": "SOUNDBUTTON" ,
+      "type" :"sound" ,
+      "file" :"button_sound.wav"
     }
   ]
 }
