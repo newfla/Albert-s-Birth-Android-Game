@@ -95,7 +95,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type= GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet=GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated=new AnimatedComponent(gameOB,spritesheet);
-        animated.x=6.5f*1920/8;
+        animated.x=7.5f*1920/8;
         animated.y=1080/10;
         gameOB.components.put(animated.getType(),animated);
         controllable=new ControllableComponent(gameOB);
