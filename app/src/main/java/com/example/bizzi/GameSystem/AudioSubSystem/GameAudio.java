@@ -26,8 +26,7 @@ public final class GameAudio {
     private final SoundPool soundPool;
     private final AssetManager assets;
     private static final int SIMULTANEOUS_CHANNELS = 5;
-    private static final String SOUND="sound/",
-                            MUSIC="music/";
+    private static final String AUDIO="audio/";
     private final SparseIntArray sounds=new SparseIntArray();
     private final SparseArray<AudioObject.MusicObject> musics=new SparseArray();
 
@@ -45,7 +44,7 @@ public final class GameAudio {
 
     AudioObject addSound(String filename){
         try {
-            AssetFileDescriptor fd=assets.openFd(SOUND+filename);
+            AssetFileDescriptor fd=assets.openFd(AUDIO+filename);
             AudioObject.SoundObject sound=new AudioObject.SoundObject(soundPool,soundPool.load(fd,1));
             sounds.append(sounds.size(),sound.soundId);
             return sound;
@@ -57,7 +56,7 @@ public final class GameAudio {
 
     AudioObject addMusic(String filename){
         try {
-            AssetFileDescriptor fd=assets.openFd(MUSIC+filename);
+            AssetFileDescriptor fd=assets.openFd(AUDIO+filename);
             MediaPlayer mediaPlayer= new MediaPlayer();
             mediaPlayer.setDataSource(fd);
             mediaPlayer.prepare();
