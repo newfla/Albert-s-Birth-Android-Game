@@ -70,7 +70,7 @@ public final class GameObBuilder implements Builder {
         bitmap=GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable=new DrawableComponent(gameOB, bitmap);
         drawable.x=1920/2;
-        drawable.y=previousY+ 70;
+        drawable.y=previousY+ 100;
         gameOB.components.put(drawable.getType(),drawable);
         controllable=new ControllableComponent(gameOB);
         gameOB.components.put(controllable.getType(),controllable);
@@ -84,7 +84,7 @@ public final class GameObBuilder implements Builder {
         bitmap=GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable=new DrawableComponent(gameOB, bitmap);
         drawable.x=1920/2;
-        drawable.y=previousY+ bitmap.getHeight()+70;
+        drawable.y=previousY+ bitmap.getHeight()+50;
         gameOB.components.put(drawable.getType(),drawable);
         controllable=new ControllableComponent(gameOB);
         gameOB.components.put(controllable.getType(),controllable);
