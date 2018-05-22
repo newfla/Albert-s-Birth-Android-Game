@@ -23,11 +23,13 @@ public final class GameInput {
         return acceloremeterFront;
     }
 
-    public synchronized SparseArray<InputObject.TouchObject> getTouchEvents(){
-        touchFront.clear();
-        SparseArray<InputObject.TouchObject> temp=touchFront;
-        touchFront=touchBuffer;
-        touchBuffer=temp;
-        return touchFront;
+    public SparseArray<InputObject.TouchObject> getTouchEvents(){
+        synchronized (touchBuffer) {
+            touchFront.clear();
+            SparseArray<InputObject.TouchObject> temp = touchFront;
+            touchFront = touchBuffer;
+            touchBuffer = temp;
+            return touchFront;
+        }
     }
 }

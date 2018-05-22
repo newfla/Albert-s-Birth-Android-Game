@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameWorld;
 
 public final class GameView extends SurfaceView implements Runnable {
@@ -60,6 +61,8 @@ public final class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume() {
+        GameAudio.SILENCE=GameAudio.LASTSILENCE;
+        GameAudio.LASTSILENCE=!GameAudio.LASTSILENCE;
         running = true;
         renderThread = new Thread(this);
         renderThread.start();
