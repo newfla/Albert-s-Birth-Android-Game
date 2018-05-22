@@ -23,7 +23,7 @@ public final class TouchListener implements View.OnTouchListener {
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    public synchronized boolean onTouch(View v, MotionEvent event) {
         Log.d("Debug", "captured in onTouch: "+String.valueOf(event.getAction()));
         int action=event.getActionMasked();
         InputObject.TouchObject touchObject=POOL.acquire();
@@ -50,7 +50,9 @@ public final class TouchListener implements View.OnTouchListener {
             touchObject.x = event.getX()*scaleX;
             touchObject.y = event.getY()*scaleY;
             //TODO manipulate
-            list.append(list.size(), touchObject);
+            synchronized (list) {
+                list.append(list.size(), touchObject);
+            }
         }
         return true;
     }

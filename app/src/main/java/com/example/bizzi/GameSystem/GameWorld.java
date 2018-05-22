@@ -105,7 +105,8 @@ public final class GameWorld {
     }
 
     public void pause(){
-        GameAudio.SILENCE=true;
-        gameAudio.checkAudio();
+        gameAudio.LASTSILENCE=gameAudio.SILENCE;
+        gameAudio.SILENCE=true;
+        gameAudio.mute();
     }
 }
