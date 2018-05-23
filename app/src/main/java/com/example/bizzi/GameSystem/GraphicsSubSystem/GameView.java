@@ -61,8 +61,7 @@ public final class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume() {
-        GameAudio.SILENCE=GameAudio.LASTSILENCE;
-        GameAudio.LASTSILENCE=!GameAudio.LASTSILENCE;
+        GameAudio.resumeAudio();
         running = true;
         renderThread = new Thread(this);
         renderThread.start();

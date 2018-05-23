@@ -44,25 +44,23 @@ public final class GameWorld {
     private SparseArray<GameObject>toBeRendered;
 
 
-    public void updateWorld(){
-        SparseArray<InputObject.TouchObject> touchs=gameInput.getTouchEvents();
-        SparseArray<InputObject.AccelerometerObject>movements=gameInput.getAccelerometerEvents();
-        if(home==true) {
-            if (mainMenu == null)
-                mainMenu=gameObFactory.buildMenu();
-            for (int i = 0; i < touchs.size(); i++) {
-                InputObject.TouchObject touch=touchs.get(i);
-                if (touch!=null) {
-                    for (int j = 0; j < mainMenu.size(); j++) {
-                        ControllableComponent controllableComponent = (ControllableComponent) mainMenu.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
-                        if (controllableComponent != null)
-                            controllableComponent.notifyTouch(touch);
+    public void updateWorld() {
 
+        if (home == true) {
+            if (mainMenu == null)
+                mainMenu = gameObFactory.buildMenu();
+                SparseArray<InputObject.TouchObject> touchs = gameInput.getTouchEvents();
+                for (int i = 0; i < touchs.size(); i++) {
+                    InputObject.TouchObject touch = touchs.get(i);
+                    if (touch != null) {
+                        for (int j = 0; j < mainMenu.size(); j++) {
+                            ControllableComponent controllableComponent = (ControllableComponent) mainMenu.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                            if (controllableComponent != null)
+                                controllableComponent.notifyTouch(touch);
+                        }
                     }
                 }
-            }
-        }
-        else{
+        } else {
             //TODO start RealGame
             //TODO physics world simulation
 
@@ -105,8 +103,6 @@ public final class GameWorld {
     }
 
     public void pause(){
-        gameAudio.LASTSILENCE=gameAudio.SILENCE;
-        gameAudio.SILENCE=true;
-        gameAudio.mute();
+        gameAudio.pauseAudio();
     }
 }

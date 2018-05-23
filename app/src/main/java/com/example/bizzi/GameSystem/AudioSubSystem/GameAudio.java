@@ -22,7 +22,7 @@ public final class GameAudio {
     public static final Map<GameObject.GameObjectType,AudioObject> AUDIOLIBRARY=new EnumMap<>(GameObject.GameObjectType.class);
     public static boolean SILENCE=false;
 
-    public static boolean LASTSILENCE=false;
+    private static boolean LASTSILENCE=false;
     private final SoundPool soundPool;
     private final AssetManager assets;
     private static final int SIMULTANEOUS_CHANNELS = 5;
@@ -70,14 +70,12 @@ public final class GameAudio {
         return null;
     }
 
-    public void mute(){
-        for (int i = 0; i < sounds.size(); i++) {
+    private void mute(){
+        for (int i = 0; i < sounds.size(); i++)
             soundPool.setVolume(sounds.get(i),0,0);
-        }
-        for (int i = 0; i < musics.size(); i++) {
-            Log.d("Debug","MUTE: "+String.valueOf(i));
+
+        for (int i = 0; i < musics.size(); i++)
             musics.get(i).player.setVolume(0,0);
-        }
     }
 
     private void unMute(){
@@ -100,4 +98,14 @@ public final class GameAudio {
         }
     }
 
+    public static void resumeAudio(){
+        SILENCE=LASTSILENCE;
+        LASTSILENCE=!LASTSILENCE;
+    }
+
+    public void pauseAudio(){
+        LASTSILENCE=SILENCE;
+        SILENCE=true;
+        mute();
+    }
 }

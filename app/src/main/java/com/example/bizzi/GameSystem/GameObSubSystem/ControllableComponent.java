@@ -40,7 +40,6 @@ public final class ControllableComponent extends Component{
                     audio=GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                     if (audio != null)
                         audio.play();
-                    Log.d("Debug","Start");
                     break;
 
                 case SOUNDBUTTON:
@@ -49,14 +48,12 @@ public final class ControllableComponent extends Component{
                         animated.animation=1;
                     else
                         animated.animation=2;
-                    Log.d("Debug","Sound");
                     break;
 
                 case QUITBUTTON:
                     audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.QUITBUTTON);
                     if (audio != null)
                         audio.play();
-                    Log.d("Debug","quit");
                     System.exit(0);
                     break;
 
