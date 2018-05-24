@@ -45,12 +45,11 @@ public final class GameObBuilder implements Builder {
         gameOB=getGameOB();
         gameOB.type= GameObject.GameObjectType.MENU;
         bitmap=GameGraphics.STATICSPRITE.get(gameOB.type);
-        drawable=new DrawableComponent(gameOB, bitmap );
+        drawable=new DrawableComponent(gameOB, bitmap);
         drawable.x=1920/2;
         drawable.y=1080/2;
         gameOB.components.put(drawable.getType(),drawable);
-        controllable=new ControllableComponent(gameOB);
-        gameOB.components.put(controllable.getType(),controllable);
+
         array.append(array.size(),gameOB);
 
         //Create menuTitle
@@ -59,7 +58,7 @@ public final class GameObBuilder implements Builder {
         bitmap=GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable=new DrawableComponent(gameOB, bitmap);
         drawable.x=1920/2;
-        drawable.y=1080/2+40;
+        drawable.y=1080/2+40;;
         gameOB.components.put(drawable.getType(),drawable);
         array.append(array.size(),gameOB);
         float previousY=drawable.y+bitmap.getHeight()/2;
@@ -70,7 +69,7 @@ public final class GameObBuilder implements Builder {
         bitmap=GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable=new DrawableComponent(gameOB, bitmap);
         drawable.x=1920/2;
-        drawable.y=previousY+ 100;
+        drawable.y=previousY+100;
         gameOB.components.put(drawable.getType(),drawable);
         controllable=new ControllableComponent(gameOB);
         gameOB.components.put(controllable.getType(),controllable);
@@ -107,5 +106,6 @@ public final class GameObBuilder implements Builder {
         return array;
     }
     //TODO factory object methods
+
 
 }

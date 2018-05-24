@@ -6,25 +6,32 @@ import android.graphics.Rect;
 
 public final class DrawableComponent extends Component {
 
-    float x, y, rotation;
+    float x, y, rotation, semiWidth, semiHeight;
 
-    private final static Rect DEST = new Rect();
+    private final static Rect DEST=new Rect();
 
     final Bitmap bitmap;
 
     DrawableComponent(GameObject owner, Bitmap bitmap) {
         super(ComponentType.DRAWABLE, owner);
         this.bitmap = bitmap;
+        semiWidth=bitmap.getWidth()/2;
+        semiHeight=bitmap.getHeight()/2;
     }
 
     public void draw(Canvas canvas) {
         canvas.save();
         canvas.rotate(rotation, x, y);
-        DEST.left = (int) x-(bitmap.getWidth()/2);
-        DEST.top = (int) y-(bitmap.getHeight()/2);
-        DEST.right = (int) x + (bitmap.getWidth()/2) ;
-        DEST.bottom = (int) y + (bitmap.getHeight()/2) ;
+        buildBorder();
         canvas.drawBitmap(bitmap, null, DEST, null);
         canvas.restore();
+    }
+    
+    private void buildBorder(){
+        DEST.left = (int) (x-semiWidth);
+        DEST.top = (int) (y-semiHeight);
+        DEST.right = (int) (x + semiWidth) ;
+        DEST.bottom = (int) (y + semiHeight);
+        
     }
 }
