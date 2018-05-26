@@ -1,10 +1,13 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Shader;
 
-public final class DrawableComponent extends Component {
+public class DrawableComponent extends Component {
 
     float x, y, rotation, semiWidth, semiHeight;
 
@@ -34,4 +37,32 @@ public final class DrawableComponent extends Component {
         DEST.bottom = (int) (y + semiHeight);
         
     }
+
+    public final static class PaintDrawableComponent extends DrawableComponent {
+
+        public static Paint getWallPaint(){
+            Paint paint=new Paint();
+            paint.setARGB(255,255, 139, 255);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(50);
+            return paint;
+        }
+
+        private final Paint paint;
+        private final BitmapShader bitmapShader;
+
+        PaintDrawableComponent(GameObject owner, Bitmap bitmap, Paint paint) {
+            super(owner, bitmap);
+            this.paint=paint;
+            bitmapShader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            paint.setShader(bitmapShader);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            canvas.drawRect(DEST.left,DEST.top, DEST.right, DEST.bottom, paint);
+        }
+    }
+
+
 }

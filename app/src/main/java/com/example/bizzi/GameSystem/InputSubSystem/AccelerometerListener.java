@@ -5,7 +5,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.support.v4.util.Pools;
 
-public final class AccelerometerListener implements SensorEventListener {
+final class AccelerometerListener implements SensorEventListener {
 
     private static final int MAXPOOLSIZE = 100;
     static final Pools.SynchronizedPool<InputObject.AccelerometerObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);

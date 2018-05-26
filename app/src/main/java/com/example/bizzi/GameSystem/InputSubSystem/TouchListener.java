@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.example.bizzi.GameSystem.GameWorld;
 
-public final class TouchListener implements View.OnTouchListener {
+final class TouchListener implements View.OnTouchListener {
 
     private static final int MAXPOOLSIZE = 100;
     static final Pools.SynchronizedPool<InputObject.TouchObject> POOL=new Pools.SynchronizedPool<>(MAXPOOLSIZE);

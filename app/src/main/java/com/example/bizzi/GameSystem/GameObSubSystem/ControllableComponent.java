@@ -1,7 +1,6 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
@@ -17,8 +16,6 @@ public final class ControllableComponent extends Component{
     }
 
     public void notifyTouch(InputObject.TouchObject touch){
-        if (owner.type== GameObject.GameObjectType.STARTBUTTON)
-            Log.d("Debug","In gameObject event type: "+String.valueOf(touch.type));
         DrawableComponent drawable=(DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
         AnimatedComponent animated=(AnimatedComponent) owner.getComponent(ComponentType.ANIMATED);
         if (drawable!=null) {

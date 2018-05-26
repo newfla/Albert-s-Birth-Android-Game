@@ -2,6 +2,7 @@ package com.example.bizzi.AlbertBirthActivity;
 
 import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,18 +11,17 @@ import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.GameBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
-import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerListener;
-import com.example.bizzi.GameSystem.InputSubSystem.TouchListener;
+
 
 public final class MainActivity extends AppCompatActivity{
 
     private GameView gameView;
-    private TouchListener touchListener;
-    private AccelerometerListener accelerometerListener;
+    private View.OnTouchListener touchListener;
+    private SensorEventListener accelerometerListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Load jLiquidFun library
         System.loadLibrary("liquidfun");
         System.loadLibrary("liquidfun_jni");
@@ -76,7 +76,7 @@ public final class MainActivity extends AppCompatActivity{
 
     }
 
-    public void setTouchListener(TouchListener touchListener){
+    public void setTouchListener(View.OnTouchListener touchListener){
         this.touchListener=touchListener;
     }
 
@@ -85,7 +85,7 @@ public final class MainActivity extends AppCompatActivity{
             gameView.setOnTouchListener(touchListener);
     }
 
-    public void setAccelerometerListener(AccelerometerListener accelerometerListner){
+    public void setAccelerometerListener(SensorEventListener accelerometerListner){
         this.accelerometerListener=accelerometerListner;
     }
 
