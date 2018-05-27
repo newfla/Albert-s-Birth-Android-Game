@@ -24,9 +24,9 @@ final public class NetworkingBuilder implements Builder {
           new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build());
 
        Bundle autoMatchCriteria= RoomConfig.createAutoMatchCriteria(gameNetworking.MINPLAYERS,gameNetworking.MAXPLAYERS,0);
-       gameNetworking.roomConfig=RoomConfig.builder(new MyRoomUpdateCallBack())
+       gameNetworking.roomConfig=RoomConfig.builder(new MyRoomUpdateCallBack(gameNetworking))
                .setOnMessageReceivedListener(new MessageListener(gameNetworking))
-               .setRoomStatusUpdateCallback(new MyRoomStatusUpdateCallback())
+               .setRoomStatusUpdateCallback(new MyRoomStatusUpdateCallback(gameNetworking))
                .setAutoMatchCriteria(autoMatchCriteria)
                .build();
     }

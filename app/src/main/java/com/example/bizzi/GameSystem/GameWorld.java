@@ -23,7 +23,7 @@ public final class GameWorld {
                                 BUFFERHEIGHT=1080;
     public final Bitmap frameBuffer;
     private final Canvas canvas;
-    private static boolean home;
+    public static boolean home;
     private final World world;
     private static final float TIMESTEP=1/50f; //60FPS
 

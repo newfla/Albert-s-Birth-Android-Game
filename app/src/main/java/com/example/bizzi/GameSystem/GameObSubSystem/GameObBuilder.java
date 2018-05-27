@@ -3,12 +3,18 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.Pools;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
+import com.example.bizzi.GameSystem.Utility.JsonUtility;
 import com.google.fpl.liquidfun.World;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public final class GameObBuilder implements Builder {
 
@@ -16,6 +22,7 @@ public final class GameObBuilder implements Builder {
     static final  Pools.SimplePool<GameObject> POOL=new Pools.SimplePool<>(MAXPOOLSIZE);
     private final Context context;
     private final World world;
+    private static final String LEVELS="levels/";
 
 
     public GameObBuilder(Context context, World world){
@@ -101,11 +108,76 @@ public final class GameObBuilder implements Builder {
         gameOB.components.put(controllable.getType(),controllable);
         array.append(array.size(),gameOB);
 
-
-        //TODO build Menu Object
         return array;
     }
     //TODO factory object methods
 
+    public SparseArray<GameObject> buildLevel(String level){
+        SparseArray<GameObject> array=new SparseArray<>();
+        JSONObject description;
+        try {
+            //Obtain level description
+            description= new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(),LEVELS+level));
+
+            //Building walls
+            JSONArray slidingWalls=description.getJSONArray("walls");
+            for (int i = 0; i <slidingWalls.length(); i++)
+                array.append(array.size(),buildSlidingWall(slidingWalls.getJSONObject(i)));
+
+
+            //Building spermatozoon
+            JSONObject spermatozoon=description.getJSONArray("spermatozoon").getJSONObject(0);
+            array.append(array.size(),buildSpermatozoon(spermatozoon));
+
+            //Building Egg cell
+            JSONObject cell=description.getJSONArray("eggcell").getJSONObject(0);
+            array.append(array.size(),buildEggCell(cell));
+
+            //Building enemies
+            JSONArray enemies=description.getJSONArray("enemies");
+            for (int i = 0; i <enemies.length(); i++){
+                switch (enemies.getJSONObject(i).getString("type")){
+                    case "spermatoozon":
+                        array.append(array.size(),buildEnemySpermatozoon(slidingWalls.getJSONObject(i)));
+                        break;
+                    case "pill":
+                        array.append(array.size(),buildEnemyPill(slidingWalls.getJSONObject(i)));
+                        break;
+                }
+            }
+
+
+        } catch (JSONException e) {
+            Log.d("Debug","Unable to create JsonOB for level: "+level);
+            return null;
+        }
+
+        return array;
+    }
+
+    private GameObject buildSlidingWall(JSONObject wall){
+        GameObject go=new GameObject();
+        return go;
+    }
+
+    private GameObject buildSpermatozoon(JSONObject spermatozoon){
+        GameObject go=new GameObject();
+        return go;
+    }
+
+    private GameObject buildEggCell(JSONObject cell){
+        GameObject go=new GameObject();
+        return go;
+    }
+
+    private GameObject buildEnemySpermatozoon(JSONObject spermatozoon){
+        GameObject go=new GameObject();
+        return go;
+    }
+
+    private GameObject buildEnemyPill(JSONObject pill){
+        GameObject go=new GameObject();
+        return go;
+    }
 
 }

@@ -2,14 +2,22 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
+import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.List;
 
 public final class GameNetworking {
 
@@ -20,6 +28,12 @@ public final class GameNetworking {
     RoomConfig roomConfig;
 
     private final Context context;
+
+    Room room;
+
+    String myPlayerId, myMessageId;
+
+    List<Participant> participants;
 
     SparseArray<RealTimeMessage> messagesBuffer , messagesFront;
 
@@ -43,7 +57,23 @@ public final class GameNetworking {
         GoogleSignInAccount account=null;
         while (account==null)
             account=GoogleSignIn.getLastSignedInAccount(context);
+
+        //Room Creation
         Games.getRealTimeMultiplayerClient(context, account).create(roomConfig);
+
+        Games.getPlayersClient(context,account)
+                .getCurrentPlayerId().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                myPlayerId=s;
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Debug","Issue  getting myPlayerId");
+                    }
+                });
     }
 
 }
