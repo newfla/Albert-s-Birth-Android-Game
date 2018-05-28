@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public final class GameObject {
 
-    public enum GameObjectType{MENU, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON}
+    public enum GameObjectType{MENU, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON, ENCLOSURE, SPERMATOZOON}
 
     private static int count=0;
 

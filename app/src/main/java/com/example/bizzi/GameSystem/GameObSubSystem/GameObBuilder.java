@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.util.Pools;
 import android.util.Log;
 import android.util.SparseArray;
@@ -10,6 +11,12 @@ import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
+import com.google.fpl.liquidfun.Body;
+import com.google.fpl.liquidfun.BodyDef;
+import com.google.fpl.liquidfun.BodyType;
+import com.google.fpl.liquidfun.CircleShape;
+import com.google.fpl.liquidfun.FixtureDef;
+import com.google.fpl.liquidfun.PolygonShape;
 import com.google.fpl.liquidfun.World;
 
 import org.json.JSONArray;
@@ -161,7 +168,68 @@ public final class GameObBuilder implements Builder {
     }
 
     private GameObject buildSpermatozoon(JSONObject spermatozoon){
+
         GameObject go=new GameObject();
+        go.type= GameObject.GameObjectType.SPERMATOZOON;
+
+        //DrawableComponent
+            DrawableComponent drawableComponent;
+            Bitmap bitmap;
+            bitmap=GameGraphics.STATICSPRITE.get(go.type);
+            drawableComponent=new DrawableComponent(go,bitmap);
+            go.setComponent(drawableComponent);
+
+
+
+        //PhysicComponent
+
+            PhysicComponent physicComponent;
+            FixtureDef fixturedef;
+            FixtureDef fixtesta;
+            BodyDef bdef;
+            bdef = new BodyDef();
+            bdef.setPosition(0, 0);
+            bdef.setType(BodyType.dynamicBody);
+            Body body = world.createBody(bdef);
+            body.setSleepingAllowed(false);
+            body.setUserData(this);
+            CircleShape testa = new CircleShape();
+            PolygonShape coda = new PolygonShape();
+            testa.setRadius(0.25f);
+            coda.setAsBox(1.5f / 2, 0.01f / 2);
+            testa.setPosition(0.125f,0f);
+            coda.setCentroid(-0.85f,-0.25f);
+            fixturedef = new FixtureDef();
+            fixtesta = new FixtureDef();
+
+            //Setup Testa
+
+            fixtesta.setShape(testa);
+            fixtesta.setFriction(0.1f);
+            fixtesta.setRestitution(0.4f);
+            fixtesta.setDensity(0.1f);
+
+            //Setup Coda
+
+            fixturedef.setShape(coda);
+            fixturedef.setFriction(0.1f);       // default 0.2
+            fixturedef.setRestitution(0.3f);    // default 0
+            fixturedef.setDensity(0.4f);
+            body.createFixture(fixtesta);
+            body.createFixture(fixturedef);
+
+            //Clean up
+
+            fixtesta.delete();
+            fixturedef.delete();
+            bdef.delete();
+            coda.delete();
+            testa.delete();
+
+
+            physicComponent = new PhysicComponent(go,body,5.5f,4f);
+            go.setComponent(physicComponent);
+
         return go;
     }
 
