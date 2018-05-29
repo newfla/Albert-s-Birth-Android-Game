@@ -51,9 +51,9 @@ public class DrawableComponent extends Component {
         private final Paint paint;
         private final BitmapShader bitmapShader;
 
-        PaintDrawableComponent(GameObject owner, Bitmap bitmap, Paint paint) {
+        PaintDrawableComponent(GameObject owner, Bitmap bitmap) {
             super(owner, bitmap);
-            this.paint=paint;
+            paint=new Paint();
             bitmapShader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
             paint.setShader(bitmapShader);
         }

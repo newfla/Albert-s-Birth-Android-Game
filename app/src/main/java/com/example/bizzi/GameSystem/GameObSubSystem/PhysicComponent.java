@@ -5,7 +5,7 @@ import com.google.fpl.liquidfun.Body;
 
 public final class PhysicComponent extends Component {
 
-    private static final int XMIN = -10,
+    public static final int XMIN = -10,
             XMAX = 10, YMIN = -15, YMAX = 15,
             PHYSICALHEIGHT=YMAX-YMIN,
             PHYSICALWIDTH=XMAX - XMIN;

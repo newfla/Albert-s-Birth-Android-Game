@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.util.Pools;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.google.fpl.liquidfun.World;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 public final class GameObBuilder implements Builder {
 
@@ -127,9 +130,9 @@ public final class GameObBuilder implements Builder {
             description= new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(),LEVELS+level));
 
             //Building walls
-            JSONArray slidingWalls=description.getJSONArray("walls");
-            for (int i = 0; i <slidingWalls.length(); i++)
-                array.append(array.size(),buildSlidingWall(slidingWalls.getJSONObject(i)));
+            JSONObject slidingWalls=description.getJSONArray("walls").getJSONObject(0);
+            for (int i = 0; i <slidingWalls.getInt("number"); i++)
+                array.append(array.size(),buildSlidingWall(slidingWalls,i));
 
 
             //Building spermatozoon
@@ -145,10 +148,10 @@ public final class GameObBuilder implements Builder {
             for (int i = 0; i <enemies.length(); i++){
                 switch (enemies.getJSONObject(i).getString("type")){
                     case "spermatoozon":
-                        array.append(array.size(),buildEnemySpermatozoon(slidingWalls.getJSONObject(i)));
+                        array.append(array.size(),buildEnemySpermatozoon(enemies.getJSONObject(i)));
                         break;
                     case "pill":
-                        array.append(array.size(),buildEnemyPill(slidingWalls.getJSONObject(i)));
+                        array.append(array.size(),buildEnemyPill(enemies.getJSONObject(i)));
                         break;
                 }
             }
@@ -162,12 +165,68 @@ public final class GameObBuilder implements Builder {
         return array;
     }
 
-    private GameObject buildSlidingWall(JSONObject wall){
+    private GameObject buildSlidingWall(JSONObject wall, int i){
         GameObject go=new GameObject();
+        go.type= GameObject.GameObjectType.DOOR;
+        //DrawableComponent
+            DrawableComponent drawableComponent;
+            Bitmap bitmap;
+            bitmap=GameGraphics.STATICSPRITE.get(go.type);
+            drawableComponent=new DrawableComponent.PaintDrawableComponent(go,bitmap);
+            go.setComponent(drawableComponent);
+        //Physic Component
+            Random random = new Random();
+            int j = 2;
+            int n = 7;
+            int tot=3;
+            try {
+                j = wall.getInt("rmin");
+                n = wall.getInt("rmax")-j;
+                tot= wall.getInt("number");
+            } catch (JSONException e) {
+                Log.d("Debug","Unable to get height SlidingWall");
+            }
+            int wallWidht = random.nextInt(n)+j;
+
+            BodyDef bdef = new BodyDef();
+            float cy = (PhysicComponent.YMIN+(PhysicComponent.PHYSICALHEIGHT)*i)/tot;
+            float cx;
+            if(i%2==0){
+                cx=PhysicComponent.XMIN+(PhysicComponent.PHYSICALWIDTH)/4;
+            }
+            else {
+                cx=PhysicComponent.XMIN+(PhysicComponent.PHYSICALWIDTH)*3/4;
+            }
+            bdef.setPosition(cx, cy);
+            //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
+            bdef.setType(BodyType.dynamicBody);
+            // a body
+            Body body = world.createBody(bdef);
+            body.setSleepingAllowed(false);
+            body.setUserData(go);
+
+            PolygonShape box = new PolygonShape();
+            box.setAsBox(wallWidht / 2, 1 / 2);
+            FixtureDef fixturedef = new FixtureDef();
+            fixturedef.setShape(box);
+            fixturedef.setFriction(0.2f);       // default 0.2
+            fixturedef.setRestitution(0.4f);    // default 0
+            fixturedef.setDensity(0);     // default 0
+            body.createFixture(fixturedef);
+            PhysicComponent physicComponent= new PhysicComponent(go,body,wallWidht/2,1/2);
+            go.setComponent(physicComponent);
+
+            // clean up native objects
+            fixturedef.delete();
+            bdef.delete();
+            box.delete();
+
+
+
         return go;
     }
 
-    private GameObject buildSpermatozoon(JSONObject spermatozoon){
+    private GameObject buildEnemySpermatozoon(JSONObject spermatozoon){
 
         GameObject go=new GameObject();
         go.type= GameObject.GameObjectType.SPERMATOZOON;
@@ -182,6 +241,13 @@ public final class GameObBuilder implements Builder {
 
 
         //PhysicComponent
+        float width=5.5f, heigth=4f;
+        try {
+             width=(float)spermatozoon.getDouble("width");
+             heigth=(float)spermatozoon.getDouble("heigth");
+        } catch (JSONException e) {
+            Log.d("Debug","Unable to get width,heigth enemey spermatozoon");
+        }
 
             PhysicComponent physicComponent;
             FixtureDef fixturedef;
@@ -192,27 +258,29 @@ public final class GameObBuilder implements Builder {
             bdef.setType(BodyType.dynamicBody);
             Body body = world.createBody(bdef);
             body.setSleepingAllowed(false);
-            body.setUserData(this);
+            body.setUserData(go);
             CircleShape testa = new CircleShape();
             PolygonShape coda = new PolygonShape();
-            testa.setRadius(0.25f);
-            coda.setAsBox(1.5f / 2, 0.01f / 2);
-            testa.setPosition(0.125f,0f);
-            coda.setCentroid(-0.85f,-0.25f);
+            float radius = width/8;
+            testa.setRadius(radius);
+            coda.setAsBox(3*radius, radius/50);
+            testa.setPosition(radius,0f);
+            coda.setCentroid(-3*radius,-0.25f);
             fixturedef = new FixtureDef();
             fixtesta = new FixtureDef();
 
             //Setup Testa
 
             fixtesta.setShape(testa);
-            fixtesta.setFriction(0.1f);
+            //0.1
+            fixtesta.setFriction(0.3f);
             fixtesta.setRestitution(0.4f);
             fixtesta.setDensity(0.1f);
 
             //Setup Coda
 
             fixturedef.setShape(coda);
-            fixturedef.setFriction(0.1f);       // default 0.2
+            fixturedef.setFriction(0.3f);       // default 0.1
             fixturedef.setRestitution(0.3f);    // default 0
             fixturedef.setDensity(0.4f);
             body.createFixture(fixtesta);
@@ -227,7 +295,7 @@ public final class GameObBuilder implements Builder {
             testa.delete();
 
 
-            physicComponent = new PhysicComponent(go,body,5.5f,4f);
+            physicComponent = new PhysicComponent(go,body,width,heigth);
             go.setComponent(physicComponent);
 
         return go;
@@ -238,7 +306,7 @@ public final class GameObBuilder implements Builder {
         return go;
     }
 
-    private GameObject buildEnemySpermatozoon(JSONObject spermatozoon){
+    private GameObject buildSpermatozoon(JSONObject spermatozoon){
         GameObject go=new GameObject();
         return go;
     }
@@ -246,6 +314,16 @@ public final class GameObBuilder implements Builder {
     private GameObject buildEnemyPill(JSONObject pill){
         GameObject go=new GameObject();
         return go;
+    }
+
+    private GameObject backgroundl(JSONObject background){
+        GameObject go=new GameObject();
+        go.type= GameObject.GameObjectType.BACKGROUND;
+        DrawableComponent drawableComponent;
+        drawableComponent=new DrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.setComponent(drawableComponent);
+        return go;
+
     }
 
 }
