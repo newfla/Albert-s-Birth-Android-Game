@@ -3,7 +3,7 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.example.bizzi.GameSystem.Builder;
+import com.example.bizzi.GameSystem.Utility.Builder;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;

@@ -6,8 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
+import com.example.bizzi.GameSystem.Utility.Builder;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
 import org.json.JSONArray;

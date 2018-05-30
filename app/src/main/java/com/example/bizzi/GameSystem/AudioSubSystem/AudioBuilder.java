@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
+import com.example.bizzi.GameSystem.Utility.Builder;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 
 import org.json.JSONArray;

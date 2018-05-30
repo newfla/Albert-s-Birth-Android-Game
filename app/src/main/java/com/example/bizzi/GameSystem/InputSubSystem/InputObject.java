@@ -1,30 +1,23 @@
 package com.example.bizzi.GameSystem.InputSubSystem;
 
+import com.example.bizzi.GameSystem.Utility.Recyclable;
+
 public abstract class InputObject {
 
     public float x=-1, y=-1;
 
-
-    public abstract void recycle();
-
-
     public static final class AccelerometerObject extends InputObject{
 
-        @Override
-        public void recycle() {
-           AccelerometerListener.POOL.release(this);
-        }
 
         AccelerometerObject(){}
     }
 
-    public static final class TouchObject extends InputObject{
+    public static final class TouchObject extends InputObject implements Recyclable {
 
         public int type;
 
         @Override
-        public void recycle() {
-            TouchListener.POOL.release(this);
+        public void recycle() { TouchListener.POOL.release(this);
         }
 
         TouchObject(){}

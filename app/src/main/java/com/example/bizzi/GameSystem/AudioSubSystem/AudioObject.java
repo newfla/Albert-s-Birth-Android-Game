@@ -3,13 +3,13 @@ package com.example.bizzi.GameSystem.AudioSubSystem;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
+import com.example.bizzi.GameSystem.Utility.Recyclable;
+
 import java.io.IOException;
 
-public interface AudioObject {
+public interface AudioObject extends Recyclable {
 
     void play();
-
-    void recycle();
 
     void stop();
 

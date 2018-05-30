@@ -5,7 +5,6 @@ import android.view.MotionEvent;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
-import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
 
 public final class ControllableComponent extends Component{
@@ -38,7 +37,7 @@ public final class ControllableComponent extends Component{
                     audio=GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                     if (audio != null)
                         audio.play();
-                    GameWorld.home=false;
+                  //  GameWorld.home=false;
                     break;
 
                 case SOUNDBUTTON:

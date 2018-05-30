@@ -2,15 +2,13 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.support.v4.util.Pools;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.example.bizzi.GameSystem.Builder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
+import com.example.bizzi.GameSystem.Utility.Builder;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
@@ -166,7 +164,7 @@ public final class GameObBuilder implements Builder {
     }
 
     private GameObject buildSlidingWall(JSONObject wall, int i){
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         go.type= GameObject.GameObjectType.DOOR;
         //DrawableComponent
             DrawableComponent drawableComponent;
@@ -228,7 +226,7 @@ public final class GameObBuilder implements Builder {
 
     private GameObject buildEnemySpermatozoon(JSONObject spermatozoon){
 
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         go.type= GameObject.GameObjectType.SPERMATOZOON;
 
         //DrawableComponent
@@ -302,22 +300,22 @@ public final class GameObBuilder implements Builder {
     }
 
     private GameObject buildEggCell(JSONObject cell){
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         return go;
     }
 
     private GameObject buildSpermatozoon(JSONObject spermatozoon){
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         return go;
     }
 
     private GameObject buildEnemyPill(JSONObject pill){
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         return go;
     }
 
     private GameObject backgroundl(JSONObject background){
-        GameObject go=new GameObject();
+        GameObject go=getGameOB();
         go.type= GameObject.GameObjectType.BACKGROUND;
         DrawableComponent drawableComponent;
         drawableComponent=new DrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));

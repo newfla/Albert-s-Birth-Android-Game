@@ -5,7 +5,7 @@ import android.graphics.Point;
 import android.view.WindowManager;
 
 import com.example.bizzi.AlbertBirthActivity.MainActivity;
-import com.example.bizzi.GameSystem.Builder;
+import com.example.bizzi.GameSystem.Utility.Builder;
 
 public final class InputBuilder implements Builder {
 

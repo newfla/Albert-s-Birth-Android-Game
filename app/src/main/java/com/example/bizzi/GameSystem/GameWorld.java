@@ -49,9 +49,9 @@ public final class GameWorld {
         if (home == true) {
             if (mainMenu == null)
                 mainMenu = gameObFactory.buildMenu();
-                SparseArray<InputObject.TouchObject> touchs = gameInput.getTouchEvents();
-                for (int i = 0; i < touchs.size(); i++) {
-                    InputObject.TouchObject touch = touchs.get(i);
+                SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
+                for (int i = 0; i < touches.size(); i++) {
+                    InputObject.TouchObject touch = touches.get(i);
                     if (touch != null) {
                         for (int j = 0; j < mainMenu.size(); j++) {
                             ControllableComponent controllableComponent = (ControllableComponent) mainMenu.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
@@ -59,8 +59,14 @@ public final class GameWorld {
                                 controllableComponent.notifyTouch(touch);
                         }
                     }
+                    touch.recycle();
                 }
         } else {
+            for (int i = 0; i < mainMenu.size(); i++) {
+                mainMenu.get(i).recycle();
+            }
+            //InputObject.AccelerometerObject accelerometerObject=gameInput.getAccelerometerEvent();
+            //world.setGravity(-accelerometerObject.x,accelerometerObject.y);
             //TODO start RealGame
             //TODO physics world simulation
 

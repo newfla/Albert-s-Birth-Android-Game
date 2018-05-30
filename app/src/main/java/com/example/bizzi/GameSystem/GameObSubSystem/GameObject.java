@@ -1,10 +1,14 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
+import android.support.v4.util.Pools;
+
+import com.example.bizzi.GameSystem.Utility.Recyclable;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class GameObject {
+public final class GameObject implements Recyclable {
 
     public enum GameObjectType{MENU, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON, ENCLOSURE, SPERMATOZOON,BACKGROUND, DOOR}
 
@@ -13,6 +17,8 @@ public final class GameObject {
     public final int id;
 
     final Map<Component.ComponentType,Component> components;
+
+    private static final Pools.Pool<GameObject> POOL=new Pools.SimplePool<>(200);
 
     GameObjectType type;
 

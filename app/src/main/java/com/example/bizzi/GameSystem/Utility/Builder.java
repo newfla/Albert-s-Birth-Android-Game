@@ -1,4 +1,4 @@
-package com.example.bizzi.GameSystem;
+package com.example.bizzi.GameSystem.Utility;
 
 public interface Builder {
 
