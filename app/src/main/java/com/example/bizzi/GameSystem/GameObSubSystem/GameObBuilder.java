@@ -16,6 +16,7 @@ import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.CircleShape;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.PolygonShape;
+import com.google.fpl.liquidfun.PrismaticJointDef;
 import com.google.fpl.liquidfun.World;
 
 import org.json.JSONArray;
@@ -130,7 +131,7 @@ public final class GameObBuilder implements Builder {
             //Building walls
             JSONObject slidingWalls=description.getJSONArray("walls").getJSONObject(0);
             for (int i = 0; i <slidingWalls.getInt("number"); i++)
-                array.append(array.size(),buildSlidingWall(slidingWalls,i));
+                buildSlidingWall(slidingWalls,i,array);
 
 
             //Building spermatozoon
@@ -149,7 +150,8 @@ public final class GameObBuilder implements Builder {
                         array.append(array.size(),buildEnemySpermatozoon(enemies.getJSONObject(i)));
                         break;
                     case "pill":
-                        array.append(array.size(),buildEnemyPill(enemies.getJSONObject(i)));
+                        array.append(array.size(),buildEnemyPill(enemies.getJSONObject(i)
+                        ));
                         break;
                 }
             }
@@ -163,7 +165,7 @@ public final class GameObBuilder implements Builder {
         return array;
     }
 
-    private GameObject buildSlidingWall(JSONObject wall, int i){
+    private void buildSlidingWall(JSONObject wall, int i,SparseArray<GameObject> array){
         GameObject go=getGameOB();
         go.type= GameObject.GameObjectType.DOOR;
         //DrawableComponent
@@ -204,7 +206,7 @@ public final class GameObBuilder implements Builder {
             body.setUserData(go);
 
             PolygonShape box = new PolygonShape();
-            box.setAsBox(wallWidht / 2, 1 / 2);
+            box.setAsBox(1/2, wallWidht / 2);
             FixtureDef fixturedef = new FixtureDef();
             fixturedef.setShape(box);
             fixturedef.setFriction(0.2f);       // default 0.2
@@ -212,16 +214,53 @@ public final class GameObBuilder implements Builder {
             fixturedef.setDensity(0);     // default 0
             body.createFixture(fixturedef);
             PhysicComponent physicComponent= new PhysicComponent(go,body,wallWidht/2,1/2);
+            physicComponent.setBody(body);
             go.setComponent(physicComponent);
 
             // clean up native objects
             fixturedef.delete();
             bdef.delete();
             box.delete();
+            float wPorta = (PhysicComponent.PHYSICALWIDTH-wallWidht)/2;
 
 
 
-        return go;
+    GameObject nw= buildWall(cx,cy+(wPorta/2+wallWidht/2),wPorta);
+    GameObject sw= buildWall(cx,cy-(wPorta/2+wallWidht/2),wPorta);
+    //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
+    jointBuilder.buildPrismaticDoor(sw,go,world,cx,cy);
+    array.append(array.size(),nw);
+    array.append(array.size(),sw);
+    array.append(array.size(),go);
+    }
+
+    private GameObject buildWall (float x, float y,float width){
+    GameObject go=getGameOB();
+    go.type= GameObject.GameObjectType.WALL;
+
+    //Drawable Component
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap=GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent=new DrawableComponent.PaintDrawableComponent(go,bitmap);
+        go.setComponent(drawableComponent);
+
+
+    //Physic Component
+        BodyDef bdef = new BodyDef();
+        Body body = world.createBody(bdef);
+        body.setUserData(go);
+        PolygonShape box = new PolygonShape();
+        box.setCentroid(x,y);
+        box.setAsBox((PhysicComponent.XMAX-PhysicComponent.XMIN)/2,width/2);
+        body.createFixture(box, 0); // no density needed
+        bdef.delete();
+        box.delete();
+        PhysicComponent physicComponent = new PhysicComponent(go, body,x,y);
+        physicComponent.setBody(body);
+        go.setComponent(physicComponent);
+    return go;
+
     }
 
     private GameObject buildEnemySpermatozoon(JSONObject spermatozoon){
@@ -239,10 +278,16 @@ public final class GameObBuilder implements Builder {
 
 
         //PhysicComponent
-        float width=5.5f, heigth=4f;
+        float width=5.5f, heigth=4f, tFriction=0.3f,tRestitution=0.4f, tDensity=0.1f,cFriction=0.3f,cRestitution=0.3f, cDensity=0.4f;
         try {
-             width=(float)spermatozoon.getDouble("width");
-             heigth=(float)spermatozoon.getDouble("heigth");
+            width=(float)spermatozoon.getDouble("width");
+            heigth=(float)spermatozoon.getDouble("height");
+            tFriction=(float)spermatozoon.getDouble("tFriction");
+            tRestitution=(float)spermatozoon.getDouble("tRestitution");
+            tDensity=(float)spermatozoon.getDouble("tDensity");
+            cFriction=(float)spermatozoon.getDouble("cFriction");
+            cRestitution=(float)spermatozoon.getDouble("cRestitution");
+            cDensity=(float)spermatozoon.getDouble("cDensity");
         } catch (JSONException e) {
             Log.d("Debug","Unable to get width,heigth enemey spermatozoon");
         }
@@ -271,16 +316,16 @@ public final class GameObBuilder implements Builder {
 
             fixtesta.setShape(testa);
             //0.1
-            fixtesta.setFriction(0.3f);
-            fixtesta.setRestitution(0.4f);
-            fixtesta.setDensity(0.1f);
+            fixtesta.setFriction(tFriction);
+            fixtesta.setRestitution(tRestitution);
+            fixtesta.setDensity(tDensity);
 
             //Setup Coda
 
             fixturedef.setShape(coda);
-            fixturedef.setFriction(0.3f);       // default 0.1
-            fixturedef.setRestitution(0.3f);    // default 0
-            fixturedef.setDensity(0.4f);
+            fixturedef.setFriction(cFriction);       // default 0.1
+            fixturedef.setRestitution(cRestitution);    // default 0
+            fixturedef.setDensity(cDensity);
             body.createFixture(fixtesta);
             body.createFixture(fixturedef);
 
@@ -311,7 +356,75 @@ public final class GameObBuilder implements Builder {
 
     private GameObject buildEnemyPill(JSONObject pill){
         GameObject go=getGameOB();
-        return go;
+        go.type= GameObject.GameObjectType.PILL;
+
+        //DrawableComponent
+            DrawableComponent drawableComponent;
+            Bitmap bitmap;
+            bitmap=GameGraphics.STATICSPRITE.get(go.type);
+            drawableComponent=new DrawableComponent(go,bitmap);
+            go.setComponent(drawableComponent);
+
+        //Physic Component
+            BodyDef bdef = new BodyDef();
+            float width=1.8f, height=0.6f, friction=0.1f,density=0.4f,restitution=0.3f;
+            try {
+                width  = (float) pill.getDouble("width");
+                height = (float) pill.getDouble("height");
+                friction = (float) pill.getDouble("friction");
+                density = (float) pill.getDouble("density");
+                restitution = (float) pill.getDouble("restitution");
+            }catch (JSONException e) {
+                Log.d("Debug","Unable to get width,heigth ecc.. enemey pill");
+            }
+            bdef.setPosition(0, 0);
+            bdef.setType(BodyType.dynamicBody);
+            Body body = world.createBody(bdef);
+            body.setSleepingAllowed(false);
+            body.setUserData(go);
+            //Rettangolo rappresentante corpo della pillola
+            PolygonShape pillola = new PolygonShape();
+            pillola.setAsBox(width / 2, height / 2);
+            FixtureDef fixturedef = new FixtureDef();
+            // Due circonferenze rappresentanti i  poli della pillola
+            CircleShape dx = new CircleShape();
+            CircleShape sx = new CircleShape();
+            dx.setRadius(height/8);
+            sx.setRadius(height/8);
+            dx.setPosition(width/2,0);
+            sx.setPosition(-width/2,0);
+
+            FixtureDef fixdx = new FixtureDef();
+            FixtureDef fixsx = new FixtureDef();
+
+            fixdx.setShape(dx);
+            fixsx.setShape(sx);
+
+            //Settaggi pillola
+            fixturedef.setShape(pillola);
+            fixturedef.setFriction(friction);       // default 0.2
+            fixturedef.setRestitution(restitution);    // default 0
+            fixturedef.setDensity(density);
+
+
+            body.createFixture(fixturedef);
+            body.createFixture(fixdx);
+            body.createFixture(fixsx);
+
+
+            // clean up native objects
+            fixturedef.delete();
+            fixdx.delete();
+            fixsx.delete();
+            bdef.delete();
+            pillola.delete();
+            dx.delete();
+            sx.delete();
+
+            PhysicComponent physicComponent = new PhysicComponent(go,body,width,height);
+            go.setComponent(physicComponent);
+
+            return go;
     }
 
     private GameObject backgroundl(JSONObject background){
