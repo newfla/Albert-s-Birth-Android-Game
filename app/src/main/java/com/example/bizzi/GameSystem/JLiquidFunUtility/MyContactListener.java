@@ -1,4 +1,4 @@
-package com.example.bizzi.GameSystem.JLiquidFunListener;
+package com.example.bizzi.GameSystem.JLiquidFunUtility;
 
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.google.fpl.liquidfun.Body;

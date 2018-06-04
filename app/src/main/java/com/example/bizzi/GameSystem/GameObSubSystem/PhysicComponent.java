@@ -9,19 +9,18 @@ public final class PhysicComponent extends Component {
             XMAX = 10, YMIN = -15, YMAX = 15,
             PHYSICALHEIGHT=YMAX-YMIN,
             PHYSICALWIDTH=XMAX - XMIN;
-    private  Body body;
+    private final Body body;
 
     PhysicComponent(GameObject owner, Body body,float width, float height) {
         super(ComponentType.PHYSIC, owner);
         this.body = body;
         scalePhysicToGraphic(width, height);
     }
+
     Body getBody(){
         return this.body;
     }
-    public void setBody(Body body){
-        this.body=body;
-    }
+
     public void updatePosition() {
         DrawableComponent drawable = (DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
         AnimatedComponent animated = (AnimatedComponent) owner.getComponent(ComponentType.ANIMATED);
@@ -29,7 +28,6 @@ public final class PhysicComponent extends Component {
                 rotation=(float)Math.toDegrees(body.getAngle());
         x=(x-XMIN)/PHYSICALWIDTH* GameWorld.BUFFERWIDTH;
         y=(y-YMIN)/PHYSICALHEIGHT*GameWorld.BUFFERHEIGHT;
-
 
         if (drawable!=null){
             drawable.x=x;

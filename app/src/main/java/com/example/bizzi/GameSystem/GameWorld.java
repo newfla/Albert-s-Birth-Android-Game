@@ -19,16 +19,15 @@ import com.google.fpl.liquidfun.World;
 public final class GameWorld {
 
     //Rendering variables
-    public static final int BUFFERWIDTH=1920,
-                                BUFFERHEIGHT=1080;
+    public static final int BUFFERWIDTH = 1920,
+            BUFFERHEIGHT = 1080;
+    private static final float TIMESTEP = 1 / 50f; //60FPS
+    public static boolean home;
     public final Bitmap frameBuffer;
     private final Canvas canvas;
-    public static boolean home;
     private final World world;
-    private static final float TIMESTEP=1/50f; //60FPS
-
     //GameObjects
-    private final ArraySet<GameObject> gameObjects=new ArraySet<>();
+    private final ArraySet<GameObject> gameObjects = new ArraySet<>();
 
 
     //Audio SubSystem ref
@@ -41,75 +40,97 @@ public final class GameWorld {
     private final GameObBuilder gameObFactory;
 
     private SparseArray<GameObject> mainMenu;
-    private SparseArray<GameObject>toBeRendered;
+    private SparseArray<GameObject> level;
+    private SparseArray<GameObject> toBeRendered;
 
+
+    GameWorld(World world, GameAudio gameAudio, GameInput gameInput, GameObBuilder gameObFactory) {
+        this.gameObFactory = gameObFactory;
+        this.gameAudio = gameAudio;
+        this.gameInput = gameInput;
+        this.world = world;
+        home = true;
+        frameBuffer = Bitmap.createBitmap(BUFFERWIDTH, BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(frameBuffer);
+        mainMenu = gameObFactory.buildMenu();
+    }
 
     public void updateWorld() {
 
-        if (home == true) {
+        if (home) {
+            if (level != null) {
+                for (int i = 0; i < level.size(); i++)
+                    level.get(i).recycle();
+                level = null;
+            }
             if (mainMenu == null)
                 mainMenu = gameObFactory.buildMenu();
-                SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
-                for (int i = 0; i < touches.size(); i++) {
-                    InputObject.TouchObject touch = touches.get(i);
-                    if (touch != null) {
-                        for (int j = 0; j < mainMenu.size(); j++) {
-                            ControllableComponent controllableComponent = (ControllableComponent) mainMenu.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
-                            if (controllableComponent != null)
-                                controllableComponent.notifyTouch(touch);
-                        }
-                    }
-                    touch.recycle();
-                }
+
+            toBeRendered = mainMenu;
         } else {
-            for (int i = 0; i < mainMenu.size(); i++) {
-                mainMenu.get(i).recycle();
+            if (mainMenu != null) {
+                for (int i = 0; i < mainMenu.size(); i++)
+                    mainMenu.get(i).recycle();
+                mainMenu = null;
             }
-            //InputObject.AccelerometerObject accelerometerObject=gameInput.getAccelerometerEvent();
+            if (level == null)
+                level = gameObFactory.buildLevel(casualLevel());
             //world.setGravity(-accelerometerObject.x,accelerometerObject.y);
             //TODO start RealGame
             //TODO physics world simulation
 
 
         }
+
+        //Parse all touch events
+        SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
+        for (int i = 0; i < touches.size(); i++) {
+            InputObject.TouchObject touch = touches.get(i);
+            if (touch != null) {
+                for (int j = 0; j < toBeRendered.size(); j++) {
+                    ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                    if (controllableComponent != null)
+                        controllableComponent.notifyTouch(touch);
+                }
+            }
+            touch.recycle();
+        }
+
+        //Parse last accelerometer event
+        InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
+        if (accelerometer != null) {
+            for (int j = 0; j < toBeRendered.size(); j++) {
+                ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                if (controllableComponent != null)
+                    controllableComponent.notifyAccelerometer(accelerometer);
+            }
+        }
         gameAudio.checkAudio();
     }
 
-    public void renderWorld(){
+    public void renderWorld() {
         canvas.drawARGB(255, 0, 0, 0);
         GameObject gameObject;
-
-        if(home==true)
-            toBeRendered=mainMenu;
-        else {
-            //TODO Update frameBuffer
-        }
-
         for (int i = 0; i < toBeRendered.size(); i++) {
-            gameObject= toBeRendered.get(i);
-            DrawableComponent drawableComponent=(DrawableComponent)gameObject.getComponent(Component.ComponentType.DRAWABLE);
-            if (drawableComponent!=null)
+            gameObject = toBeRendered.get(i);
+            DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
+            if (drawableComponent != null)
                 drawableComponent.draw(canvas);
 
-            AnimatedComponent animatedComponent=(AnimatedComponent)gameObject.getComponent(Component.ComponentType.ANIMATED);
-            if(animatedComponent!=null)
+            AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
+            if (animatedComponent != null)
                 animatedComponent.draw(canvas);
         }
 
 
     }
 
-    GameWorld(World world, GameAudio gameAudio,GameInput gameInput, GameObBuilder gameObFactory){
-        this.gameObFactory=gameObFactory;
-        this.gameAudio=gameAudio;
-        this.gameInput=gameInput;
-        this.world=world;
-        home=true;
-        frameBuffer=Bitmap.createBitmap(BUFFERWIDTH,BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
-        canvas=new Canvas(frameBuffer);
+    public void pause() {
+        gameAudio.pauseAudio();
     }
 
-    public void pause(){
-        gameAudio.pauseAudio();
+    private String casualLevel() {
+        //TODO maybe one day...
+        return "lv1";
     }
 }
