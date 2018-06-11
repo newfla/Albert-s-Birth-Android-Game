@@ -23,6 +23,31 @@
       "type": "static",
       "file": "menu_title.png"
     },
+    
+    {
+      "gameobject": "BACKGROUND",
+      "type": "static",
+      "file": "cell.png"
+    },
+
+	{
+      "gameobject": "DOOR",
+      "type": "static",
+      "file": "cellText.png"
+    },
+
+    {
+      "gameobject": "WALL",
+      "type": "static",
+      "file": "cellText.png"
+    },
+
+    {
+      "gameobject": "PILL",
+      "type": "static",
+      "file": "pill.png"
+    },
+
 
     {
       "gameobject": "SOUNDBUTTON",

@@ -169,14 +169,14 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.DOOR;
 
-        //Set-Up DrawableComponent
+        //Set-Up Door DrawableComponent
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
 
-        // Set-Up Physic Component
+        // Set-Up Door Physic Component + wallBuild call
         Random random = new Random();
         int j = 2;
         int n = 7;
