@@ -130,8 +130,9 @@ public final class GameObBuilder implements Builder {
         JSONObject description;
         try {
             //Obtain level description
+            Log.d("Livello", "buildLevel: carico il Json");
             description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
-
+            Log.d("Livello", "buildLevel: Caricato il jSon");
             //Background
             array.append(array.size(), backgroundlevel());
 
@@ -140,7 +141,7 @@ public final class GameObBuilder implements Builder {
             for (int i = 0; i < slidingWalls.getInt("number"); i++)
                 buildSlidingWall(slidingWalls, i, array);
 
-
+            Log.d("Livello", "buildLevel: Costruite le mura");
             //Building spermatozoon
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
             array.append(array.size(), buildSpermatozoon(spermatozoon));
@@ -163,7 +164,7 @@ public final class GameObBuilder implements Builder {
                 }
             }
 
-
+            Log.d("Livello", "buildLevel: Costruiti i nemici");
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for level: " + level);
             return null;
