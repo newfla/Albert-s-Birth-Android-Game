@@ -17,7 +17,10 @@ public abstract class InputObject {
         public int type;
 
         @Override
-        public void recycle() { TouchListener.POOL.release(this);
+        public void recycle() {
+            x = -1;
+            y = -1;
+            TouchListener.POOL.release(this);
         }
 
         TouchObject(){}

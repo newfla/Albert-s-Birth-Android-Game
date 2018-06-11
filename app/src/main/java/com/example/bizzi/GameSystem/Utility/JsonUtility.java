@@ -12,6 +12,7 @@ public final class JsonUtility {
 
     public static String readJsonFromFile(AssetManager assets, String filename) {
         String result=null;
+        Log.d("Debug", "json/" + filename);
         try {
             InputStream inputStream = assets.open("json/"+filename);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
@@ -23,7 +24,7 @@ public final class JsonUtility {
             }
             result = sb.toString();
         } catch (IOException e) {
-            Log.d("Debug", "Unable open audio description file");
+            Log.d("Debug", "Unable open description file");
         }
         return result;
     }

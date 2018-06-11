@@ -1,20 +1,35 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
+import android.support.v4.util.Pools;
+
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.fpl.liquidfun.Body;
 
 public final class PhysicComponent extends Component {
 
+    private static final Pools.Pool<PhysicComponent> POOL = new Pools.SimplePool<>(100);
+
     public static final int XMIN = -10,
             XMAX = 10, YMIN = -15, YMAX = 15,
             PHYSICALHEIGHT=YMAX-YMIN,
             PHYSICALWIDTH=XMAX - XMIN;
-    private final Body body;
 
-    PhysicComponent(GameObject owner, Body body,float width, float height) {
+    private Body body;
+
+    static PhysicComponent getPhysicComponent(GameObject owner, Body body, float width, float height) {
+        PhysicComponent object = POOL.acquire();
+        if (object == null)
+            object = new PhysicComponent(owner, body, width, height);
+        else {
+            object.owner = owner;
+            object.scalePhysicToGraphic(body, width, height);
+        }
+        return object;
+    }
+
+    private PhysicComponent(GameObject owner, Body body, float width, float height) {
         super(ComponentType.PHYSIC, owner);
-        this.body = body;
-        scalePhysicToGraphic(width, height);
+        scalePhysicToGraphic(body, width, height);
     }
 
     Body getBody(){
@@ -42,7 +57,8 @@ public final class PhysicComponent extends Component {
         }
     }
 
-    private void scalePhysicToGraphic(float width, float height){
+    private void scalePhysicToGraphic(Body body, float width, float height) {
+        this.body = body;
         DrawableComponent drawable = (DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
         AnimatedComponent animated = (AnimatedComponent) owner.getComponent(ComponentType.ANIMATED);
         width=(width/PHYSICALWIDTH*GameWorld.BUFFERWIDTH)/2;
@@ -56,5 +72,10 @@ public final class PhysicComponent extends Component {
             animated.semiWidth=width;
             animated.semiHeight=height;
         }
+    }
+
+    @Override
+    public void recycle() {
+        POOL.release(this);
     }
 }

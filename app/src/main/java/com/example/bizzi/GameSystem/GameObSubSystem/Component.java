@@ -1,6 +1,8 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
-public abstract class Component {
+import com.example.bizzi.GameSystem.Utility.Recyclable;
+
+public abstract class Component implements Recyclable {
 
     public enum ComponentType{DRAWABLE, PHYSIC, ANIMATED, CONTROLLABLE}
 
@@ -12,6 +14,7 @@ public abstract class Component {
         this.type=type;
         this.owner=owner;
     }
+
 
     public ComponentType getType() {
         return type;

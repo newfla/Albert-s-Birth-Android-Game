@@ -22,6 +22,13 @@ public final class GameObject implements Recyclable {
 
     GameObjectType type;
 
+    static GameObject getGameOB() {
+        GameObject object = POOL.acquire();
+        if (object == null)
+            object = new GameObject();
+        return object;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,6 +60,9 @@ public final class GameObject implements Recyclable {
     }
 
     public void recycle(){
-        GameObBuilder.POOL.release(this);
+        for (Component component : components.values())
+            component.recycle();
+        components.clear();
+        POOL.release(this);
     }
 }

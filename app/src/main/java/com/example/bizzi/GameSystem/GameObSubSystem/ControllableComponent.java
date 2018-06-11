@@ -1,6 +1,7 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.graphics.Rect;
+import android.support.v4.util.Pools;
 import android.view.MotionEvent;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
@@ -16,14 +17,24 @@ public abstract class ControllableComponent extends Component {
 
     public abstract void notifyTouch(InputObject.TouchObject touch);
 
-
     public abstract void notifyAccelerometer(InputObject.AccelerometerObject accelorometer);
 
     public static final class ControllableWidgetComponent extends ControllableComponent {
 
+        private static final Pools.Pool<ControllableWidgetComponent> POOL = new Pools.SimplePool<>(10);
+
+        static ControllableComponent getControllableWidgetComponent(GameObject owner) {
+            ControllableWidgetComponent object = POOL.acquire();
+            if (object == null)
+                object = new ControllableWidgetComponent(owner);
+            else
+                object.owner = owner;
+            return object;
+        }
+
         private final Rect rect = new Rect();
 
-        ControllableWidgetComponent(GameObject owner) {
+        private ControllableWidgetComponent(GameObject owner) {
             super(owner);
         }
 
@@ -77,9 +88,25 @@ public abstract class ControllableComponent extends Component {
 
         }
 
+        @Override
+        public void recycle() {
+            POOL.release(this);
+        }
     }
 
     public static final class ControllableAccelerometerComponent extends ControllableComponent {
+
+        private static final Pools.Pool<ControllableAccelerometerComponent> POOL = new Pools.SimplePool<>(10);
+
+        static ControllableComponent getControllableWidgetComponent(GameObject owner) {
+            ControllableAccelerometerComponent object = POOL.acquire();
+            if (object == null)
+                object = new ControllableAccelerometerComponent(owner);
+            else
+                object.owner = owner;
+            return object;
+        }
+
         private ControllableAccelerometerComponent(GameObject owner) {
             super(owner);
         }
@@ -92,6 +119,11 @@ public abstract class ControllableComponent extends Component {
         @Override
         public void notifyAccelerometer(InputObject.AccelerometerObject accelorometer) {
 
+        }
+
+        @Override
+        public void recycle() {
+            POOL.release(this);
         }
     }
 }

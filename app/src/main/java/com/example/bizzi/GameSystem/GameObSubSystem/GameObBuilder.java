@@ -2,7 +2,6 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.util.Pools;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -25,10 +24,11 @@ import org.json.JSONObject;
 
 import java.util.Random;
 
+import static com.example.bizzi.GameSystem.GameObSubSystem.GameObject.getGameOB;
+
 public final class GameObBuilder implements Builder {
 
     private static final int MAXPOOLSIZE = 300;
-    static final Pools.SimplePool<GameObject> POOL = new Pools.SimplePool<>(MAXPOOLSIZE);
     private static final String LEVELS = "levels/";
     private final Context context;
     private final World world;
@@ -39,18 +39,10 @@ public final class GameObBuilder implements Builder {
         this.world = world;
     }
 
-    private GameObject getGameOB() {
-        GameObject object = POOL.acquire();
-        if (object == null)
-            object = new GameObject();
-        return object;
-    }
+
 
     @Override
     public void build() {
-        for (int i = 0; i < MAXPOOLSIZE / 3; i++) {
-            POOL.release(new GameObject());
-        }
     }
 
     public SparseArray<GameObject> buildMenu() {
@@ -64,7 +56,7 @@ public final class GameObBuilder implements Builder {
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.MENU;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
-        drawable = new DrawableComponent(gameOB, bitmap);
+        drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = 1080 / 2;
         gameOB.components.put(drawable.getType(), drawable);
@@ -75,7 +67,7 @@ public final class GameObBuilder implements Builder {
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.MENUTITLE;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
-        drawable = new DrawableComponent(gameOB, bitmap);
+        drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = 1080 / 2 + 40;
         ;
@@ -87,11 +79,11 @@ public final class GameObBuilder implements Builder {
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.STARTBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
-        drawable = new DrawableComponent(gameOB, bitmap);
+        drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = previousY + 100;
         gameOB.components.put(drawable.getType(), drawable);
-        controllable = new ControllableComponent.ControllableWidgetComponent(gameOB);
+        controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
         array.append(array.size(), gameOB);
         previousY = drawable.y;
@@ -101,11 +93,11 @@ public final class GameObBuilder implements Builder {
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.QUITBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
-        drawable = new DrawableComponent(gameOB, bitmap);
+        drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = previousY + bitmap.getHeight() + 50;
         gameOB.components.put(drawable.getType(), drawable);
-        controllable = new ControllableComponent.ControllableWidgetComponent(gameOB);
+        controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
         array.append(array.size(), gameOB);
 
@@ -113,11 +105,11 @@ public final class GameObBuilder implements Builder {
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
-        AnimatedComponent animated = new AnimatedComponent(gameOB, spritesheet);
+        AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
         animated.x = 7.5f * 1920 / 8;
         animated.y = 1080 / 10;
         gameOB.components.put(animated.getType(), animated);
-        controllable = new ControllableComponent.ControllableWidgetComponent(gameOB);
+        controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
         array.append(array.size(), gameOB);
 
@@ -181,7 +173,7 @@ public final class GameObBuilder implements Builder {
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
-        drawableComponent = new DrawableComponent.PaintDrawableComponent(go, bitmap);
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
 
         // Set-Up Physic Component
@@ -220,7 +212,7 @@ public final class GameObBuilder implements Builder {
         fixturedef.setRestitution(0.4f);    // default 0
         fixturedef.setDensity(0);     // default 0
         body.createFixture(fixturedef);
-        PhysicComponent physicComponent = new PhysicComponent(go, body, wallWidht / 2, 1 / 2);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, wallWidht / 2, 1 / 2);
         go.setComponent(physicComponent);
 
         // clean up native objects
@@ -246,7 +238,7 @@ public final class GameObBuilder implements Builder {
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
-        drawableComponent = new DrawableComponent.PaintDrawableComponent(go, bitmap);
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
 
 
@@ -260,7 +252,7 @@ public final class GameObBuilder implements Builder {
         body.createFixture(box, 0); // no density needed
         bdef.delete();
         box.delete();
-        PhysicComponent physicComponent = new PhysicComponent(go, body, x, y);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, x, y);
         go.setComponent(physicComponent);
         return go;
 
@@ -275,7 +267,7 @@ public final class GameObBuilder implements Builder {
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
-        drawableComponent = new DrawableComponent(go, bitmap);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
 
 
@@ -333,7 +325,7 @@ public final class GameObBuilder implements Builder {
         coda.delete();
         testa.delete();
 
-        physicComponent = new PhysicComponent(go, body, width, heigth);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, width, heigth);
         go.setComponent(physicComponent);
         return go;
     }
@@ -356,7 +348,7 @@ public final class GameObBuilder implements Builder {
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
-        drawableComponent = new DrawableComponent(go, bitmap);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
 
         //Physic Component
@@ -416,7 +408,7 @@ public final class GameObBuilder implements Builder {
         dx.delete();
         sx.delete();
 
-        PhysicComponent physicComponent = new PhysicComponent(go, body, width, height);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, width, height);
         go.setComponent(physicComponent);
         return go;
     }
@@ -425,7 +417,7 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.BACKGROUND;
         DrawableComponent drawableComponent;
-        drawableComponent = new DrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
+        drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
         return go;
     }

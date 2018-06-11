@@ -131,6 +131,6 @@ public final class GameWorld {
 
     private String casualLevel() {
         //TODO maybe one day...
-        return "lv1";
+        return "lv1.json";
     }
 }

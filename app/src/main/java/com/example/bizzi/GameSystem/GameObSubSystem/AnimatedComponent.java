@@ -3,27 +3,44 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.v4.util.Pools;
 
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 
 public final class AnimatedComponent extends Component {
 
+    private static final Pools.Pool<AnimatedComponent> POOL = new Pools.SimplePool<>(50);
+
     float x,y,semiWidth, semiHeight;
     int animation=1;
     private int lastAnimation, lastFrame;
-    private final Bitmap sheet;
-    final int frameWidth, frameHeight, animations, lenght;
+    private Bitmap sheet;
+    int frameWidth, frameHeight, animations, lenght;
     private final static Rect RECTSHEET=new Rect(), RECTCANVAS=new Rect();
 
-    AnimatedComponent(GameObject owner, Spritesheet spritesheet) {
-        super(ComponentType.ANIMATED, owner);
+    static AnimatedComponent getAnimatedComponent(GameObject owner, Spritesheet spritesheet) {
+        AnimatedComponent object = POOL.acquire();
+        if (object == null)
+            object = new AnimatedComponent(owner, spritesheet);
+        else
+            object.setAttributes(owner, spritesheet);
+        return object;
+    }
+
+    private void setAttributes(GameObject owner, Spritesheet spritesheet) {
         sheet = spritesheet.getSheet();
         frameHeight = spritesheet.getFrameHeight();
         frameWidth = spritesheet.getFrameWidth();
         animations = spritesheet.getAnimations();
         lenght = spritesheet.getLenght();
-        semiWidth=frameWidth/2;
-        semiHeight=frameHeight/2;
+        semiWidth = frameWidth / 2;
+        semiHeight = frameHeight / 2;
+        this.owner = owner;
+    }
+
+    private AnimatedComponent(GameObject owner, Spritesheet spritesheet) {
+        super(ComponentType.ANIMATED, owner);
+        setAttributes(owner, spritesheet);
     }
 
     //https://stackoverflow.com/questions/22589322/what-does-top-left-right-and-bottom-mean-in-android-rect-object?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -56,5 +73,13 @@ public final class AnimatedComponent extends Component {
         RECTSHEET.top=1+(animation-1)*frameHeight;
         RECTSHEET.right=lastFrame*frameWidth;
         RECTSHEET.bottom=animation*frameHeight;
+    }
+
+    @Override
+    public void recycle() {
+        x = 0;
+        y = 0;
+        animation = 1;
+        POOL.release(this);
     }
 }
