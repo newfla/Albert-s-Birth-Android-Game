@@ -61,6 +61,7 @@ public abstract class ControllableComponent extends Component {
                         if (audio != null)
                             audio.play();
                         GameWorld.home=false;
+                        GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
                         break;
 
                     case SOUNDBUTTON:
@@ -77,8 +78,6 @@ public abstract class ControllableComponent extends Component {
                             audio.play();
                         System.exit(0);
                         break;
-
-
                 }
             }
         }

@@ -12,6 +12,7 @@ import com.example.bizzi.GameSystem.GameObSubSystem.ControllableComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.DrawableComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObBuilder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
+import com.example.bizzi.GameSystem.GameObSubSystem.PhysicComponent;
 import com.example.bizzi.GameSystem.InputSubSystem.GameInput;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
 import com.google.fpl.liquidfun.World;
@@ -20,8 +21,12 @@ public final class GameWorld {
 
     //Rendering variables
     public static final int BUFFERWIDTH = 1920,
-            BUFFERHEIGHT = 1080;
+            BUFFERHEIGHT = 1080,
+            VELOCITYITERATION=8,
+            POSITIONITERATION=3,
+            PARTICLEITERATION=3;
     private static final float TIMESTEP = 1 / 50f; //60FPS
+
     public static boolean home;
     public final Bitmap frameBuffer;
     private final Canvas canvas;
@@ -52,34 +57,33 @@ public final class GameWorld {
         home = true;
         frameBuffer = Bitmap.createBitmap(BUFFERWIDTH, BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(frameBuffer);
-        mainMenu = gameObFactory.buildMenu();
     }
 
     public void updateWorld() {
-
+        InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
         if (home) {
             if (level != null) {
                 for (int i = 0; i < level.size(); i++)
                     level.get(i).recycle();
                 level = null;
             }
-            if (mainMenu == null)
+            if (mainMenu == null) {
                 mainMenu = gameObFactory.buildMenu();
-
-            toBeRendered = mainMenu;
+                toBeRendered = mainMenu;
+            }
         } else {
             if (mainMenu != null) {
                 for (int i = 0; i < mainMenu.size(); i++)
                     mainMenu.get(i).recycle();
                 mainMenu = null;
             }
-            if (level == null)
+            if (level == null) {
                 level = gameObFactory.buildLevel(casualLevel());
-            //world.setGravity(-accelerometerObject.x,accelerometerObject.y);
-            //TODO start RealGame
-            //TODO physics world simulation
+                toBeRendered=level;
+            }
 
-
+            world.setGravity(accelerometer.y,accelerometer.x);
+            world.step(TIMESTEP,VELOCITYITERATION,POSITIONITERATION,PARTICLEITERATION);
         }
 
         //Parse all touch events
@@ -97,7 +101,6 @@ public final class GameWorld {
         }
 
         //Parse last accelerometer event
-        InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
         if (accelerometer != null) {
             for (int j = 0; j < toBeRendered.size(); j++) {
                 ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
@@ -105,12 +108,19 @@ public final class GameWorld {
                     controllableComponent.notifyAccelerometer(accelerometer);
             }
         }
+        for (int j = 0; j < toBeRendered.size(); j++) {
+            PhysicComponent physicComponent=(PhysicComponent)toBeRendered.get(j).getComponent(Component.ComponentType.PHYSIC);
+            if (physicComponent!=null)
+                physicComponent.updatePosition();
+        }
+
         gameAudio.checkAudio();
     }
 
     public void renderWorld() {
         canvas.drawARGB(255, 0, 0, 0);
         GameObject gameObject;
+
         for (int i = 0; i < toBeRendered.size(); i++) {
             gameObject = toBeRendered.get(i);
             DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);

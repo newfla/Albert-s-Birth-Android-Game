@@ -7,7 +7,6 @@ import android.util.SparseArray;
 
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
-import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
 import com.example.bizzi.GameSystem.Utility.Builder;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 import com.google.fpl.liquidfun.Body;
@@ -18,7 +17,6 @@ import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.PolygonShape;
 import com.google.fpl.liquidfun.World;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +30,7 @@ public final class GameObBuilder implements Builder {
     private static final String LEVELS = "levels/";
     private final Context context;
     private final World world;
+    private final static float THICKNESS=1;
 
 
     public GameObBuilder(Context context, World world) {
@@ -122,19 +121,21 @@ public final class GameObBuilder implements Builder {
         JSONObject description;
         try {
             //Obtain level description
-            Log.d("Livello", "buildLevel: carico il Json");
             description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
-            Log.d("Livello", "buildLevel: Caricato il jSon");
             //Background
-            array.append(array.size(), backgroundlevel());
+            array.append(array.size(), buildBackgroundLevel());
+
+            //Enclosure
+          buildEnclosureLevel(array);
 
             //Building walls
-            JSONObject slidingWalls = description.getJSONArray("walls").getJSONObject(0);
-            for (int i = 0; i < slidingWalls.getInt("number"); i++)
-                buildSlidingWall(slidingWalls, i, array);
-
-            Log.d("Livello", "buildLevel: Costruite le mura");
+           JSONObject slidingWalls = description.getJSONArray("walls").getJSONObject(0);
+           int tot=slidingWalls.getInt("number");
+            for (int i = 0; i < tot; i++)
+                buildSlidingWall(slidingWalls, i+1, tot,array);
+            Log.d("Livello", "Number "+String.valueOf(slidingWalls.getInt("number")));
             //Building spermatozoon
+/*
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
             array.append(array.size(), buildSpermatozoon(spermatozoon));
 
@@ -154,7 +155,7 @@ public final class GameObBuilder implements Builder {
                         ));
                         break;
                 }
-            }
+            }*/
 
             Log.d("Livello", "buildLevel: Costruiti i nemici");
         } catch (JSONException e) {
@@ -165,7 +166,7 @@ public final class GameObBuilder implements Builder {
         return array;
     }
 
-    private void buildSlidingWall(JSONObject wall, int i, SparseArray<GameObject> array) {
+    private void buildSlidingWall(JSONObject wall, int i, int tot, SparseArray<GameObject> array) {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.DOOR;
 
@@ -179,25 +180,20 @@ public final class GameObBuilder implements Builder {
         // Set-Up Door Physic Component + wallBuild call
         Random random = new Random();
         int j = 2;
-        int n = 7;
-        int tot = 3;
+        int n = 5;
         try {
             j = wall.getInt("rmin");
             n = wall.getInt("rmax") - j;
-            tot = wall.getInt("number");
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get height SlidingWall");
         }
-        int wallWidht = random.nextInt(n) + j;
+        int wallHeight = random.nextInt(n) + j;
 
         BodyDef bdef = new BodyDef();
-        float cy = (PhysicComponent.YMIN + (PhysicComponent.PHYSICALHEIGHT) * i) / tot;
-        float cx;
-        if (i % 2 == 0)
-            cx = PhysicComponent.XMIN + (PhysicComponent.PHYSICALWIDTH) / 4;
-        else
-            cx = PhysicComponent.XMIN + (PhysicComponent.PHYSICALWIDTH) * 3 / 4;
+        float cy= (PhysicComponent.YMIN + PhysicComponent.YMAX)/2;
+        float cx=PhysicComponent.XMIN+ (PhysicComponent.PHYSICALWIDTH*i/(tot+1));
         bdef.setPosition(cx, cy);
+        Log.d("Debug","cx: "+String.valueOf(cx)+"_"+"cy: "+String.valueOf(cy));
         //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
@@ -205,32 +201,33 @@ public final class GameObBuilder implements Builder {
         body.setUserData(go);
 
         PolygonShape box = new PolygonShape();
-        box.setAsBox(1 / 2, wallWidht / 2);
+        box.setAsBox(THICKNESS/2, wallHeight / 2);
         FixtureDef fixturedef = new FixtureDef();
         fixturedef.setShape(box);
         fixturedef.setFriction(0.2f);       // default 0.2
         fixturedef.setRestitution(0.4f);    // default 0
         fixturedef.setDensity(0);     // default 0
         body.createFixture(fixturedef);
-        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, wallWidht / 2, 1 / 2);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS,wallHeight);
         go.setComponent(physicComponent);
 
         // clean up native objects
         fixturedef.delete();
         bdef.delete();
         box.delete();
-        float wPorta = (PhysicComponent.PHYSICALWIDTH - wallWidht) / 2;
-        GameObject nw = buildWall(cx, cy + (wPorta / 2 + wallWidht / 2), wPorta);
-        GameObject sw = buildWall(cx, cy - (wPorta / 2 + wallWidht / 2), wPorta);
+
+        float wPorta = (PhysicComponent.PHYSICALHEIGHT - wallHeight - (2*THICKNESS)) / 2;
+        GameObject sw = buildWall(cx, cy+wPorta/2, wPorta);
+        GameObject nw = buildWall(cx, cy-wPorta/2, wPorta);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-        WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-                ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy);
+      //  WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+        //        ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
     }
 
-    private GameObject buildWall(float x, float y, float width) {
+    private GameObject buildWall(float x, float y, float height) {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.WALL;
 
@@ -240,19 +237,18 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
-
-
         //Physic Component
         BodyDef bdef = new BodyDef();
+        bdef.setPosition(x,y);
         Body body = world.createBody(bdef);
         body.setUserData(go);
         PolygonShape box = new PolygonShape();
-        box.setCentroid(x, y);
-        box.setAsBox((PhysicComponent.XMAX - PhysicComponent.XMIN) / 2, width / 2);
+        //box.setCentroid(x, y);
+        box.setAsBox(THICKNESS/2, height / 2);
         body.createFixture(box, 0); // no density needed
         bdef.delete();
         box.delete();
-        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, x, y);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, height);
         go.setComponent(physicComponent);
         return go;
 
@@ -413,13 +409,105 @@ public final class GameObBuilder implements Builder {
         return go;
     }
 
-    private GameObject backgroundlevel() {
+    private GameObject buildBackgroundLevel() {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.BACKGROUND;
         DrawableComponent drawableComponent;
         drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
+        drawableComponent.x = 1920 / 2;
+        drawableComponent.y = 1080 / 2;
         go.setComponent(drawableComponent);
         return go;
     }
 
+    private void buildEnclosureLevel(SparseArray<GameObject> array){
+
+        //Bottom enclosure
+        GameObject go;
+        DrawableComponent drawableComponent;
+        PhysicComponent physicComponent;
+        BodyDef bdef;
+        PolygonShape box;
+
+        go=GameObject.getGameOB();
+        bdef=new BodyDef();
+        //PhysicComponent.YMAX-THICKNESS/2
+        bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMAX-THICKNESS/2);
+        Body body=world.createBody(bdef);
+        body.setUserData(go);
+        box=new PolygonShape();
+        box.setAsBox(PhysicComponent.PHYSICALWIDTH/2,THICKNESS/2);
+        body.createFixture(box,0);
+        bdef.delete();
+        box.delete();
+
+        go.type= GameObject.GameObjectType.WALL;
+        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.setComponent(drawableComponent);
+
+        physicComponent=PhysicComponent.getPhysicComponent(go,body,PhysicComponent.PHYSICALWIDTH,THICKNESS);
+        go.setComponent(physicComponent);
+        array.append(array.size(),go);
+
+        //Top Enclosure
+        go=GameObject.getGameOB();
+        bdef=new BodyDef();
+        bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMIN+THICKNESS/2);
+        body=world.createBody(bdef);
+        body.setUserData(go);
+        box=new PolygonShape();
+        box.setAsBox(PhysicComponent.PHYSICALWIDTH/2,THICKNESS/2);
+        body.createFixture(box,0);
+        bdef.delete();
+        box.delete();
+
+        go.type= GameObject.GameObjectType.WALL;
+        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.setComponent(drawableComponent);
+
+        physicComponent=PhysicComponent.getPhysicComponent(go,body,PhysicComponent.PHYSICALWIDTH,THICKNESS);
+        go.setComponent(physicComponent);
+        array.append(array.size(),go);
+
+        //Left Enclosure
+        go=GameObject.getGameOB();
+        bdef=new BodyDef();
+        bdef.setPosition(PhysicComponent.XMIN+THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
+        body=world.createBody(bdef);
+        body.setUserData(go);
+        box=new PolygonShape();
+        box.setAsBox(THICKNESS/2,PhysicComponent.PHYSICALHEIGHT/2);
+        body.createFixture(box,0);
+        bdef.delete();
+        box.delete();
+
+        go.type= GameObject.GameObjectType.WALL;
+        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.setComponent(drawableComponent);
+
+        physicComponent=PhysicComponent.getPhysicComponent(go,body,THICKNESS,PhysicComponent.PHYSICALHEIGHT);
+        go.setComponent(physicComponent);
+        array.append(array.size(),go);
+
+
+        //Right Enclosure
+        go=GameObject.getGameOB();
+        bdef=new BodyDef();
+        bdef.setPosition(PhysicComponent.XMAX-THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
+        body=world.createBody(bdef);
+        body.setUserData(go);
+        box=new PolygonShape();
+        box.setAsBox(THICKNESS/2,PhysicComponent.PHYSICALHEIGHT/2);
+        body.createFixture(box,0);
+        bdef.delete();
+        box.delete();
+
+        go.type= GameObject.GameObjectType.WALL;
+        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.setComponent(drawableComponent);
+
+        physicComponent=PhysicComponent.getPhysicComponent(go,body,THICKNESS,PhysicComponent.PHYSICALHEIGHT);
+        go.setComponent(physicComponent);
+        array.append(array.size(),go);
+    }
 }

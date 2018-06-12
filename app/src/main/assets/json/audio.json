@@ -13,7 +13,7 @@
     {
       "gameobject": "QUITBUTTON" ,
       "type" :"sound" ,
-      "file" :"button_sound.wav"
+      "file" :"button_sound.mp3"
     }
   ]
 }

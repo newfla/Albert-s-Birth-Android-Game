@@ -7,12 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.v4.util.Pools;
-
-import com.example.bizzi.GameSystem.GameWorld;
+import android.util.Log;
 
 public class DrawableComponent extends Component {
 
-    private static final Pools.Pool<DrawableComponent> POOL = new Pools.SimplePool<>(25);
+    private static final Pools.Pool<DrawableComponent> POOL = new Pools.SimplePool<>(50);
 
     float x, y, rotation, semiWidth, semiHeight;
 
@@ -109,7 +108,13 @@ public class DrawableComponent extends Component {
 
         @Override
         public void draw(Canvas canvas) {
+            canvas.save();
+            canvas.rotate(rotation, x, y);
+            if (rotation!=0)
+                Log.d("Debug","rotation");
+            super.buildBorder();
             canvas.drawRect(DEST.left,DEST.top, DEST.right, DEST.bottom, paint);
+            canvas.restore();
         }
 
         @Override

@@ -1,8 +1,5 @@
 package com.example.bizzi.GameSystem.JLiquidFunUtility;
 
-import com.example.bizzi.GameSystem.GameObSubSystem.Component;
-import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
-import com.example.bizzi.GameSystem.GameObSubSystem.PhysicComponent;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.Joint;
 import com.google.fpl.liquidfun.PrismaticJointDef;
@@ -15,9 +12,9 @@ public final class WallJoint {
         jointDef.setBodyA(a);
         jointDef.setBodyB(b);
         jointDef.setLocalAnchorA(0, 0);
-        jointDef.setLocalAnchorB(cx, cy);
+        jointDef.setLocalAnchorB(cy, cx);
         // asse
-        jointDef.setLocalAxisA(1.0f, 0f);
+        jointDef.setLocalAxisA(0, 1.0f);
         //Limite inferiore e superiore
         jointDef.setEnableLimit(true);
         // PEr farlo aprire solo da un lato -1.5
