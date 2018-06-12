@@ -33,13 +33,13 @@
 	{
       "gameobject": "DOOR",
       "type": "static",
-      "file": "cellText.png"
+      "file": "doorText.png"
     },
 
     {
       "gameobject": "WALL",
       "type": "static",
-      "file": "cellText.png"
+      "file": "wallText.png"
     },
 
     {
