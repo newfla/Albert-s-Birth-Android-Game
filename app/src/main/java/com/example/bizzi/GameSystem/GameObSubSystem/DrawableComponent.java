@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.v4.util.Pools;
 
+import com.example.bizzi.GameSystem.GameWorld;
+
 public class DrawableComponent extends Component {
 
     private static final Pools.Pool<DrawableComponent> POOL = new Pools.SimplePool<>(25);
@@ -29,8 +31,8 @@ public class DrawableComponent extends Component {
 
     private void setAttributes(GameObject owner, Bitmap bitmap) {
         this.bitmap = bitmap;
-        semiWidth=bitmap.getWidth()/2;
-        semiHeight=bitmap.getHeight()/2;
+        semiWidth = bitmap.getWidth() / 2;
+        semiHeight = bitmap.getHeight() / 2;
         this.owner = owner;
     }
 

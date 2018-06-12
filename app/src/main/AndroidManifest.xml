@@ -13,7 +13,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:resizeableActivity="false">
         <activity android:name="com.example.bizzi.AlbertBirthActivity.MainActivity"
-            android:screenOrientation="sensorLandscape"
+            android:screenOrientation="landscape"
             android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

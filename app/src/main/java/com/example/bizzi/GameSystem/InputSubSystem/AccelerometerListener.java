@@ -3,6 +3,7 @@ package com.example.bizzi.GameSystem.InputSubSystem;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 final class AccelerometerListener implements SensorEventListener {
 
@@ -17,7 +18,7 @@ final class AccelerometerListener implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         //TODO manipulate
-
+        Log.d("Debug","Sto qui dentro ");
         ACCELEROMETER.x=event.values[0];
         ACCELEROMETER.y=event.values[1];
         synchronized (gameInput) {

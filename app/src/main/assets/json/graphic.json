@@ -27,7 +27,7 @@
     {
       "gameobject": "BACKGROUND",
       "type": "static",
-      "file": "cell.png"
+      "file": "levelBackground.png"
     },
 
 	{
@@ -46,6 +46,12 @@
       "gameobject": "PILL",
       "type": "static",
       "file": "pill.png"
+    },
+
+    {
+      "gameobject": "SPERMATOZOON",
+      "type": "static",
+      "file": "spermatozoon.png"
     },
 
 
