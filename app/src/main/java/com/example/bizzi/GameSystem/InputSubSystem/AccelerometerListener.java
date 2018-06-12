@@ -10,6 +10,7 @@ final class AccelerometerListener implements SensorEventListener {
     private final GameInput gameInput;
 
      AccelerometerListener(GameInput gameInput){ this.gameInput=gameInput;
+     gameInput.accelerometerObject=ACCELEROMETER;
     }
 
     @Override
