@@ -7,6 +7,7 @@ import android.util.SparseArray;
 
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
+import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
 import com.example.bizzi.GameSystem.Utility.Builder;
 import com.example.bizzi.GameSystem.Utility.JsonUtility;
 import com.google.fpl.liquidfun.Body;
@@ -133,7 +134,6 @@ public final class GameObBuilder implements Builder {
            int tot=slidingWalls.getInt("number");
             for (int i = 0; i < tot; i++)
                 buildSlidingWall(slidingWalls, i+1, tot,array);
-            Log.d("Livello", "Number "+String.valueOf(slidingWalls.getInt("number")));
             //Building spermatozoon
 /*
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
@@ -193,7 +193,6 @@ public final class GameObBuilder implements Builder {
         float cy= (PhysicComponent.YMIN + PhysicComponent.YMAX)/2;
         float cx=PhysicComponent.XMIN+ (PhysicComponent.PHYSICALWIDTH*i/(tot+1));
         bdef.setPosition(cx, cy);
-        Log.d("Debug","cx: "+String.valueOf(cx)+"_"+"cy: "+String.valueOf(cy));
         //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
@@ -215,22 +214,22 @@ public final class GameObBuilder implements Builder {
         fixturedef.delete();
         bdef.delete();
         box.delete();
-
-        float wPorta = (PhysicComponent.PHYSICALHEIGHT - wallHeight - (2*THICKNESS)) / 2;
-        GameObject sw = buildWall(cx, cy+wPorta/2, wPorta);
-        GameObject nw = buildWall(cx, cy-wPorta/2, wPorta);
+        GameObject sw = buildSudWall(cx, cy,wallHeight);
+        GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-      //  WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-        //        ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy);
+        WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+                ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
     }
 
-    private GameObject buildWall(float x, float y, float height) {
+
+    private GameObject buildSudWall(float cx, float cy, float height) {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.WALL;
 
+        float myHeight=PhysicComponent.YMAX-THICKNESS-height/2;
         //Drawable Component
         DrawableComponent drawableComponent;
         Bitmap bitmap;
@@ -239,16 +238,44 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         //Physic Component
         BodyDef bdef = new BodyDef();
-        bdef.setPosition(x,y);
+        bdef.setPosition(cx,cy+height/2+myHeight/2);
         Body body = world.createBody(bdef);
         body.setUserData(go);
         PolygonShape box = new PolygonShape();
         //box.setCentroid(x, y);
-        box.setAsBox(THICKNESS/2, height / 2);
+        box.setAsBox(THICKNESS/2, myHeight / 2);
         body.createFixture(box, 0); // no density needed
         bdef.delete();
         box.delete();
-        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, height);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, myHeight);
+        go.setComponent(physicComponent);
+        return go;
+
+    }
+
+    private GameObject buildNordWall(float cx, float cy, float height) {
+        GameObject go = getGameOB();
+        go.type = GameObject.GameObjectType.WALL;
+
+        float myHeight= -PhysicComponent.YMIN -THICKNESS-height/2;
+        //Drawable Component
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap = GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
+        go.setComponent(drawableComponent);
+        //Physic Component
+        BodyDef bdef = new BodyDef();
+        bdef.setPosition(cx,cy-height/2-myHeight/2);
+        Body body = world.createBody(bdef);
+        body.setUserData(go);
+        PolygonShape box = new PolygonShape();
+        //box.setCentroid(x, y);
+        box.setAsBox(THICKNESS/2, myHeight / 2);
+        body.createFixture(box, 0); // no density needed
+        bdef.delete();
+        box.delete();
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, myHeight);
         go.setComponent(physicComponent);
         return go;
 
@@ -431,7 +458,7 @@ public final class GameObBuilder implements Builder {
 
         go=GameObject.getGameOB();
         bdef=new BodyDef();
-        //PhysicComponent.YMAX-THICKNESS/2
+        bdef.setType(BodyType.staticBody);
         bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMAX-THICKNESS/2);
         Body body=world.createBody(bdef);
         body.setUserData(go);
@@ -452,6 +479,7 @@ public final class GameObBuilder implements Builder {
         //Top Enclosure
         go=GameObject.getGameOB();
         bdef=new BodyDef();
+        bdef.setType(BodyType.staticBody);
         bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMIN+THICKNESS/2);
         body=world.createBody(bdef);
         body.setUserData(go);
@@ -472,6 +500,7 @@ public final class GameObBuilder implements Builder {
         //Left Enclosure
         go=GameObject.getGameOB();
         bdef=new BodyDef();
+        bdef.setType(BodyType.staticBody);
         bdef.setPosition(PhysicComponent.XMIN+THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
         body=world.createBody(bdef);
         body.setUserData(go);
@@ -493,6 +522,7 @@ public final class GameObBuilder implements Builder {
         //Right Enclosure
         go=GameObject.getGameOB();
         bdef=new BodyDef();
+        bdef.setType(BodyType.staticBody);
         bdef.setPosition(PhysicComponent.XMAX-THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
         body=world.createBody(bdef);
         body.setUserData(go);

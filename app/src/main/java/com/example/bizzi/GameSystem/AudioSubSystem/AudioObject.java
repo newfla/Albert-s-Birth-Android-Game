@@ -69,12 +69,16 @@ public interface AudioObject extends Recyclable {
 
         @Override
         public void stop() {
-            if (player.isPlaying())
+            if(player.isPlaying()) {
                 player.stop();
+            }
             try {
                 player.prepare();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            catch (IllegalStateException ex){
+                stop();
             }
         }
     }

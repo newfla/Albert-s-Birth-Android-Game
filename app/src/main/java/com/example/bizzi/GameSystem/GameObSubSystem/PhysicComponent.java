@@ -62,7 +62,7 @@ public final class PhysicComponent extends Component {
         DrawableComponent drawable = (DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
         AnimatedComponent animated = (AnimatedComponent) owner.getComponent(ComponentType.ANIMATED);
         width=(width/PHYSICALWIDTH*GameWorld.BUFFERWIDTH)/2;
-        height=(height/PHYSICALHEIGHT*GameWorld.BUFFERWIDTH)/2;
+        height=(height/PHYSICALHEIGHT*GameWorld.BUFFERHEIGHT)/2;
         if (drawable!=null){
             drawable.semiWidth=width;
             drawable.semiHeight=height;
