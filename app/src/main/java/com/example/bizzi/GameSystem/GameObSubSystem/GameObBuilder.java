@@ -222,8 +222,9 @@ public final class GameObBuilder implements Builder {
         GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
         Log.d("Debug","cx e cy e heigth :"+cx+"  "+cy+" "+wallHeight);
-        WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-               ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy, wallHeight, THICKNESS);
+        WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+                ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+                world, cx, cy,PhysicComponent.YMAX-THICKNESS-wallHeight/2,wallHeight);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
