@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
@@ -83,7 +82,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
-        drawable.y = previousY + 100;
+        drawable.y =(int) previousY + 100;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -97,7 +96,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
-        drawable.y = previousY + bitmap.getHeight() + 50;
+        drawable.y =(int) previousY + bitmap.getHeight() + 50;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -108,7 +107,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
-        animated.x = 7.5f * 1920 / 8;
+        animated.x =(int) 7.5f * 1920 / 8;
         animated.y = 1080 / 10;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -190,10 +189,7 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get height SlidingWall");
         }
-        int wallHeight ;
-        do {
-            wallHeight = random.nextInt(n) + j;
-        }while (wallHeight%2==1);
+        float wallHeight = random.nextInt(n) + j;
         BodyDef bdef = new BodyDef();
         float cy= (PhysicComponent.YMIN + PhysicComponent.YMAX)/2;
         float cx=PhysicComponent.XMIN+ (PhysicComponent.PHYSICALWIDTH*i/(tot+1));
@@ -225,7 +221,7 @@ public final class GameObBuilder implements Builder {
         GameObject sw = buildSudWall(cx, cy,wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-        Log.d("Debug","cx e cy :"+cx+"  "+cy);
+        Log.d("Debug","cx e cy e heigth :"+cx+"  "+cy+" "+wallHeight);
         WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy, wallHeight, THICKNESS);
         array.append(array.size(), nw);

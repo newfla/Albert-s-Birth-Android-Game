@@ -1,9 +1,9 @@
 {
   "walls":[
     {
-      "number": "4",
-      "rmin": "3",
-      "rmax":"7"
+      "number": "3",
+      "rmin": "2",
+      "rmax":"5"
     }
   ],
   "pill":[
