@@ -1,9 +1,9 @@
 {
   "walls":[
     {
-      "number": "3",
-      "rmin": "2",
-      "rmax":"5"
+      "number": "4",
+      "rmin": "3",
+      "rmax":"6"
     }
   ],
   "pill":[
@@ -40,8 +40,8 @@
     {
       "type":"spermatozoon",
       "number":"10",
-      "width": "2",
-      "height": "2",
+      "width": "1.5f",
+      "height": "1.5f",
       "tFriction" : "0.3f" ,
       "tRestitution" : "0.4f" ,
       "tDensity" : "0.1f" ,
