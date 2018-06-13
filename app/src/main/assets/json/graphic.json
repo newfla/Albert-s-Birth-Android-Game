@@ -47,6 +47,11 @@
       "type": "static",
       "file": "pill.png"
     },
+    {
+      "gameobject": "EGGCELL",
+      "type": "static",
+      "file": "eggCell.png"
+    },
 
     {
       "gameobject": "SPERMATOZOON",

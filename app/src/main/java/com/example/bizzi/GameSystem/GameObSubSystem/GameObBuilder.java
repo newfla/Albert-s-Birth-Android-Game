@@ -141,11 +141,11 @@ public final class GameObBuilder implements Builder {
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
             array.append(array.size(), buildEnemySpermatozoon(spermatozoon));
  */
-/*
+
             //Building Egg cell
             JSONObject cell = description.getJSONArray("eggcell").getJSONObject(0);
             array.append(array.size(), buildEggCell(cell));
-*/
+
             //Building enemies
             JSONArray enemies = description.getJSONArray("enemies");
             for (int i = 0; i < enemies.length(); i++) {
@@ -227,7 +227,7 @@ public final class GameObBuilder implements Builder {
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
         Log.d("Debug","cx e cy :"+cx+"  "+cy);
         WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-               ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy, wallHeight, THICKNESS);
+               ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, wallHeight, THICKNESS);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
@@ -384,6 +384,53 @@ public final class GameObBuilder implements Builder {
 
     private GameObject buildEggCell(JSONObject cell) {
         GameObject go = getGameOB();
+        go.type = GameObject.GameObjectType.EGGCELL;
+
+        //DrawableComponent
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap = GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
+        go.setComponent(drawableComponent);
+
+        //Physic Component
+        BodyDef bdef = new BodyDef();
+        PolygonShape Ovulo = new PolygonShape();
+        FixtureDef Ovuldef = new FixtureDef();
+        CircleShape ovul = new CircleShape();
+
+        float width = 0.8f;
+
+
+        try {
+            width = (float) cell.getDouble("width");
+
+
+        } catch (JSONException e) {
+            Log.d("Debug", "Unable to get width,heigth ecc.. EggCell");
+        }
+
+        bdef.setPosition((9*PhysicComponent.PHYSICALWIDTH/10)+PhysicComponent.XMIN,(PhysicComponent.YMAX+PhysicComponent.YMIN)/2);
+        bdef.setType(BodyType.staticBody);
+        Body body = world.createBody(bdef);
+        body.setSleepingAllowed(true);
+        body.setUserData(go);
+        //Rettangolo rappresentante corpo della pillola
+        ovul.setRadius(width / 2);
+        Ovuldef.setShape(ovul);
+        body.createFixture(Ovuldef);
+
+
+        // clean up native objects
+
+        Ovuldef.delete();
+        bdef.delete();
+        Ovulo.delete();
+        ovul.delete();
+
+
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, width, width);
+        go.setComponent(physicComponent);
         return go;
     }
 
