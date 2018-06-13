@@ -18,6 +18,7 @@ import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.PolygonShape;
 import com.google.fpl.liquidfun.World;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -137,25 +138,28 @@ public final class GameObBuilder implements Builder {
             //Building spermatozoon
 /*
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
-            array.append(array.size(), buildSpermatozoon(spermatozoon));
-
+            array.append(array.size(), buildEnemySpermatozoon(spermatozoon));
+ */
+/*
             //Building Egg cell
             JSONObject cell = description.getJSONArray("eggcell").getJSONObject(0);
             array.append(array.size(), buildEggCell(cell));
-
+*/
             //Building enemies
             JSONArray enemies = description.getJSONArray("enemies");
             for (int i = 0; i < enemies.length(); i++) {
                 switch (enemies.getJSONObject(i).getString("type")) {
-                    case "spermatoozon":
-                        array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
-                        break;
+                    case "spermatozoon":
+                        for(int z = 0 ; z < enemies.getJSONObject(i).getInt("number"); z++ ) {
+                            array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
+                        }
+                        break;/*
                     case "pill":
                         array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)
                         ));
-                        break;
+                        break;*/
                 }
-            }*/
+            }
 
             Log.d("Livello", "buildLevel: Costruiti i nemici");
         } catch (JSONException e) {
@@ -285,21 +289,14 @@ public final class GameObBuilder implements Builder {
 
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.SPERMATOZOON;
-
-        //DrawableComponent
-        DrawableComponent drawableComponent;
-        Bitmap bitmap;
-        bitmap = GameGraphics.STATICSPRITE.get(go.type);
-        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
-        go.setComponent(drawableComponent);
-
-
         //PhysicComponent
-        float width = 5.5f, heigth = 4f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.1f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius = width / 8;
+        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius = width / 8;
+        float cWidht, cHeight;
         PhysicComponent physicComponent;
-        FixtureDef fixturedef = new FixtureDef(), fixtesta = new FixtureDef();
+        FixtureDef fixturedef = new FixtureDef(), fixtesta = new FixtureDef(), fixtesta2 = new FixtureDef();
         BodyDef bdef = new BodyDef();
         CircleShape testa = new CircleShape();
+        CircleShape testa2 = new CircleShape();
         PolygonShape coda = new PolygonShape();
 
         try {
@@ -320,18 +317,30 @@ public final class GameObBuilder implements Builder {
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        radius = width / 8;
+        radius = width / 12;
         testa.setRadius(radius);
-        coda.setAsBox(3 * radius, radius / 50);
-        testa.setPosition(radius, 0f);
-        coda.setCentroid(-3 * radius, -0.25f);
+        testa2.setRadius(radius);
+        cWidht=2 * width / 4;
+        cHeight=radius / 50;
 
-        //Setup Testa
+        coda.setAsBox(cWidht, cHeight);
+        testa.setPosition(radius, 0f);
+        testa2.setPosition(2*radius,0);
+        coda.setCentroid(-cWidht, 0f);
+
+        //Setup Teste
+       //1
         fixtesta.setShape(testa);
-        //0.1
         fixtesta.setFriction(tFriction);
         fixtesta.setRestitution(tRestitution);
         fixtesta.setDensity(tDensity);
+        //2
+        fixtesta2.setShape(testa2);
+        fixtesta2.setFriction(tFriction);
+        fixtesta2.setRestitution(tRestitution);
+        fixtesta2.setDensity(tDensity);
+
+
 
         //Setup Coda
         fixturedef.setShape(coda);
@@ -340,16 +349,31 @@ public final class GameObBuilder implements Builder {
         fixturedef.setDensity(cDensity);
         body.createFixture(fixtesta);
         body.createFixture(fixturedef);
+        body.createFixture(fixtesta2);
 
         //Clean up
         fixtesta.delete();
         fixturedef.delete();
+        fixtesta2.delete();
         bdef.delete();
         coda.delete();
         testa.delete();
+        testa2.delete();
 
+
+
+        //DrawableComponent
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap = GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
+        go.setComponent(drawableComponent);
         physicComponent = PhysicComponent.getPhysicComponent(go, body, width, heigth);
         go.setComponent(physicComponent);
+
+
+
+
         return go;
     }
 
