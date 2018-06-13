@@ -13,7 +13,7 @@ public class DrawableComponent extends Component {
 
     private static final Pools.Pool<DrawableComponent> POOL = new Pools.SimplePool<>(50);
 
-    float x, y, rotation, semiWidth, semiHeight;
+    int x, y, rotation, semiWidth, semiHeight;
 
     private final static Rect DEST=new Rect();
 

@@ -44,16 +44,16 @@ public final class PhysicComponent extends Component {
         x=(x-XMIN)/PHYSICALWIDTH*GameWorld.BUFFERWIDTH;
         y=(y-YMIN)/PHYSICALHEIGHT*GameWorld.BUFFERHEIGHT;
         if (drawable!=null){
-            drawable.x=x;
-            drawable.y=y;
-            drawable.rotation=rotation;
+            drawable.x=(int)x;
+            drawable.y=(int)y;
+            drawable.rotation=(int)rotation;
 
         }
 
         if (animated!=null){
-            animated.x=x;
-            animated.y=y;
-           // animated.rotation=rotation;
+            animated.x=(int)x;
+            animated.y=(int)y;
+           // animated.rotation=(int)rotation;
         }
     }
 
@@ -64,13 +64,13 @@ public final class PhysicComponent extends Component {
         width=(width/PHYSICALWIDTH*GameWorld.BUFFERWIDTH)/2;
         height=(height/PHYSICALHEIGHT*GameWorld.BUFFERHEIGHT)/2;
         if (drawable!=null){
-            drawable.semiWidth=width;
-            drawable.semiHeight=height;
+            drawable.semiWidth=(int)width;
+            drawable.semiHeight=(int)height;
         }
 
         if (animated!=null){
-            animated.semiWidth=width;
-            animated.semiHeight=height;
+            animated.semiWidth=(int)width;
+            animated.semiHeight=(int)height;
         }
     }
 
