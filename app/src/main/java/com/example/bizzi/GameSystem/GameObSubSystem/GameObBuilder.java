@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
@@ -153,11 +154,11 @@ public final class GameObBuilder implements Builder {
                         for(int z = 0 ; z < enemies.getJSONObject(i).getInt("number"); z++ ) {
                             array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
                         }
-                        break;/*
+                        break;
                     case "pill":
                         array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)
                         ));
-                        break;*/
+                        break;
                 }
             }
 
@@ -388,6 +389,73 @@ public final class GameObBuilder implements Builder {
 
     private GameObject buildSpermatozoon(JSONObject spermatozoon) {
         GameObject go = getGameOB();
+        go.type = GameObject.GameObjectType.PILL;
+        BodyDef bdef = new BodyDef();
+
+        //bdef.setPosition(x, y);
+        bdef.setType(BodyType.dynamicBody);
+        Body body = world.createBody(bdef);
+        body.setSleepingAllowed(false);
+
+        body.setUserData(this);
+        float width= 1.8f, height= 0.6f, friction = 0.1f , restitution = 0.3f ,  density = 0.4f;
+        try {
+            width = (float) spermatozoon.getDouble("width");
+            height = (float) spermatozoon.getDouble("height");
+            friction = (float) spermatozoon.getDouble("friction");
+            restitution = (float) spermatozoon.getDouble("restitution");
+            density = (float) spermatozoon.getDouble("density");
+
+        } catch (JSONException e) {
+            Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
+        }
+        //Rettangolo rappresentante corpo della pillola
+        PolygonShape pillola = new PolygonShape();
+        pillola.setAsBox(width / 2, height / 2);
+        FixtureDef fixturedef = new FixtureDef();
+        // Due circonferenze rappresentanti i  poli della pillola
+        CircleShape dx = new CircleShape();
+        CircleShape sx = new CircleShape();
+        dx.setRadius(height/8);
+        sx.setRadius(height/8);
+        dx.setPosition(width/2,0);
+        sx.setPosition(-width/2,0);
+
+        FixtureDef fixdx = new FixtureDef();
+        FixtureDef fixsx = new FixtureDef();
+
+        fixdx.setShape(dx);
+        fixsx.setShape(sx);
+
+        //Settaggi pillola
+        fixturedef.setShape(pillola);
+        fixturedef.setFriction(friction);
+        fixturedef.setRestitution(restitution);
+        fixturedef.setDensity(density);
+
+
+        body.createFixture(fixturedef);
+        body.createFixture(fixdx);
+        body.createFixture(fixsx);
+
+
+        // clean up native objects
+        fixturedef.delete();
+        fixdx.delete();
+        fixsx.delete();
+        bdef.delete();
+        pillola.delete();
+        dx.delete();
+        sx.delete();
+
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap = GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
+        go.setComponent(drawableComponent);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, width, height);
+        go.setComponent(physicComponent);
+
         return go;
     }
 
@@ -408,7 +476,7 @@ public final class GameObBuilder implements Builder {
         FixtureDef fixturedef = new FixtureDef(), fixdx = new FixtureDef(), fixsx = new FixtureDef();
         CircleShape dx = new CircleShape(), sx = new CircleShape();
 
-        float width = 1.8f, height = 0.6f, friction = 0.1f, density = 0.4f, restitution = 0.3f;
+        float width = 0.8f, height = 0.6f, friction = 0.1f, density = 0.4f, restitution = 0.3f;
 
 
         try {
@@ -425,9 +493,9 @@ public final class GameObBuilder implements Builder {
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-
+        Log.d("Debug","Queste sono le dimensioni :"+width+" "+height);
         //Rettangolo rappresentante corpo della pillola
-        pillola.setAsBox(width / 2, height / 2);
+        pillola.setAsBox(width / 2, height / 6);
 
         // Due circonferenze rappresentanti i  poli della pillola
         dx.setRadius(height / 8);

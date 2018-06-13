@@ -3,12 +3,12 @@
     {
       "number": "4",
       "rmin": "3",
-      "rmax":"6"
+      "rmax":"7"
     }
   ],
   "pill":[
     {
-      "width": "1.8f",
+      "width": "1f",
       "height": "0.6f",
       "friction" : "0.1f" ,
       "restitution" : "0.3f" ,
@@ -50,9 +50,11 @@
       "cDensity" : "0.4f"},
     {
       "type":"pill",
-      "number":"30",
-      "width":"7",
-      "heigth":"7"
+      "width": "1.5f",
+      "height": "0.9f",
+      "friction" : "0.1f" ,
+      "restitution" : "0.3f" ,
+      "density" : "0.1f"
     }
   ]
 }
