@@ -11,7 +11,7 @@ import com.google.fpl.liquidfun.World;
 
 public  final class WallJoint {
     static SparseArray<Joint> joint = new SparseArray<Joint>();
-    public static void buildPrismaticDoor(Body a, Body b, World word, float cx, float cy, float wallHeight,float thikness) {
+    public static void buildPrismaticDoor(Body a, Body b, World word, float wallHeight,float thikness) {
 
         //a is the south wall body
         //b is the sliding Door body

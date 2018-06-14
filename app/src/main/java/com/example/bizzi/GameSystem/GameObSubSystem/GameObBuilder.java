@@ -72,7 +72,6 @@ public final class GameObBuilder implements Builder {
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = 1080 / 2 + 40;
-        ;
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
         float previousY = drawable.y + bitmap.getHeight() / 2;
@@ -83,7 +82,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
-        drawable.y = previousY + 100;
+        drawable.y = (int) previousY + 100;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -97,7 +96,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
-        drawable.y = previousY + bitmap.getHeight() + 50;
+        drawable.y = (int)previousY + bitmap.getHeight() + 50;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -108,7 +107,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
-        animated.x = 7.5f * 1920 / 8;
+        animated.x = (int)7.5f * 1920 / 8;
         animated.y = 1080 / 10;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -141,11 +140,11 @@ public final class GameObBuilder implements Builder {
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
             array.append(array.size(), buildEnemySpermatozoon(spermatozoon));
  */
-/*
+
             //Building Egg cell
             JSONObject cell = description.getJSONArray("eggcell").getJSONObject(0);
             array.append(array.size(), buildEggCell(cell));
-*/
+
             //Building enemies
             JSONArray enemies = description.getJSONArray("enemies");
             for (int i = 0; i < enemies.length(); i++) {
@@ -382,8 +381,47 @@ public final class GameObBuilder implements Builder {
         return go;
     }
 
-    private GameObject buildEggCell(JSONObject cell) {
-        GameObject go = getGameOB();
+    private GameObject buildEggCell(JSONObject EggCell) {
+       GameObject go = getGameOB();
+         go.type = GameObject.GameObjectType.EGGCELL;
+
+        //DrawableComponent
+        DrawableComponent drawableComponent;
+        Bitmap bitmap;
+        bitmap = GameGraphics.STATICSPRITE.get(go.type);
+        drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
+        go.setComponent(drawableComponent);
+
+        //Physic Component
+        BodyDef bdef = new BodyDef();
+        FixtureDef  ovulDef= new FixtureDef();
+        CircleShape ovulo = new CircleShape(), sx = new CircleShape();
+
+        float width = 0.8f, height = 0.6f, friction = 0.1f, density = 0.4f, restitution = 0.3f;
+
+
+        try {
+            width = (float) EggCell.getDouble("width");
+
+        } catch (JSONException e) {
+            Log.d("Debug", "Unable to get Egg Cell Radius");
+        }
+        bdef.setPosition(PhysicComponent.XMIN+7*PhysicComponent.PHYSICALWIDTH/8,(PhysicComponent.YMAX+PhysicComponent.YMIN)/2);
+        bdef.setType(BodyType.staticBody);
+        Body body = world.createBody(bdef);
+        body.setSleepingAllowed(false);
+        body.setUserData(go);
+        ovulo.setRadius(width/2);
+        ovulDef.setShape(ovulo);
+        body.createFixture(ovulDef);
+
+        // clean up native objects
+        ovulDef.delete();
+        ovulo.delete();
+        bdef.delete();
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, width, width);
+        go.setComponent(physicComponent);
+
         return go;
     }
 

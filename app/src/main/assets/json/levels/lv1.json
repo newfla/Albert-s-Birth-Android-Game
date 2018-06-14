@@ -1,7 +1,7 @@
 {
   "walls":[
     {
-      "number": "4",
+      "number": "3",
       "rmin": "2",
       "rmax":"7"
     }
