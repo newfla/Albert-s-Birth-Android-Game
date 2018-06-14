@@ -65,6 +65,7 @@ public final class GameWorld {
     }
 
     public void updateWorld() {
+        String Level = casualLevel();
         InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
         if (home) {
             if (level != null) {
@@ -83,9 +84,14 @@ public final class GameWorld {
                 mainMenu = null;
             }
             if (level == null) {
-                level = gameObFactory.buildLevel(casualLevel());
+                level = gameObFactory.buildLevel(Level);
                 toBeRendered=level;
             }
+            else {
+                gameObFactory.buildSpawner(toBeRendered,casualLevel());
+            }
+
+
 
             world.setGravity(accelerometer.y,accelerometer.x);
             world.step(TIMESTEP,VELOCITYITERATION,POSITIONITERATION,PARTICLEITERATION);

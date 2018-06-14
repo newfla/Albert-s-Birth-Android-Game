@@ -8,8 +8,8 @@
   ],
   "pill":[
     {
-      "width": "1f",
-      "height": "0.6f",
+      "width": "1.8f",
+      "height": "1.2f",
       "friction" : "0.1f" ,
       "restitution" : "0.3f" ,
       "density" : "0.4f"
@@ -47,14 +47,19 @@
       "tDensity" : "0.1f" ,
       "cFriction" : "0.3f" ,
       "cRestitution" : "0.3f" ,
-      "cDensity" : "0.4f"},
+      "cDensity" : "0.4f",
+      "numberS" : "1",
+      "rate"    : "40"
+    },
     {
       "type":"pill",
       "width": "1.5f",
-      "height": "0.9f",
+      "height": "1.5f",
       "friction" : "0.1f" ,
       "restitution" : "0.3f" ,
-      "density" : "0.1f"
+      "density" : "0.1f",
+      "numberS" : "1",
+      "rate"    : "40"
     }
   ]
 }

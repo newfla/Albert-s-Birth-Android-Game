@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Timestamp;
 import java.util.Random;
 
 import static com.example.bizzi.GameSystem.GameObSubSystem.GameObject.getGameOB;
@@ -32,14 +33,15 @@ public final class GameObBuilder implements Builder {
     private static final String LEVELS = "levels/";
     private final Context context;
     private final World world;
-    private final static float THICKNESS=1;
+    private static final SparseArray<Long> TimeStamps = new SparseArray<>();
+    private final static float THICKNESS = 1;
+    private JSONObject description;
 
 
     public GameObBuilder(Context context, World world) {
         this.context = context;
         this.world = world;
     }
-
 
 
     @Override
@@ -96,7 +98,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
-        drawable.y = (int)previousY + bitmap.getHeight() + 50;
+        drawable.y = (int) previousY + bitmap.getHeight() + 50;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -107,7 +109,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
-        animated.x = (int)7.5f * 1920 / 8;
+        animated.x = (int) 7.5f * 1920 / 8;
         animated.y = 1080 / 10;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -120,7 +122,7 @@ public final class GameObBuilder implements Builder {
 
     public SparseArray<GameObject> buildLevel(String level) {
         SparseArray<GameObject> array = new SparseArray<>();
-        JSONObject description;
+
         try {
             //Obtain level description
             description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
@@ -128,13 +130,13 @@ public final class GameObBuilder implements Builder {
             array.append(array.size(), buildBackgroundLevel());
 
             //Enclosure
-          buildEnclosureLevel(array);
+            buildEnclosureLevel(array);
 
             //Building walls
-           JSONObject slidingWalls = description.getJSONArray("walls").getJSONObject(0);
-           int tot=slidingWalls.getInt("number");
+            JSONObject slidingWalls = description.getJSONArray("walls").getJSONObject(0);
+            int tot = slidingWalls.getInt("number");
             for (int i = 0; i < tot; i++)
-                buildSlidingWall(slidingWalls, i+1, tot,array);
+                buildSlidingWall(slidingWalls, i + 1, tot, array);
             //Building spermatozoon
 /*
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
@@ -150,13 +152,15 @@ public final class GameObBuilder implements Builder {
             for (int i = 0; i < enemies.length(); i++) {
                 switch (enemies.getJSONObject(i).getString("type")) {
                     case "spermatozoon":
-                        for(int z = 0 ; z < enemies.getJSONObject(i).getInt("number"); z++ ) {
+                        for (int z = 0; z < enemies.getJSONObject(i).getInt("number"); z++) {
                             array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
                         }
+                        TimeStamps.append(i, System.currentTimeMillis() / 1000);
                         break;
                     case "pill":
                         array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)
                         ));
+                        TimeStamps.append(i, System.currentTimeMillis() / 1000);
                         break;
                 }
             }
@@ -191,8 +195,8 @@ public final class GameObBuilder implements Builder {
         }
         float wallHeight = random.nextInt(n) + j;
         BodyDef bdef = new BodyDef();
-        float cy= (PhysicComponent.YMIN + PhysicComponent.YMAX)/2;
-        float cx=PhysicComponent.XMIN+ (PhysicComponent.PHYSICALWIDTH*i/(tot+1));
+        float cy = (PhysicComponent.YMIN + PhysicComponent.YMAX) / 2;
+        float cx = PhysicComponent.XMIN + (PhysicComponent.PHYSICALWIDTH * i / (tot + 1));
         bdef.setPosition(cx, cy);
         //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
         bdef.setType(BodyType.dynamicBody);
@@ -201,7 +205,7 @@ public final class GameObBuilder implements Builder {
         body.setUserData(go);
 
         PolygonShape box = new PolygonShape();
-        box.setAsBox(THICKNESS/2, wallHeight / 2);
+        box.setAsBox(THICKNESS / 2, wallHeight / 2);
         FixtureDef fixturedef = new FixtureDef();
         fixturedef.setShape(box);
         fixturedef.setFriction(0.2f);       // default 0.2
@@ -211,20 +215,20 @@ public final class GameObBuilder implements Builder {
 
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
-        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS,wallHeight);
+        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, wallHeight);
         go.setComponent(physicComponent);
 
         // clean up native objects
         fixturedef.delete();
         bdef.delete();
         box.delete();
-        GameObject sw = buildSudWall(cx, cy,wallHeight);
+        GameObject sw = buildSudWall(cx, cy, wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-        Log.d("Debug","cx e cy e heigth :"+cx+"  "+cy+" "+wallHeight);
+        Log.d("Debug", "cx e cy e heigth :" + cx + "  " + cy + " " + wallHeight);
         WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-                world, cx, cy,PhysicComponent.YMAX-THICKNESS-wallHeight/2,wallHeight);
+                world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
@@ -235,7 +239,7 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.WALL;
 
-        float myHeight=PhysicComponent.YMAX-THICKNESS-height/2;
+        float myHeight = PhysicComponent.YMAX - THICKNESS - height / 2;
         //Drawable Component
         DrawableComponent drawableComponent;
         Bitmap bitmap;
@@ -244,12 +248,12 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         //Physic Component
         BodyDef bdef = new BodyDef();
-        bdef.setPosition(cx,cy+height/2+myHeight/2);
+        bdef.setPosition(cx, cy + height / 2 + myHeight / 2);
         Body body = world.createBody(bdef);
         body.setUserData(go);
         PolygonShape box = new PolygonShape();
         //box.setCentroid(x, y);
-        box.setAsBox(THICKNESS/2, myHeight / 2);
+        box.setAsBox(THICKNESS / 2, myHeight / 2);
         body.createFixture(box, 0); // no density needed
         bdef.delete();
         box.delete();
@@ -263,7 +267,7 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.WALL;
 
-        float myHeight= -PhysicComponent.YMIN -THICKNESS-height/2;
+        float myHeight = -PhysicComponent.YMIN - THICKNESS - height / 2;
         //Drawable Component
         DrawableComponent drawableComponent;
         Bitmap bitmap;
@@ -272,12 +276,12 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         //Physic Component
         BodyDef bdef = new BodyDef();
-        bdef.setPosition(cx,cy-height/2-myHeight/2);
+        bdef.setPosition(cx, cy - height / 2 - myHeight / 2);
         Body body = world.createBody(bdef);
         body.setUserData(go);
         PolygonShape box = new PolygonShape();
         //box.setCentroid(x, y);
-        box.setAsBox(THICKNESS/2, myHeight / 2);
+        box.setAsBox(THICKNESS / 2, myHeight / 2);
         body.createFixture(box, 0); // no density needed
         bdef.delete();
         box.delete();
@@ -322,16 +326,16 @@ public final class GameObBuilder implements Builder {
         radius = width / 12;
         testa.setRadius(radius);
         testa2.setRadius(radius);
-        cWidht=2 * width / 4;
-        cHeight=radius / 50;
+        cWidht = 2 * width / 4;
+        cHeight = radius / 50;
 
         coda.setAsBox(cWidht, cHeight);
         testa.setPosition(radius, 0f);
-        testa2.setPosition(2*radius,0);
+        testa2.setPosition(2 * radius, 0);
         coda.setCentroid(-cWidht, 0f);
 
         //Setup Teste
-       //1
+        //1
         fixtesta.setShape(testa);
         fixtesta.setFriction(tFriction);
         fixtesta.setRestitution(tRestitution);
@@ -341,7 +345,6 @@ public final class GameObBuilder implements Builder {
         fixtesta2.setFriction(tFriction);
         fixtesta2.setRestitution(tRestitution);
         fixtesta2.setDensity(tDensity);
-
 
 
         //Setup Coda
@@ -363,7 +366,6 @@ public final class GameObBuilder implements Builder {
         testa2.delete();
 
 
-
         //DrawableComponent
         DrawableComponent drawableComponent;
         Bitmap bitmap;
@@ -374,14 +376,12 @@ public final class GameObBuilder implements Builder {
         go.setComponent(physicComponent);
 
 
-
-
         return go;
     }
 
     private GameObject buildEggCell(JSONObject EggCell) {
-       GameObject go = getGameOB();
-         go.type = GameObject.GameObjectType.EGGCELL;
+        GameObject go = getGameOB();
+        go.type = GameObject.GameObjectType.EGGCELL;
 
         //DrawableComponent
         DrawableComponent drawableComponent;
@@ -392,7 +392,7 @@ public final class GameObBuilder implements Builder {
 
         //Physic Component
         BodyDef bdef = new BodyDef();
-        FixtureDef  ovulDef= new FixtureDef();
+        FixtureDef ovulDef = new FixtureDef();
         CircleShape ovulo = new CircleShape(), sx = new CircleShape();
 
         float width = 0.8f, height = 0.6f, friction = 0.1f, density = 0.4f, restitution = 0.3f;
@@ -404,12 +404,12 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get Egg Cell Radius");
         }
-        bdef.setPosition(PhysicComponent.XMIN+7*PhysicComponent.PHYSICALWIDTH/8,(PhysicComponent.YMAX+PhysicComponent.YMIN)/2);
+        bdef.setPosition(PhysicComponent.XMIN + 7 * PhysicComponent.PHYSICALWIDTH / 8, (PhysicComponent.YMAX + PhysicComponent.YMIN) / 2);
         bdef.setType(BodyType.staticBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        ovulo.setRadius(width/2);
+        ovulo.setRadius(width / 2);
         ovulDef.setShape(ovulo);
         body.createFixture(ovulDef);
 
@@ -434,7 +434,7 @@ public final class GameObBuilder implements Builder {
         body.setSleepingAllowed(false);
 
         body.setUserData(this);
-        float width= 1.8f, height= 0.6f, friction = 0.1f , restitution = 0.3f ,  density = 0.4f;
+        float width = 1.8f, height = 0.6f, friction = 0.1f, restitution = 0.3f, density = 0.4f;
         try {
             width = (float) spermatozoon.getDouble("width");
             height = (float) spermatozoon.getDouble("height");
@@ -452,10 +452,10 @@ public final class GameObBuilder implements Builder {
         // Due circonferenze rappresentanti i  poli della pillola
         CircleShape dx = new CircleShape();
         CircleShape sx = new CircleShape();
-        dx.setRadius(height/8);
-        sx.setRadius(height/8);
-        dx.setPosition(width/2,0);
-        sx.setPosition(-width/2,0);
+        dx.setRadius(height / 8);
+        sx.setRadius(height / 8);
+        dx.setPosition(width / 2, 0);
+        sx.setPosition(-width / 2, 0);
 
         FixtureDef fixdx = new FixtureDef();
         FixtureDef fixsx = new FixtureDef();
@@ -529,23 +529,23 @@ public final class GameObBuilder implements Builder {
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        Log.d("Debug","Queste sono le dimensioni :"+width+" "+height);
+        Log.d("Debug", "Queste sono le dimensioni :" + width + " " + height);
         //Rettangolo rappresentante corpo della pillola
-        pillola.setAsBox(width / 2, height / 6);
+        pillola.setAsBox(width / 3, height / 6);
 
         // Due circonferenze rappresentanti i  poli della pillola
-        dx.setRadius(height / 8);
-        sx.setRadius(height / 8);
-        dx.setPosition(width / 2, 0);
-        sx.setPosition(-width / 2, 0);
+        dx.setRadius(height / 7);
+        sx.setRadius(height / 7);
+        dx.setPosition(width / 3, 0);
+        sx.setPosition(-width / 3, 0);
 
         fixdx.setShape(dx);
         fixsx.setShape(sx);
 
         //Settaggi pillola
         fixturedef.setShape(pillola);
-        fixturedef.setFriction(friction);       // default 0.2
-        fixturedef.setRestitution(restitution);    // default 0
+        fixturedef.setFriction(friction);
+        fixturedef.setRestitution(restitution);
         fixturedef.setDensity(density);
 
 
@@ -579,7 +579,7 @@ public final class GameObBuilder implements Builder {
         return go;
     }
 
-    private void buildEnclosureLevel(SparseArray<GameObject> array){
+    private void buildEnclosureLevel(SparseArray<GameObject> array) {
 
         //Bottom enclosure
         GameObject go;
@@ -588,88 +588,117 @@ public final class GameObBuilder implements Builder {
         BodyDef bdef;
         PolygonShape box;
 
-        go=GameObject.getGameOB();
-        bdef=new BodyDef();
+        go = GameObject.getGameOB();
+        bdef = new BodyDef();
         bdef.setType(BodyType.staticBody);
-        bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMAX-THICKNESS/2);
-        Body body=world.createBody(bdef);
+        bdef.setPosition((PhysicComponent.XMIN + PhysicComponent.XMAX) / 2, PhysicComponent.YMAX - THICKNESS / 2);
+        Body body = world.createBody(bdef);
         body.setUserData(go);
-        box=new PolygonShape();
-        box.setAsBox(PhysicComponent.PHYSICALWIDTH/2,THICKNESS/2);
-        body.createFixture(box,0);
+        box = new PolygonShape();
+        box.setAsBox(PhysicComponent.PHYSICALWIDTH / 2, THICKNESS / 2);
+        body.createFixture(box, 0);
         bdef.delete();
         box.delete();
 
-        go.type= GameObject.GameObjectType.WALL;
-        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.type = GameObject.GameObjectType.WALL;
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
-        physicComponent=PhysicComponent.getPhysicComponent(go,body,PhysicComponent.PHYSICALWIDTH,THICKNESS);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, PhysicComponent.PHYSICALWIDTH, THICKNESS);
         go.setComponent(physicComponent);
-        array.append(array.size(),go);
+        array.append(array.size(), go);
 
         //Top Enclosure
-        go=GameObject.getGameOB();
-        bdef=new BodyDef();
+        go = GameObject.getGameOB();
+        bdef = new BodyDef();
         bdef.setType(BodyType.staticBody);
-        bdef.setPosition((PhysicComponent.XMIN+PhysicComponent.XMAX)/2,PhysicComponent.YMIN+THICKNESS/2);
-        body=world.createBody(bdef);
+        bdef.setPosition((PhysicComponent.XMIN + PhysicComponent.XMAX) / 2, PhysicComponent.YMIN + THICKNESS / 2);
+        body = world.createBody(bdef);
         body.setUserData(go);
-        box=new PolygonShape();
-        box.setAsBox(PhysicComponent.PHYSICALWIDTH/2,THICKNESS/2);
-        body.createFixture(box,0);
+        box = new PolygonShape();
+        box.setAsBox(PhysicComponent.PHYSICALWIDTH / 2, THICKNESS / 2);
+        body.createFixture(box, 0);
         bdef.delete();
         box.delete();
 
-        go.type= GameObject.GameObjectType.WALL;
-        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.type = GameObject.GameObjectType.WALL;
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
-        physicComponent=PhysicComponent.getPhysicComponent(go,body,PhysicComponent.PHYSICALWIDTH,THICKNESS);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, PhysicComponent.PHYSICALWIDTH, THICKNESS);
         go.setComponent(physicComponent);
-        array.append(array.size(),go);
+        array.append(array.size(), go);
 
         //Left Enclosure
-        go=GameObject.getGameOB();
-        bdef=new BodyDef();
+        go = GameObject.getGameOB();
+        bdef = new BodyDef();
         bdef.setType(BodyType.staticBody);
-        bdef.setPosition(PhysicComponent.XMIN+THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
-        body=world.createBody(bdef);
+        bdef.setPosition(PhysicComponent.XMIN + THICKNESS / 2, (PhysicComponent.YMIN + PhysicComponent.YMAX) / 2);
+        body = world.createBody(bdef);
         body.setUserData(go);
-        box=new PolygonShape();
-        box.setAsBox(THICKNESS/2,PhysicComponent.PHYSICALHEIGHT/2);
-        body.createFixture(box,0);
+        box = new PolygonShape();
+        box.setAsBox(THICKNESS / 2, PhysicComponent.PHYSICALHEIGHT / 2);
+        body.createFixture(box, 0);
         bdef.delete();
         box.delete();
 
-        go.type= GameObject.GameObjectType.WALL;
-        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.type = GameObject.GameObjectType.WALL;
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
-        physicComponent=PhysicComponent.getPhysicComponent(go,body,THICKNESS,PhysicComponent.PHYSICALHEIGHT);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, PhysicComponent.PHYSICALHEIGHT);
         go.setComponent(physicComponent);
-        array.append(array.size(),go);
+        array.append(array.size(), go);
 
 
         //Right Enclosure
-        go=GameObject.getGameOB();
-        bdef=new BodyDef();
+        go = GameObject.getGameOB();
+        bdef = new BodyDef();
         bdef.setType(BodyType.staticBody);
-        bdef.setPosition(PhysicComponent.XMAX-THICKNESS/2,(PhysicComponent.YMIN+PhysicComponent.YMAX)/2);
-        body=world.createBody(bdef);
+        bdef.setPosition(PhysicComponent.XMAX - THICKNESS / 2, (PhysicComponent.YMIN + PhysicComponent.YMAX) / 2);
+        body = world.createBody(bdef);
         body.setUserData(go);
-        box=new PolygonShape();
-        box.setAsBox(THICKNESS/2,PhysicComponent.PHYSICALHEIGHT/2);
-        body.createFixture(box,0);
+        box = new PolygonShape();
+        box.setAsBox(THICKNESS / 2, PhysicComponent.PHYSICALHEIGHT / 2);
+        body.createFixture(box, 0);
         bdef.delete();
         box.delete();
 
-        go.type= GameObject.GameObjectType.WALL;
-        drawableComponent=DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go,GameGraphics.STATICSPRITE.get(go.type));
+        go.type = GameObject.GameObjectType.WALL;
+        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
-        physicComponent=PhysicComponent.getPhysicComponent(go,body,THICKNESS,PhysicComponent.PHYSICALHEIGHT);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, PhysicComponent.PHYSICALHEIGHT);
         go.setComponent(physicComponent);
-        array.append(array.size(),go);
+        array.append(array.size(), go);
+    }
+
+    public void buildSpawner(SparseArray<GameObject> array, String Level) {
+
+        try {
+            JSONArray enemies = this.description.getJSONArray("enemies");
+            for (int i = 0; i < enemies.length(); i++) {
+                Long last = this.TimeStamps.get(i);
+                Long now = System.currentTimeMillis() / 1000;
+                switch (enemies.getJSONObject(i).getString("type")) {
+                    case "spermatozoon":
+                        if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
+                            for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
+                                array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
+                            TimeStamps.append(i, now);
+                        }
+                        break;
+                    case "pill":
+                        if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
+                            for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
+                                array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)));
+                            TimeStamps.append(i, now);
+                        }
+                        break;
+                }
+            }
+        } catch (JSONException e) {
+            Log.d("Debug", "Unable to create JsonOB for level: " + Level);
+        }
     }
 }
