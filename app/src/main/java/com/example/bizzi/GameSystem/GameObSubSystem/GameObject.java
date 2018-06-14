@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public final class GameObject implements Recyclable {
 
-    public enum GameObjectType{MENU, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON, ENCLOSURE, SPERMATOZOON,BACKGROUND, DOOR,PILL,WALL, EGGCELL}
+    public enum GameObjectType{MENU, EINSTEIN, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON, ENCLOSURE, SPERMATOZOON,BACKGROUND, DOOR,PILL,WALL, EGGCELL}
 
     private static int count=0;
 

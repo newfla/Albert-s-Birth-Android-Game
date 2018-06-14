@@ -36,6 +36,7 @@ public final class GameObBuilder implements Builder {
     private static final SparseArray<Long> TimeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
     private JSONObject description;
+    private Body Einstein;
 
 
     public GameObBuilder(Context context, World world) {
@@ -137,11 +138,11 @@ public final class GameObBuilder implements Builder {
             int tot = slidingWalls.getInt("number");
             for (int i = 0; i < tot; i++)
                 buildSlidingWall(slidingWalls, i + 1, tot, array);
-            //Building spermatozoon
-/*
+            //Building Einstein's spermatozoon
+
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
-            array.append(array.size(), buildEnemySpermatozoon(spermatozoon));
- */
+            array.append(array.size(), buildSpermatozoon(spermatozoon));
+
 
             //Building Egg cell
             JSONObject cell = description.getJSONArray("eggcell").getJSONObject(0);
@@ -225,7 +226,6 @@ public final class GameObBuilder implements Builder {
         GameObject sw = buildSudWall(cx, cy, wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-        Log.d("Debug", "cx e cy e heigth :" + cx + "  " + cy + " " + wallHeight);
         WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);
@@ -318,8 +318,18 @@ public final class GameObBuilder implements Builder {
             Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
         }
 
-        bdef.setPosition(0, 0);
+
+
         bdef.setType(BodyType.dynamicBody);
+
+
+        if(Einstein!=null)
+            bdef.setPosition(Einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+        else {
+            bdef.setPosition(0,0);
+            Log.d("Debug", "Non ho trovato la posizione di Einstein");
+        }
+
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
@@ -425,74 +435,95 @@ public final class GameObBuilder implements Builder {
 
     private GameObject buildSpermatozoon(JSONObject spermatozoon) {
         GameObject go = getGameOB();
-        go.type = GameObject.GameObjectType.PILL;
+        go.type = GameObject.GameObjectType.EINSTEIN;
+        //PhysicComponent
+        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius = width / 8;
+        float cWidht, cHeight;
+        PhysicComponent physicComponent;
+        FixtureDef fixturedef = new FixtureDef(), fixtesta = new FixtureDef(), fixtesta2 = new FixtureDef();
         BodyDef bdef = new BodyDef();
+        CircleShape testa = new CircleShape();
+        CircleShape testa2 = new CircleShape();
+        PolygonShape coda = new PolygonShape();
 
-        //bdef.setPosition(x, y);
-        bdef.setType(BodyType.dynamicBody);
-        Body body = world.createBody(bdef);
-        body.setSleepingAllowed(false);
 
-        body.setUserData(this);
-        float width = 1.8f, height = 0.6f, friction = 0.1f, restitution = 0.3f, density = 0.4f;
         try {
             width = (float) spermatozoon.getDouble("width");
-            height = (float) spermatozoon.getDouble("height");
-            friction = (float) spermatozoon.getDouble("friction");
-            restitution = (float) spermatozoon.getDouble("restitution");
-            density = (float) spermatozoon.getDouble("density");
-
+            heigth = (float) spermatozoon.getDouble("height");
+            tFriction = (float) spermatozoon.getDouble("tFriction");
+            tRestitution = (float) spermatozoon.getDouble("tRestitution");
+            tDensity = (float) spermatozoon.getDouble("tDensity");
+            cFriction = (float) spermatozoon.getDouble("cFriction");
+            cRestitution = (float) spermatozoon.getDouble("cRestitution");
+            cDensity = (float) spermatozoon.getDouble("cDensity");
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
         }
-        //Rettangolo rappresentante corpo della pillola
-        PolygonShape pillola = new PolygonShape();
-        pillola.setAsBox(width / 2, height / 2);
-        FixtureDef fixturedef = new FixtureDef();
-        // Due circonferenze rappresentanti i  poli della pillola
-        CircleShape dx = new CircleShape();
-        CircleShape sx = new CircleShape();
-        dx.setRadius(height / 8);
-        sx.setRadius(height / 8);
-        dx.setPosition(width / 2, 0);
-        sx.setPosition(-width / 2, 0);
 
-        FixtureDef fixdx = new FixtureDef();
-        FixtureDef fixsx = new FixtureDef();
+        if(Einstein!=null)
+            bdef.setPosition(Einstein.getPositionX(), 4*PhysicComponent.PHYSICALHEIGHT/5);
+        bdef.setType(BodyType.dynamicBody);
+        bdef.setPosition(PhysicComponent.XMIN+THICKNESS*2,PhysicComponent.YMAX-THICKNESS*2);
+        Body body = world.createBody(bdef);
+        body.setSleepingAllowed(false);
+        body.setUserData(go);
+        radius = width / 12;
+        testa.setRadius(radius);
+        testa2.setRadius(radius);
+        cWidht = 2 * width / 4;
+        cHeight = radius / 50;
 
-        fixdx.setShape(dx);
-        fixsx.setShape(sx);
+        coda.setAsBox(cWidht, cHeight);
+        testa.setPosition(radius, 0f);
+        testa2.setPosition(2 * radius, 0);
+        coda.setCentroid(-cWidht, 0f);
 
-        //Settaggi pillola
-        fixturedef.setShape(pillola);
-        fixturedef.setFriction(friction);
-        fixturedef.setRestitution(restitution);
-        fixturedef.setDensity(density);
+        //Setup Teste
+        //1
+        fixtesta.setShape(testa);
+        fixtesta.setFriction(tFriction);
+        fixtesta.setRestitution(tRestitution);
+        fixtesta.setDensity(tDensity);
+        //2
+        fixtesta2.setShape(testa2);
+        fixtesta2.setFriction(tFriction);
+        fixtesta2.setRestitution(tRestitution);
+        fixtesta2.setDensity(tDensity);
 
 
+        //Setup Coda
+        fixturedef.setShape(coda);
+        fixturedef.setFriction(cFriction);       // default 0.1
+        fixturedef.setRestitution(cRestitution);    // default 0
+        fixturedef.setDensity(cDensity);
+        body.createFixture(fixtesta);
         body.createFixture(fixturedef);
-        body.createFixture(fixdx);
-        body.createFixture(fixsx);
+        body.createFixture(fixtesta2);
 
+        Einstein=body;
 
-        // clean up native objects
+        //Clean up
+        fixtesta.delete();
         fixturedef.delete();
-        fixdx.delete();
-        fixsx.delete();
+        fixtesta2.delete();
         bdef.delete();
-        pillola.delete();
-        dx.delete();
-        sx.delete();
+        coda.delete();
+        testa.delete();
+        testa2.delete();
 
+
+        //DrawableComponent
         DrawableComponent drawableComponent;
         Bitmap bitmap;
         bitmap = GameGraphics.STATICSPRITE.get(go.type);
         drawableComponent = DrawableComponent.getDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
-        PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, width, height);
+        physicComponent = PhysicComponent.getPhysicComponent(go, body, width, heigth);
         go.setComponent(physicComponent);
 
+
         return go;
+
     }
 
     private GameObject buildEnemyPill(JSONObject pill) {
@@ -524,12 +555,12 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
-        bdef.setPosition(0, 0);
+        if(Einstein!=null)
+            bdef.setPosition(Einstein.getPositionX(), 2*PhysicComponent.PHYSICALHEIGHT/5);
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        Log.d("Debug", "Queste sono le dimensioni :" + width + " " + height);
         //Rettangolo rappresentante corpo della pillola
         pillola.setAsBox(width / 3, height / 6);
 
@@ -552,7 +583,6 @@ public final class GameObBuilder implements Builder {
         body.createFixture(fixturedef);
         body.createFixture(fixdx);
         body.createFixture(fixsx);
-
 
         // clean up native objects
         fixturedef.delete();
