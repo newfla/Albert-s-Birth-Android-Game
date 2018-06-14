@@ -38,6 +38,7 @@ public final class GameNetworking {
 
     SparseArray<RealTimeMessage> messagesBuffer , messagesFront;
 
+
    public GameNetworking(Context context){
         this.context=context;
         messagesBuffer=new SparseArray<>();
@@ -77,18 +78,23 @@ public final class GameNetworking {
                 });
     }
 
-    public void sendInitMessage(SparseArray<GameObject> array){
-       byte[] arrayOfByte=new byte[20];
+    public void sendFirstMessage(SparseArray<GameObject> array){
+       byte[]arrayByte=new byte[20*array.size()];
         for (int i = 0; i < array.size(); i++) {
             GameObject go=array.get(i);
-            switch (go.getType()){
-                case ENCLOSURE:
-                case BACKGROUND:
-                case WALL:
-
-                    break;
+            byte[] temp=GameObject.serializeGameObject(go,true);
+            for (int j = 0; j < temp.length; j++) {
+                arrayByte[i*21]=temp[j];
             }
+            //TODO first send
         }
     }
 
+    public void receiveFirstMessage(byte[]array){
+       int j=(array.length+1)/20;
+        for (int i = 0; i < j; i++) {
+            GameObject.deSerializeGameObject(array,i,20);
+        }
+        //TODO add in List
+    }
 }
