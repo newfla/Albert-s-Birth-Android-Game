@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
@@ -72,6 +71,7 @@ public final class GameObBuilder implements Builder {
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = 1920 / 2;
         drawable.y = 1080 / 2 + 40;
+        ;
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
         float previousY = drawable.y + bitmap.getHeight() / 2;
@@ -189,10 +189,7 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get height SlidingWall");
         }
-        int wallHeight ;
-        do {
-            wallHeight = random.nextInt(n) + j;
-        }while (wallHeight%2==1);
+        float wallHeight = random.nextInt(n) + j;
         BodyDef bdef = new BodyDef();
         float cy= (PhysicComponent.YMIN + PhysicComponent.YMAX)/2;
         float cx=PhysicComponent.XMIN+ (PhysicComponent.PHYSICALWIDTH*i/(tot+1));
@@ -224,9 +221,10 @@ public final class GameObBuilder implements Builder {
         GameObject sw = buildSudWall(cx, cy,wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
         //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
-        Log.d("Debug","cx e cy :"+cx+"  "+cy);
-        WallJoint.buildPrismaticDoor(((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-               ((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(), world, cx, cy, wallHeight, THICKNESS);
+        Log.d("Debug","cx e cy e heigth :"+cx+"  "+cy+" "+wallHeight);
+        WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+                ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+                world, cx, cy,PhysicComponent.YMAX-THICKNESS-wallHeight/2,wallHeight);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
         array.append(array.size(), go);
