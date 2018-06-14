@@ -17,8 +17,8 @@
   ],
   "spermatozoon":[
     {
-     "width": "2",
-      "height": "2",
+     "width": "3",
+      "height": "3",
       "tFriction" : "0.3f" ,
       "tRestitution" : "0.4f" ,
       "tDensity" : "0.1f" ,

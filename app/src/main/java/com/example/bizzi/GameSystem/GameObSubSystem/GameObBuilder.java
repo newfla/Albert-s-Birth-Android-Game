@@ -467,7 +467,7 @@ public final class GameObBuilder implements Builder {
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        radius = width / 12;
+        radius = width / 6;
         testa.setRadius(radius);
         testa2.setRadius(radius);
         cWidht = 2 * width / 4;
