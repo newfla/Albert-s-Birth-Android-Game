@@ -47,7 +47,6 @@ public final class PhysicComponent extends Component {
             drawable.x=(int)x;
             drawable.y=(int)y;
             drawable.rotation=(int)rotation;
-
         }
 
         if (animated!=null){

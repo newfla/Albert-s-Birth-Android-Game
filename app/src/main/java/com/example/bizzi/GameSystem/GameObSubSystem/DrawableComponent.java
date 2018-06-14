@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.v4.util.Pools;
-import android.util.Log;
 
 public class DrawableComponent extends Component {
 
@@ -110,8 +109,6 @@ public class DrawableComponent extends Component {
         public void draw(Canvas canvas) {
             canvas.save();
             canvas.rotate(rotation, x, y);
-            if (rotation!=0)
-                Log.d("Debug","rotation");
             super.buildBorder();
             canvas.drawRect(DEST.left,DEST.top, DEST.right, DEST.bottom, paint);
             canvas.restore();
