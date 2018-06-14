@@ -11,6 +11,9 @@ import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.GameBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
+import com.kaushikthedeveloper.doublebackpress.DoubleBackPress;
+import com.kaushikthedeveloper.doublebackpress.helper.DoubleBackPressAction;
+import com.kaushikthedeveloper.doublebackpress.setup.display.ToastDisplay;
 
 
 public final class MainActivity extends AppCompatActivity{
@@ -19,6 +22,16 @@ public final class MainActivity extends AppCompatActivity{
     private View.OnTouchListener touchListener;
     private SensorEventListener accelerometerListener;
 
+    private DoubleBackPress doubleBackPress=new DoubleBackPress()
+            .withDoublePressDuration(3000)
+            .withFirstBackPressAction(new ToastDisplay().standard(this, "Press again to close"))
+            .withDoubleBackPressAction(new DoubleBackPressAction() {
+                @Override
+                public void actionCall() {
+                    finish();
+                    System.exit(0);
+                }
+            });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +87,11 @@ public final class MainActivity extends AppCompatActivity{
         registerAccelerometerListener();
         gameView.resume();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        doubleBackPress.onBackPressed();
     }
 
     public void setTouchListener(View.OnTouchListener touchListener){

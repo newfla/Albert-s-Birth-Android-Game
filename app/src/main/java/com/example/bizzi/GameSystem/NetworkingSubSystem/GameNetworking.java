@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,7 +38,7 @@ public final class GameNetworking {
 
     SparseArray<RealTimeMessage> messagesBuffer , messagesFront;
 
-    GameNetworking(Context context){
+   public GameNetworking(Context context){
         this.context=context;
         messagesBuffer=new SparseArray<>();
         messagesFront=new SparseArray<>();
@@ -74,6 +75,20 @@ public final class GameNetworking {
                         Log.d("Debug","Issue  getting myPlayerId");
                     }
                 });
+    }
+
+    public void sendInitMessage(SparseArray<GameObject> array){
+       byte[] arrayOfByte=new byte[20];
+        for (int i = 0; i < array.size(); i++) {
+            GameObject go=array.get(i);
+            switch (go.getType()){
+                case ENCLOSURE:
+                case BACKGROUND:
+                case WALL:
+
+                    break;
+            }
+        }
     }
 
 }

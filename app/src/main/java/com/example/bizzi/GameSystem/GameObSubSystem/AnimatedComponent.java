@@ -11,7 +11,7 @@ public final class AnimatedComponent extends Component {
 
     private static final Pools.Pool<AnimatedComponent> POOL = new Pools.SimplePool<>(50);
 
-    float x,y,semiWidth, semiHeight;
+    int x,y,semiWidth, semiHeight;
     int animation=1;
     private int lastAnimation, lastFrame;
     private Bitmap sheet;

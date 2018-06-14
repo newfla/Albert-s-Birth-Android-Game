@@ -11,7 +11,7 @@ import com.google.fpl.liquidfun.World;
 
 public  final class WallJoint {
     static SparseArray<Joint> joint = new SparseArray<Joint>();
-    public static void buildPrismaticDoor(Body a, Body b, World word,  float wallHeight,float thikness) {
+    public static void buildPrismaticDoor(Body a, Body b, World word, float cx, float cy, float wallHeight,float thikness) {
 
         //a is the south wall body
         //b is the sliding Door body
@@ -19,7 +19,7 @@ public  final class WallJoint {
         PrismaticJointDef jointDef = new PrismaticJointDef();
         jointDef.setBodyA(b);
         jointDef.setBodyB(a);
-        jointDef.setLocalAnchorB(0, -(PhysicComponent.PHYSICALHEIGHT-thikness-wallHeight )/2);
+        jointDef.setLocalAnchorB(0, -(PhysicComponent.PHYSICALHEIGHT-thikness-wallHeight)/2);
         //Log.d("Debug","cx e cy :"+cx+"    "+cy);
         jointDef.setLocalAnchorA(0, wallHeight/2);
 
@@ -27,10 +27,7 @@ public  final class WallJoint {
         jointDef.setLocalAxisA(0, 1.0f);
 
         jointDef.setEnableLimit(true);
-        if(wallHeight==2)
-            jointDef.setLowerTranslation(-wallHeight*2-2);    //-wallHeight*2
-        else
-            jointDef.setLowerTranslation(-wallHeight*2);
+        jointDef.setLowerTranslation(-wallHeight*2);    //-wallHeight*2
         jointDef.setUpperTranslation(-wallHeight/2);    //-wallHeight/2
 
 

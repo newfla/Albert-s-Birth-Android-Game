@@ -15,6 +15,7 @@ import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameObSubSystem.PhysicComponent;
 import com.example.bizzi.GameSystem.InputSubSystem.GameInput;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
+import com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking;
 import com.google.fpl.liquidfun.World;
 
 public final class GameWorld {
@@ -44,16 +45,20 @@ public final class GameWorld {
     //GameObBuilder
     private final GameObBuilder gameObFactory;
 
+    //GameNetwork
+    private final GameNetworking gameNetworking;
+
     private SparseArray<GameObject> mainMenu;
     private SparseArray<GameObject> level;
     private SparseArray<GameObject> toBeRendered;
 
 
-    GameWorld(World world, GameAudio gameAudio, GameInput gameInput, GameObBuilder gameObFactory) {
+    GameWorld(World world, GameAudio gameAudio, GameInput gameInput, GameObBuilder gameObFactory, GameNetworking gameNetworking) {
         this.gameObFactory = gameObFactory;
         this.gameAudio = gameAudio;
         this.gameInput = gameInput;
         this.world = world;
+        this.gameNetworking=gameNetworking;
         home = true;
         frameBuffer = Bitmap.createBitmap(BUFFERWIDTH, BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(frameBuffer);
