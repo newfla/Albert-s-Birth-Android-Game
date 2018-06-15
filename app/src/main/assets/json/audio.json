@@ -19,6 +19,36 @@
       "gameobject": "BACKGROUND",
       "type": "music",
       "file":"background_music.mp3"
+    },
+    {
+      "gameobject": "DEFEAT1",
+      "type": "music",
+      "file":"defeat1_music.mp3"
+    },
+    {
+      "gameobject": "DEFEAT2",
+      "type": "music",
+      "file":"defeat2_music.mp3"
+    },
+    {
+      "gameobject": "VICTORY",
+      "type": "music",
+      "file":"victory_music.mp3"
+    },
+    {
+      "gameobject": "EGGCELL",
+      "type": "sound",
+      "file":"eggcel_sound.mp3"
+    },
+    {
+      "gameobject": "EINSTEIN",
+      "type": "sound",
+      "file":"einstein_sound.mp3"
+    },
+    {
+      "gameobject": "SPERMATOZOON",
+      "type": "sound",
+      "file":"spermatozoon_sound.mp3"
     }
   ]
 }

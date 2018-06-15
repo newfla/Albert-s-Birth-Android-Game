@@ -464,7 +464,7 @@ public final class GameObBuilder implements Builder {
         if(einstein!=null)
             bdef.setPosition(einstein.getPositionX(), 4*PhysicComponent.PHYSICALHEIGHT/5);
         bdef.setType(BodyType.dynamicBody);
-        bdef.setPosition(PhysicComponent.XMIN+THICKNESS*2,PhysicComponent.YMAX-THICKNESS*2);
+        bdef.setPosition(PhysicComponent.XMIN+THICKNESS*4,PhysicComponent.YMAX-THICKNESS*2);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
@@ -737,12 +737,13 @@ public final class GameObBuilder implements Builder {
 
         //Create lastBackgorund
         GameObject gameOB = getGameOB();
-        gameOB.type = GameObject.GameObjectType.BACKGROUND;
+        gameOB.type = type;
         DrawableComponent drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
         drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
         drawableComponent.y = GameWorld.BUFFERHEIGHT / 2;
         gameOB.setComponent(drawableComponent);
         array.append(array.size(),gameOB);
+
         //Create backHomeButton
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.HOMEBUTTON;

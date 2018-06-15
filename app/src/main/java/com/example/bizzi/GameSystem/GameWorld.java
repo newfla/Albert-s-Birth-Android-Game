@@ -70,11 +70,12 @@ public final class GameWorld {
         InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
         if (finish != null) {
             toBeRendered = gameObFactory.buildFinish(finish);
-            finish = null;
             for (int i = 0; i < level.size(); i++)
                 level.get(i).recycle();
             level=toBeRendered;
-
+            GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
+            GameAudio.AUDIOLIBRARY.get(finish).play();
+            finish = null;
         } else if (home) {
             if (level != null) {
                 for (int i = 0; i < level.size(); i++)
@@ -94,6 +95,7 @@ public final class GameWorld {
                 if (level == null) {
                     level = gameObFactory.buildLevel(Level);
                     toBeRendered = level;
+//                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).play();
                 } else
                     gameObFactory.buildSpawner(toBeRendered);
 

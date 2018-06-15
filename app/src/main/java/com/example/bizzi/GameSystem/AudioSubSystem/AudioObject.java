@@ -39,7 +39,7 @@ public interface AudioObject extends Recyclable {
 
         @Override
         public void stop() {
-
+            soundPool.stop(soundId);
         }
     }
 

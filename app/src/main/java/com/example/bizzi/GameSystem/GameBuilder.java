@@ -33,7 +33,7 @@ public final  class GameBuilder implements Builder {
 
         //init Physics
         World world=new World(XGRAVITY,YGRAVITY);
-        contactListener= new MyContactListener();
+        contactListener=new MyContactListener();
         world.setContactListener(contactListener);
 
         //init Audio Game
