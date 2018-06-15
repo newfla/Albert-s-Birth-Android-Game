@@ -35,7 +35,7 @@ public final class GameObBuilder implements Builder {
     private final World world;
     private static final SparseArray<Long> TimeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
-    private Body Einstein;
+    private Body einstein;
     private JSONArray enemies;
 
     private String level;
@@ -142,7 +142,7 @@ public final class GameObBuilder implements Builder {
             //Building Einstein's spermatozoon
 
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
-           array.append(array.size(), buildSpermatozoon(spermatozoon));
+            array.append(array.size(), buildSpermatozoon(spermatozoon));
 
 
             //Building Egg cell
@@ -324,8 +324,8 @@ public final class GameObBuilder implements Builder {
         bdef.setType(BodyType.dynamicBody);
 
 
-        if(Einstein!=null)
-            bdef.setPosition(Einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+        if(einstein!=null)
+            bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
         else {
             bdef.setPosition(0,0);
             Log.d("Debug", "Non ho trovato la posizione di Einstein");
@@ -461,8 +461,8 @@ public final class GameObBuilder implements Builder {
             Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
         }
 
-        if(Einstein!=null)
-            bdef.setPosition(Einstein.getPositionX(), 4*PhysicComponent.PHYSICALHEIGHT/5);
+        if(einstein!=null)
+            bdef.setPosition(einstein.getPositionX(), 4*PhysicComponent.PHYSICALHEIGHT/5);
         bdef.setType(BodyType.dynamicBody);
         bdef.setPosition(PhysicComponent.XMIN+THICKNESS*2,PhysicComponent.YMAX-THICKNESS*2);
         Body body = world.createBody(bdef);
@@ -501,7 +501,7 @@ public final class GameObBuilder implements Builder {
         body.createFixture(fixturedef);
         body.createFixture(fixtesta2);
 
-        Einstein=body;
+        einstein=body;
 
         //Clean up
         fixtesta.delete();
@@ -554,8 +554,8 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
-        if(Einstein!=null)
-            bdef.setPosition(Einstein.getPositionX(), 2*PhysicComponent.PHYSICALHEIGHT/5);
+        if(einstein!=null)
+            bdef.setPosition(einstein.getPositionX(), 2*PhysicComponent.PHYSICALHEIGHT/5);
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);

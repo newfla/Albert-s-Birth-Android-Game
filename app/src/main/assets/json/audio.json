@@ -14,6 +14,11 @@
       "gameobject": "QUITBUTTON" ,
       "type" :"sound" ,
       "file" :"button_sound.mp3"
+    },
+    {
+      "gameobject": "BACKGROUND",
+      "type": "music",
+      "file":"background_music.mp3"
     }
   ]
 }

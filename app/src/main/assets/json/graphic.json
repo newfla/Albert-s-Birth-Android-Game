@@ -62,9 +62,8 @@
     {
       "gameobject": "EINSTEIN",
       "type": "static",
-      "file": "espermatozoon.png"
+      "file": "einstein.png"
     },
-
 
     {
       "gameobject": "SOUNDBUTTON",
