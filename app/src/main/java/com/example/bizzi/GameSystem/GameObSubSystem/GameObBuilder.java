@@ -22,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Timestamp;
 import java.util.Random;
 
 import static com.example.bizzi.GameSystem.GameObSubSystem.GameObject.getGameOB;
@@ -35,8 +34,8 @@ public final class GameObBuilder implements Builder {
     private final World world;
     private static final SparseArray<Long> TimeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
-    private JSONObject description;
     private Body Einstein;
+    private JSONArray enemies;
 
 
     public GameObBuilder(Context context, World world) {
@@ -126,7 +125,7 @@ public final class GameObBuilder implements Builder {
 
         try {
             //Obtain level description
-            description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
+            JSONObject description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
             //Background
             array.append(array.size(), buildBackgroundLevel());
 
@@ -149,7 +148,7 @@ public final class GameObBuilder implements Builder {
             array.append(array.size(), buildEggCell(cell));
 
             //Building enemies
-            JSONArray enemies = description.getJSONArray("enemies");
+            enemies = description.getJSONArray("enemies");
             for (int i = 0; i < enemies.length(); i++) {
                 switch (enemies.getJSONObject(i).getString("type")) {
                     case "spermatozoon":
@@ -165,8 +164,6 @@ public final class GameObBuilder implements Builder {
                         break;
                 }
             }
-
-            Log.d("Livello", "buildLevel: Costruiti i nemici");
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for level: " + level);
             return null;
@@ -520,8 +517,6 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         physicComponent = PhysicComponent.getPhysicComponent(go, body, width, heigth);
         go.setComponent(physicComponent);
-
-
         return go;
 
     }
@@ -706,7 +701,6 @@ public final class GameObBuilder implements Builder {
     public void buildSpawner(SparseArray<GameObject> array, String Level) {
 
         try {
-            JSONArray enemies = this.description.getJSONArray("enemies");
             for (int i = 0; i < enemies.length(); i++) {
                 Long last = this.TimeStamps.get(i);
                 Long now = System.currentTimeMillis() / 1000;

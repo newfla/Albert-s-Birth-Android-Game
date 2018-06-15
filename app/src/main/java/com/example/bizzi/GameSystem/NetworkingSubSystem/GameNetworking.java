@@ -83,9 +83,8 @@ public final class GameNetworking {
         for (int i = 0; i < array.size(); i++) {
             GameObject go=array.get(i);
             byte[] temp=GameObject.serializeGameObject(go,true);
-            for (int j = 0; j < temp.length; j++) {
+            for (int j = 0; j < temp.length; j++)
                 arrayByte[i*21]=temp[j];
-            }
             //TODO first send
         }
     }
