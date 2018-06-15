@@ -140,7 +140,7 @@ public final class GameObBuilder implements Builder {
             //Building Einstein's spermatozoon
 
             JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
-            array.append(array.size(), buildSpermatozoon(spermatozoon));
+           array.append(array.size(), buildSpermatozoon(spermatozoon));
 
 
             //Building Egg cell
@@ -252,6 +252,7 @@ public final class GameObBuilder implements Builder {
         //box.setCentroid(x, y);
         box.setAsBox(THICKNESS / 2, myHeight / 2);
         body.createFixture(box, 0); // no density needed
+        body.setSleepingAllowed(true);
         bdef.delete();
         box.delete();
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, myHeight);
@@ -280,6 +281,7 @@ public final class GameObBuilder implements Builder {
         //box.setCentroid(x, y);
         box.setAsBox(THICKNESS / 2, myHeight / 2);
         body.createFixture(box, 0); // no density needed
+        body.setSleepingAllowed(true);
         bdef.delete();
         box.delete();
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, myHeight);
@@ -686,6 +688,7 @@ public final class GameObBuilder implements Builder {
         box = new PolygonShape();
         box.setAsBox(THICKNESS / 2, PhysicComponent.PHYSICALHEIGHT / 2);
         body.createFixture(box, 0);
+        body.setSleepingAllowed(true);
         bdef.delete();
         box.delete();
 

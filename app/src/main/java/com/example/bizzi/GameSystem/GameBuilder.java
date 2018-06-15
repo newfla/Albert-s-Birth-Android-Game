@@ -9,6 +9,7 @@ import com.example.bizzi.GameSystem.InputSubSystem.InputBuilder;
 import com.example.bizzi.GameSystem.JLiquidFunUtility.MyContactListener;
 import com.example.bizzi.GameSystem.NetworkingSubSystem.NetworkingBuilder;
 import com.example.bizzi.GameSystem.Utility.Builder;
+import com.google.fpl.liquidfun.ContactListener;
 import com.google.fpl.liquidfun.World;
 
 public final  class GameBuilder implements Builder {
@@ -17,6 +18,7 @@ public final  class GameBuilder implements Builder {
 
     private final Context context;
     public GameWorld gameWorld;
+    private ContactListener contactListener;
 
 
 
@@ -31,7 +33,8 @@ public final  class GameBuilder implements Builder {
 
         //init Physics
         World world=new World(XGRAVITY,YGRAVITY);
-        world.setContactListener(new MyContactListener());
+        contactListener= new MyContactListener();
+        world.setContactListener(contactListener);
 
         //init Audio Game
         AudioBuilder audioFactory=new AudioBuilder(context);
