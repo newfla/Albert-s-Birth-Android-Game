@@ -29,6 +29,7 @@ public final class GameWorld {
     private static final float TIMESTEP = 1 / 50f; //60FPS
 
     public static boolean home;
+    public static GameObject.GameObjectType finish=null;
     public final Bitmap frameBuffer;
     private final Canvas canvas;
     private final World world;
@@ -67,66 +68,69 @@ public final class GameWorld {
     public void updateWorld() {
         String Level = casualLevel();
         InputObject.AccelerometerObject accelerometer = gameInput.getAccelerometerEvent();
-        if (home) {
+        if (finish != null) {
+            toBeRendered = gameObFactory.buildFinish(finish);
+            finish = null;
+            for (int i = 0; i < level.size(); i++)
+                level.get(i).recycle();
+            level=toBeRendered;
+
+        } else if (home) {
             if (level != null) {
                 for (int i = 0; i < level.size(); i++)
                     level.get(i).recycle();
-                level = null;
+                level=null;
             }
             if (mainMenu == null) {
                 mainMenu = gameObFactory.buildMenu();
                 toBeRendered = mainMenu;
-            }
+                }
         } else {
             if (mainMenu != null) {
                 for (int i = 0; i < mainMenu.size(); i++)
                     mainMenu.get(i).recycle();
-                mainMenu = null;
+                    mainMenu = null;
+                }
+                if (level == null) {
+                    level = gameObFactory.buildLevel(Level);
+                    toBeRendered = level;
+                } else
+                    gameObFactory.buildSpawner(toBeRendered);
+
+                world.setGravity(accelerometer.y, accelerometer.x);
+                world.step(TIMESTEP, VELOCITYITERATION, POSITIONITERATION, PARTICLEITERATION);
             }
-            if (level == null) {
-                level = gameObFactory.buildLevel(Level);
-                toBeRendered=level;
+
+            //Parse all touch events
+            SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
+            for (int i = 0; i < touches.size(); i++) {
+                InputObject.TouchObject touch = touches.get(i);
+                if (touch != null) {
+                    for (int j = 0; j < toBeRendered.size(); j++) {
+                        ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                        if (controllableComponent != null)
+                            controllableComponent.notifyTouch(touch);
+                    }
+                }
+                touch.recycle();
             }
-            else {
-                gameObFactory.buildSpawner(toBeRendered,casualLevel());
-            }
 
-
-
-            world.setGravity(accelerometer.y,accelerometer.x);
-            world.step(TIMESTEP,VELOCITYITERATION,POSITIONITERATION,PARTICLEITERATION);
-        }
-
-        //Parse all touch events
-        SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
-        for (int i = 0; i < touches.size(); i++) {
-            InputObject.TouchObject touch = touches.get(i);
-            if (touch != null) {
+            //Parse last accelerometer event
+            if (accelerometer != null) {
                 for (int j = 0; j < toBeRendered.size(); j++) {
                     ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
                     if (controllableComponent != null)
-                        controllableComponent.notifyTouch(touch);
+                        controllableComponent.notifyAccelerometer(accelerometer);
                 }
             }
-            touch.recycle();
-        }
-
-        //Parse last accelerometer event
-        if (accelerometer != null) {
             for (int j = 0; j < toBeRendered.size(); j++) {
-                ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
-                if (controllableComponent != null)
-                    controllableComponent.notifyAccelerometer(accelerometer);
+                PhysicComponent physicComponent = (PhysicComponent) toBeRendered.get(j).getComponent(Component.ComponentType.PHYSIC);
+                if (physicComponent != null)
+                    physicComponent.updatePosition();
             }
-        }
-        for (int j = 0; j < toBeRendered.size(); j++) {
-            PhysicComponent physicComponent=(PhysicComponent)toBeRendered.get(j).getComponent(Component.ComponentType.PHYSIC);
-            if (physicComponent!=null)
-                physicComponent.updatePosition();
-        }
 
-        gameAudio.checkAudio();
-    }
+            gameAudio.checkAudio();
+        }
 
     public void renderWorld() {
         canvas.drawARGB(255, 0, 0, 0);

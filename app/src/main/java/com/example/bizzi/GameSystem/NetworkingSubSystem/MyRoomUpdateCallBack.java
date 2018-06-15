@@ -9,6 +9,8 @@ import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback;
 
+import java.util.List;
+
 final class MyRoomUpdateCallBack extends RoomUpdateCallback {
     private final GameNetworking gameNetworking;
 
@@ -27,6 +29,7 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
 
         @Override
         public void onJoinedRoom(int i, @Nullable Room room) {
+        gameNetworking.room=room;
             if (i!= GamesCallbackStatusCodes.OK)
                 Log.d("Debug","Issue with Online Room");
 
@@ -37,7 +40,6 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             if (i!= GamesCallbackStatusCodes.OK)
                 Log.d("Debug","Issue with Online Room");
             gameNetworking.room=null;
-            gameNetworking.participants=null;
             GameWorld.home=true;
 
         }
@@ -47,7 +49,13 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             if (i!= GamesCallbackStatusCodes.OK)
                 Log.d("Debug","Issue with Online Room");
             try {
-                gameNetworking.participants=room.getParticipants();
+               List<String> partecipants= room.getParticipantIds();
+               String x;
+                for (int j = 0; j < partecipants.size(); j++) {
+                    x=partecipants.get(j);
+                    if (!x.equalsIgnoreCase(gameNetworking.myMessageId))
+                        gameNetworking.friendMessageId=x;
+                }
             }catch (NullPointerException e){
                 Log.d("Debug", "Ok status and No partecipants on RoomConnected\nThis sound really strange");
             }

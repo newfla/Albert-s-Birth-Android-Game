@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
 import com.example.bizzi.GameSystem.JLiquidFunUtility.WallJoint;
@@ -37,6 +38,8 @@ public final class GameObBuilder implements Builder {
     private Body Einstein;
     private JSONArray enemies;
 
+    private String level;
+
 
     public GameObBuilder(Context context, World world) {
         this.context = context;
@@ -60,8 +63,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.MENU;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = 1920 / 2;
-        drawable.y = 1080 / 2;
+        drawable.x = GameWorld.BUFFERWIDTH / 2;
+        drawable.y = GameWorld.BUFFERHEIGHT / 2;
         gameOB.components.put(drawable.getType(), drawable);
 
         array.append(array.size(), gameOB);
@@ -71,8 +74,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.MENUTITLE;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = 1920 / 2;
-        drawable.y = 1080 / 2 + 40;
+        drawable.x = GameWorld.BUFFERWIDTH / 2;
+        drawable.y = GameWorld.BUFFERHEIGHT / 2 + 40;
         ;
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
@@ -83,7 +86,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.STARTBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = 1920 / 2;
+        drawable.x = GameWorld.BUFFERWIDTH / 2;
         drawable.y = (int) previousY + 100;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -97,7 +100,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.QUITBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = 1920 / 2;
+        drawable.x = GameWorld.BUFFERWIDTH / 2;
         drawable.y = (int) previousY + bitmap.getHeight() + 50;
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -109,8 +112,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
-        animated.x = (int) 7.5f * 1920 / 8;
-        animated.y = 1080 / 10;
+        animated.x = (int) 7.5f * GameWorld.BUFFERWIDTH / 8;
+        animated.y = GameWorld.BUFFERHEIGHT / 10;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -118,11 +121,10 @@ public final class GameObBuilder implements Builder {
 
         return array;
     }
-    //TODO factory object methods
 
     public SparseArray<GameObject> buildLevel(String level) {
         SparseArray<GameObject> array = new SparseArray<>();
-
+        this.level=level;
         try {
             //Obtain level description
             JSONObject description = new JSONObject(JsonUtility.readJsonFromFile(context.getAssets(), LEVELS + level));
@@ -226,9 +228,9 @@ public final class GameObBuilder implements Builder {
         WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);
+        array.append(array.size(), go);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
-        array.append(array.size(), go);
     }
 
 
@@ -600,8 +602,8 @@ public final class GameObBuilder implements Builder {
         go.type = GameObject.GameObjectType.BACKGROUND;
         DrawableComponent drawableComponent;
         drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
-        drawableComponent.x = 1920 / 2;
-        drawableComponent.y = 1080 / 2;
+        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
+        drawableComponent.y = GameWorld.BUFFERHEIGHT / 2;
         go.setComponent(drawableComponent);
         return go;
     }
@@ -701,7 +703,7 @@ public final class GameObBuilder implements Builder {
         array.append(array.size(), go);
     }
 
-    public void buildSpawner(SparseArray<GameObject> array, String Level) {
+    public void buildSpawner(SparseArray<GameObject> array) {
 
         try {
             for (int i = 0; i < enemies.length(); i++) {
@@ -725,7 +727,33 @@ public final class GameObBuilder implements Builder {
                 }
             }
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for level: " + Level);
+            Log.d("Debug", "Unable to create JsonOB for level: " + level);
         }
     }
+
+    public SparseArray<GameObject> buildFinish(GameObject.GameObjectType type){
+
+        SparseArray<GameObject> array=new SparseArray<>(2);
+
+        //Create lastBackgorund
+        GameObject gameOB = getGameOB();
+        gameOB.type = GameObject.GameObjectType.BACKGROUND;
+        DrawableComponent drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
+        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
+        drawableComponent.y = GameWorld.BUFFERHEIGHT / 2;
+        gameOB.setComponent(drawableComponent);
+        array.append(array.size(),gameOB);
+        //Create backHomeButton
+        gameOB = getGameOB();
+        gameOB.type = GameObject.GameObjectType.HOMEBUTTON;
+        drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
+        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
+        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+120;
+        gameOB.components.put(drawableComponent.getType(), drawableComponent);
+        ControllableComponent controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
+        gameOB.components.put(controllable.getType(), controllable);
+        array.append(array.size(),gameOB);
+        return array;
+    }
+
 }

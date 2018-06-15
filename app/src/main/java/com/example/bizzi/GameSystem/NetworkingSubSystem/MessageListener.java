@@ -7,7 +7,7 @@ import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 
 final class MessageListener implements OnRealTimeMessageReceivedListener {
 
-    private final  GameNetworking gameNetworking;
+    private final GameNetworking gameNetworking;
 
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {

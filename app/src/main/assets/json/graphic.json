@@ -62,7 +62,7 @@
     {
       "gameobject": "EINSTEIN",
       "type": "static",
-      "file": "Espermatozoon.png"
+      "file": "espermatozoon.png"
     },
 
 
@@ -74,7 +74,30 @@
       "animations": "2",
       "length": "1",
       "file": "sound_button.png"
-    }
+    },
 
+    {
+      "gameobject": "HOMEBUTTON",
+      "type": "static",
+      "file": "home_button.png"
+    },
+
+    {
+      "gameobject": "DEFEAT1",
+      "type": "static",
+      "file": "defeat1_background.png"
+    },
+
+    {
+      "gameobject": "DEFEAT2",
+      "type": "static",
+      "file": "defeat2_background.png"
+    },
+
+    {
+      "gameobject": "VICTORY",
+      "type": "static",
+      "file": "victory_background.png"
+    }
   ]
 }

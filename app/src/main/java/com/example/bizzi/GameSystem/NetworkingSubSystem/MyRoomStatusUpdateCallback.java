@@ -89,11 +89,9 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     private void updateRoom(Room room){
         if (room!=null) {
             gameNetworking.room=room;
-            gameNetworking.participants = room.getParticipants();
         }
         else{
             gameNetworking.room=null;
-            gameNetworking.participants=null;
             GameWorld.home=true;
         }
     }

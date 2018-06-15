@@ -2,7 +2,6 @@ package com.example.bizzi.GameSystem.JLiquidFunUtility;
 
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.fpl.liquidfun.Body;
@@ -40,17 +39,17 @@ public final class MyContactListener extends ContactListener {
                         //NESSUN FIGLIO;
                         //
                         Log.d("Debug", "Nessun figlio");
-                        GameWorld.finish= GameObject.GameObjectType.DEFEAT2
+                        GameWorld.finish= GameObject.GameObjectType.DEFEAT2;
                     case SPERMATOZOON:
                         //Hitler
                         //
-                        GameWorld.finish= GameObject.GameObjectType.DEFEAT1
+                        GameWorld.finish= GameObject.GameObjectType.DEFEAT1;
                         Log.d("Debug", "Hitler");
                     case EINSTEIN:
                         //Vittoria
                         //
                         Log.d("Debug", "Mexicooo");
-                        GameWorld.finish= GameObject.GameObjectType.VICTORY
+                        GameWorld.finish= GameObject.GameObjectType.VICTORY;
 
                 }
             }

@@ -13,7 +13,9 @@ import java.util.Objects;
 
 public final class GameObject implements Recyclable {
 
-    public enum GameObjectType{MENU, EINSTEIN, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON, ENCLOSURE, SPERMATOZOON,BACKGROUND, DOOR,PILL,WALL, EGGCELL}
+    public enum GameObjectType{MENU, EINSTEIN, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON,
+        ENCLOSURE, SPERMATOZOON, BACKGROUND, DOOR, PILL, WALL,
+        EGGCELL, VICTORY, DEFEAT1, DEFEAT2, HOMEBUTTON}
 
     private static int count=0;
 
@@ -103,7 +105,7 @@ public final class GameObject implements Recyclable {
         else {
             x = animatedComponent.x;
             y=animatedComponent.y;
-            rotation[0]=5;
+            rotation[0]=4;
             rotation[1]=(byte)animatedComponent.animation;
             semiWidth=animatedComponent.semiWidth;
             semiHeight=animatedComponent.semiHeight;

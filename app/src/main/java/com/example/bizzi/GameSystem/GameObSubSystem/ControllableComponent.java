@@ -78,6 +78,14 @@ public abstract class ControllableComponent extends Component {
                             audio.play();
                         System.exit(0);
                         break;
+
+                    case HOMEBUTTON:
+                        GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
+                        audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
+                        if (audio != null);
+                            audio.play();
+                        GameWorld.home=true;
+                        break;
                 }
             }
         }

@@ -54,7 +54,7 @@ public final  class GameBuilder implements Builder {
 
         //init multiplayer
         NetworkingBuilder networkingBuilder=new NetworkingBuilder(context);
-       // networkingBuilder.build();
+        networkingBuilder.build();
 
         gameWorld=new GameWorld(world,audioFactory.gameAudio,inputFactory.gameInput,gameObFactory,networkingBuilder.gameNetworking);
 
