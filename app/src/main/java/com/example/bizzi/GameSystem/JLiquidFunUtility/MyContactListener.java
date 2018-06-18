@@ -37,16 +37,9 @@ public final class MyContactListener extends ContactListener {
                     GameAudio.AUDIOLIBRARY.get(b.getType()).play();
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
-                    if (a.getType() == GameObject.GameObjectType.EGGCELL)
-                        GameAudio.AUDIOLIBRARY.get(a.getType()).play();
-                    else
-                        GameAudio.AUDIOLIBRARY.get(b.getType()).play();
+                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL).play();
 
-                    //Stop current sound
-                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.SPERMATOZOON).stop();
-                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EINSTEIN).stop();
-
-                    //Stop future audio
+                    //Stop future contacts
                     finish = true;
 
                     //Choose a endGameScreen

@@ -32,7 +32,7 @@ public final class GameObBuilder implements Builder {
     private static final int MAXPOOLSIZE = 300;
     private static final String LEVELS = "levels/";
     private final Context context;
-    private final World world;
+    private World world;
     private static final SparseArray<Long> TimeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
     private Body einstein;
@@ -41,11 +41,13 @@ public final class GameObBuilder implements Builder {
     private String level;
 
 
-    public GameObBuilder(Context context, World world) {
+    public GameObBuilder(Context context) {
         this.context = context;
-        this.world = world;
     }
 
+    public void setWorld(World world) {
+        this.world = world;
+    }
 
     @Override
     public void build() {
@@ -749,7 +751,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.HOMEBUTTON;
         drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
         drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+120;
+        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+350;
         gameOB.components.put(drawableComponent.getType(), drawableComponent);
         ControllableComponent controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
