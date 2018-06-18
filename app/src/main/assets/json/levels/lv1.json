@@ -47,19 +47,20 @@
       "tDensity" : "0.1f" ,
       "cFriction" : "0.3f" ,
       "cRestitution" : "0.3f" ,
-      "cDensity" : "0.4f",
+      "cDensity" : "0.5f",
       "numberS" : "1",
-      "rate"    : "40"
+      "rate"    : "20"
     },
     {
       "type":"pill",
+      "number":"3",
       "width": "1.5f",
       "height": "1.5f",
       "friction" : "0.1f" ,
       "restitution" : "0.3f" ,
       "density" : "0.1f",
       "numberS" : "1",
-      "rate"    : "40"
+      "rate"    : "20"
     }
   ]
 }
