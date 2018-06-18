@@ -750,7 +750,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.HOMEBUTTON;
         drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
         drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+350;
+        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+400;
         gameOB.components.put(drawableComponent.getType(), drawableComponent);
         ControllableComponent controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
