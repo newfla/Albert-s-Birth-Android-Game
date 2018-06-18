@@ -177,7 +177,7 @@ public final class GameWorld {
             level = gameObFactory.buildLevel(casualLevel());
             toBeRendered = level;
             GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).play();
-        } else
+        } else if (MyContactListener.finish!=false)
             gameObFactory.buildSpawner(toBeRendered);
 
         world.setGravity(accelerometer.y, accelerometer.x);

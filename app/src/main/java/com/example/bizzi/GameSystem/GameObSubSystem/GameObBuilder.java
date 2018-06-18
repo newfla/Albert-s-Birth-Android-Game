@@ -706,7 +706,6 @@ public final class GameObBuilder implements Builder {
     }
 
     public void buildSpawner(SparseArray<GameObject> array) {
-
         try {
             for (int i = 0; i < enemies.length(); i++) {
                 Long last = this.TimeStamps.get(i);
