@@ -704,33 +704,34 @@ public final class GameObBuilder implements Builder {
     }
 
     public void buildSpawner(SparseArray<GameObject> array) {
-
-        try {
-            for (int i = 0; i < enemies.length(); i++) {
-                Long last = this.TimeStamps.get(i);
-                Long now = System.currentTimeMillis() / 1000;
-                switch (enemies.getJSONObject(i).getString("type")) {
-                    case "spermatozoon":
-                        if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
-                            for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
-                                array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
-                            TimeStamps.append(i, now);
-                        }
-                        break;
-                    case "pill":
-                        if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
-                            for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
-                                array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)));
-                            TimeStamps.append(i, now);
-                        }
-                        break;
+        //in this way there are not spawn during the finish menu
+        if (array.get(0).getType()== GameObject.GameObjectType.BACKGROUND) {
+            try {
+                for (int i = 0; i < enemies.length(); i++) {
+                    Long last = this.TimeStamps.get(i);
+                    Long now = System.currentTimeMillis() / 1000;
+                    switch (enemies.getJSONObject(i).getString("type")) {
+                        case "spermatozoon":
+                            if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
+                                for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
+                                    array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
+                                TimeStamps.append(i, now);
+                            }
+                            break;
+                        case "pill":
+                            if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
+                                for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
+                                    array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)));
+                                TimeStamps.append(i, now);
+                            }
+                            break;
+                    }
                 }
+            } catch (JSONException e) {
+                Log.d("Debug", "Unable to create JsonOB for level: " + level);
             }
-        } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for level: " + level);
         }
     }
-
     public SparseArray<GameObject> buildFinish(GameObject.GameObjectType type){
 
         SparseArray<GameObject> array=new SparseArray<>(2);
@@ -749,7 +750,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.HOMEBUTTON;
         drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
         drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+120;
+        drawableComponent.y = 7*GameWorld.BUFFERHEIGHT/8;
         gameOB.components.put(drawableComponent.getType(), drawableComponent);
         ControllableComponent controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
