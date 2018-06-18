@@ -226,7 +226,6 @@ public final class GameObBuilder implements Builder {
         box.delete();
         GameObject sw = buildSudWall(cx, cy, wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
-        //TODO verificare con il play testing se cx e cy sono corretti (sicuro no)
         WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);

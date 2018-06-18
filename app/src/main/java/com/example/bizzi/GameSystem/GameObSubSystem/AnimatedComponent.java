@@ -53,7 +53,6 @@ public final class AnimatedComponent extends Component {
 
         if (animation>animations)
             animation=1;
-        //TODO check rotation
         buildSprite();
         buildBorder();
         canvas.drawBitmap(sheet,RECTSHEET,RECTCANVAS,null);

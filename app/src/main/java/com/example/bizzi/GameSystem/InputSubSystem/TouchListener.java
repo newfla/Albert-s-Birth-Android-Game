@@ -44,13 +44,9 @@ final class TouchListener implements View.OnTouchListener {
             }
             touchObject.x = event.getX() * scaleX;
             touchObject.y = event.getY() * scaleY;
-            //TODO manipulate
-            String old, newer;
-            old = String.valueOf(gameInput.touchBuffer.size());
             synchronized (gameInput) {
                 gameInput.touchBuffer.append(gameInput.touchBuffer.size(), touchObject);
             }
-            newer = String.valueOf(gameInput.touchBuffer.size());
             return true;
         }
 }
