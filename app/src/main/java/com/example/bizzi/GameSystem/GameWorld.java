@@ -146,8 +146,6 @@ public final class GameWorld {
         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
         GameAudio.AUDIOLIBRARY.get(finish).play();
         finish = null;
-
-        //TODO ShutDownSpawner
     }
 
     private void menuScreen(){
@@ -177,7 +175,7 @@ public final class GameWorld {
             level = gameObFactory.buildLevel(casualLevel());
             toBeRendered = level;
             GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).play();
-        } else if (MyContactListener.finish!=true)
+        } else if (!MyContactListener.finish)
             gameObFactory.buildSpawner(toBeRendered);
 
         world.setGravity(accelerometer.y, accelerometer.x);
