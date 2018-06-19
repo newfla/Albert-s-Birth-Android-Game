@@ -144,10 +144,6 @@ public final class GameObBuilder implements Builder {
             int tot = slidingWalls.getInt("number");
             for (int i = 0; i < tot; i++)
                 buildSlidingWall(slidingWalls, i + 1, tot, array);
-            //Building Einstein's spermatozoon
-
-            JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
-            array.append(array.size(), buildSpermatozoon(spermatozoon));
 
 
             //Building Egg cell
@@ -171,6 +167,13 @@ public final class GameObBuilder implements Builder {
                         break;
                 }
             }
+
+            //Building Einstein's spermatozoon
+
+            JSONObject spermatozoon = description.getJSONArray("spermatozoon").getJSONObject(0);
+            array.append(array.size(), buildSpermatozoon(spermatozoon));
+
+
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for level: " + level);
             return null;
@@ -326,13 +329,16 @@ public final class GameObBuilder implements Builder {
 
 
         bdef.setType(BodyType.dynamicBody);
+        Random rand = new Random();
+        //if Einstein == NULL=> Build level call  buildSpermatozoon
+        // else  buildSpawner call it
 
-
-        if(einstein!=null)
-            bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+        if(einstein!=null) {
+            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+        }
         else {
-            bdef.setPosition(0,0);
-            Log.d("Debug", "Non ho trovato la posizione di Einstein");
+            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2) + PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
         }
 
         Body body = world.createBody(bdef);
@@ -558,8 +564,15 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
-        if(einstein!=null)
-            bdef.setPosition(einstein.getPositionX(), 2*PhysicComponent.PHYSICALHEIGHT/5);
+
+        Random rand = new Random();
+        if(einstein!=null) {
+            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+        }
+        else {
+            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2) + PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+        }
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
@@ -708,7 +721,7 @@ public final class GameObBuilder implements Builder {
     }
 
     public void buildSpawner(SparseArray<GameObject> array) {
-
+        if (array.size() < 35) {
             try {
                 for (int i = 0; i < enemies.length(); i++) {
                     Long last = this.TimeStamps.get(i);
@@ -734,7 +747,7 @@ public final class GameObBuilder implements Builder {
                 Log.d("Debug", "Unable to create JsonOB for level: " + level);
             }
         }
-
+    }
     public SparseArray<GameObject> buildFinish(GameObject.GameObjectType type){
 
         SparseArray<GameObject> array=new SparseArray<>(2);

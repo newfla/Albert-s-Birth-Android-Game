@@ -21,7 +21,7 @@
       "height": "3",
       "tFriction" : "0.3f" ,
       "tRestitution" : "0.4f" ,
-      "tDensity" : "0.1f" ,
+      "tDensity" : "1f" ,
       "cFriction" : "0.3f" ,
       "cRestitution" : "0.3f" ,
       "cDensity" : "0.4f"
@@ -44,7 +44,7 @@
       "height": "1.5f",
       "tFriction" : "0.3f" ,
       "tRestitution" : "0.4f" ,
-      "tDensity" : "0.1f" ,
+      "tDensity" : "1f" ,
       "cFriction" : "0.3f" ,
       "cRestitution" : "0.3f" ,
       "cDensity" : "0.5f",
