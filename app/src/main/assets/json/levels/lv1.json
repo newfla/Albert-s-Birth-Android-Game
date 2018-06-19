@@ -10,8 +10,8 @@
     {
       "width": "1.8f",
       "height": "1.2f",
-      "friction" : "0.1f" ,
-      "restitution" : "0.3f" ,
+      "friction" : "20f" ,
+      "restitution" : "0.5f" ,
       "density" : "0.4f"
     }
   ],
@@ -19,11 +19,11 @@
     {
      "width": "3",
       "height": "3",
-      "tFriction" : "0.3f" ,
-      "tRestitution" : "0.4f" ,
+      "tFriction" : "0.1f" ,
+      "tRestitution" : "0.1f" ,
       "tDensity" : "1f" ,
-      "cFriction" : "0.3f" ,
-      "cRestitution" : "0.3f" ,
+      "cFriction" : "0.1f" ,
+      "cRestitution" : "0.1f" ,
       "cDensity" : "0.4f"
     }
   ],
@@ -42,11 +42,11 @@
       "number":"10",
       "width": "1.5f",
       "height": "1.5f",
-      "tFriction" : "0.3f" ,
-      "tRestitution" : "0.4f" ,
+      "tFriction" : "2f" ,
+      "tRestitution" : "0.5f" ,
       "tDensity" : "1f" ,
-      "cFriction" : "0.3f" ,
-      "cRestitution" : "0.3f" ,
+      "cFriction" : "2f" ,
+      "cRestitution" : "0.5f" ,
       "cDensity" : "0.5f",
       "numberS" : "1",
       "rate"    : "20"
@@ -56,8 +56,8 @@
       "number":"3",
       "width": "1.5f",
       "height": "1.5f",
-      "friction" : "0.1f" ,
-      "restitution" : "0.3f" ,
+      "friction" : "2f" ,
+      "restitution" : "0.4f" ,
       "density" : "0.1f",
       "numberS" : "1",
       "rate"    : "20"

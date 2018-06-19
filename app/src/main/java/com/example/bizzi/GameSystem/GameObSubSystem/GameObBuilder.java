@@ -334,11 +334,11 @@ public final class GameObBuilder implements Builder {
         // else  buildSpawner call it
 
         if(einstein!=null) {
-            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS)+PhysicComponent.YMIN+THICKNESS);
             //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
         }
         else {
-            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2) + PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
         }
 
         Body body = world.createBody(bdef);
@@ -376,6 +376,9 @@ public final class GameObBuilder implements Builder {
         body.createFixture(fixtesta);
         body.createFixture(fixturedef);
         body.createFixture(fixtesta2);
+
+        // This velocity let Einstein to move faster
+        body.setLinearDamping(0.7f);
 
         //Clean up
         fixtesta.delete();
@@ -510,9 +513,7 @@ public final class GameObBuilder implements Builder {
         body.createFixture(fixtesta);
         body.createFixture(fixturedef);
         body.createFixture(fixtesta2);
-
         einstein=body;
-
         //Clean up
         fixtesta.delete();
         fixturedef.delete();
@@ -567,11 +568,11 @@ public final class GameObBuilder implements Builder {
 
         Random rand = new Random();
         if(einstein!=null) {
-            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
-            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
         }
         else {
-            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2) + PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.YMAX-(int)THICKNESS)+PhysicComponent.YMIN);
+            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
+
         }
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
@@ -599,6 +600,10 @@ public final class GameObBuilder implements Builder {
         body.createFixture(fixturedef);
         body.createFixture(fixdx);
         body.createFixture(fixsx);
+
+        // This velocity let Einstein to move faster
+        body.setLinearDamping(0.7f);
+
 
         // clean up native objects
         fixturedef.delete();
