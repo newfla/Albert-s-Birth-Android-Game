@@ -128,6 +128,7 @@ public final class GameObBuilder implements Builder {
     }
 
     public SparseArray<GameObject> buildLevel(String level) {
+        einstein=null;
         SparseArray<GameObject> array = new SparseArray<>();
         this.level=level;
         try {
