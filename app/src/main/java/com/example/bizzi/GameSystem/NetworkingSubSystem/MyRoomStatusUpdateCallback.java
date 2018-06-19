@@ -63,7 +63,7 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     public void onDisconnectedFromRoom(@Nullable Room room) {
         updateRoom(room);
         gameNetworking.myMessageId=null;
-        GameWorld.home=true;
+        GameWorld.gameStatus=0;
     }
 
     @Override
@@ -92,7 +92,7 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
         }
         else{
             gameNetworking.room=null;
-            GameWorld.home=true;
+            GameWorld.gameStatus=0;
         }
     }
 }

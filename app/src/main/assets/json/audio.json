@@ -37,8 +37,8 @@
     },
     {
       "gameobject": "EGGCELL",
-      "type": "sound",
-      "file":"eggcell_sound.mp3"
+      "type": "music",
+      "file":"eggcell_music.mp3"
     },
     {
       "gameobject": "EINSTEIN",

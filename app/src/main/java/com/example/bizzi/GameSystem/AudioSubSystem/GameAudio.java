@@ -60,7 +60,8 @@ public final class GameAudio {
             MediaPlayer mediaPlayer= new MediaPlayer();
             mediaPlayer.setDataSource(fd);
             mediaPlayer.prepare();
-            mediaPlayer.setLooping(true);
+            if (!filename.contains("eggcell"))
+                mediaPlayer.setLooping(true);
             AudioObject.MusicObject music=new AudioObject.MusicObject(mediaPlayer);
             musics.append(musics.size(),music);
             return music;
@@ -88,11 +89,11 @@ public final class GameAudio {
     }
 
     public void checkAudio(){
-        if (SILENCE==true && LASTSILENCE==false) {
+        if (SILENCE && !LASTSILENCE) {
             mute();
             LASTSILENCE=true;
         }
-        else if(SILENCE==false && LASTSILENCE==true){
+        else if(!SILENCE && LASTSILENCE){
             unMute();
             LASTSILENCE=false;
         }

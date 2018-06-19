@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem.JLiquidFunUtility;
 
 import android.util.Log;
 
+import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
@@ -13,7 +14,11 @@ import com.google.fpl.liquidfun.Fixture;
 
 public final class MyContactListener extends ContactListener {
 
-    public static boolean finish = false;
+    private GameWorld gameWorld;
+
+    public void setGameWorld(GameWorld gameWorld) {
+        this.gameWorld = gameWorld;
+    }
 
     public void beginContact(Contact contact) {
 
@@ -27,7 +32,7 @@ public final class MyContactListener extends ContactListener {
                     b = (GameObject) userdataB;
 
             //It's time to play sound effects
-            if (!finish) {
+            if (GameWorld.gameStatus==1) {
                 if ((a.getType() == GameObject.GameObjectType.EINSTEIN && b.getType() == GameObject.GameObjectType.WALL)
                         || a.getType() == GameObject.GameObjectType.SPERMATOZOON && b.getType() == GameObject.GameObjectType.WALL)
                     GameAudio.AUDIOLIBRARY.get(a.getType()).play();
@@ -37,10 +42,15 @@ public final class MyContactListener extends ContactListener {
                     GameAudio.AUDIOLIBRARY.get(b.getType()).play();
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
-                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL).play();
+
+                   //EndGame music should wait eggCell sound
+                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
+                    AudioObject.MusicObject music=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL);
+                    music.play();
+                    while (music.isPlaying()){}
 
                     //Stop future contacts
-                    finish = true;
+                    GameWorld.gameStatus=2;
 
                     //Choose a endGameScreen
                     GameObject Pretender;
@@ -54,19 +64,19 @@ public final class MyContactListener extends ContactListener {
                             //NESSUN FIGLIO;
                             //
                             Log.d("Debug", "Nessun figlio");
-                            GameWorld.finish = GameObject.GameObjectType.DEFEAT2;
+                            gameWorld.endGameType = GameObject.GameObjectType.DEFEAT2;
                             break;
                         case SPERMATOZOON:
                             //Hitler
                             //
-                            GameWorld.finish = GameObject.GameObjectType.DEFEAT1;
+                            gameWorld.endGameType= GameObject.GameObjectType.DEFEAT1;
                             Log.d("Debug", "Hitler");
                             break;
                         case EINSTEIN:
                             //Vittoria
                             //
                             Log.d("Debug", "Mexicooo");
-                            GameWorld.finish = GameObject.GameObjectType.VICTORY;
+                            gameWorld.endGameType = GameObject.GameObjectType.VICTORY;
                             break;
 
                     }

@@ -29,8 +29,11 @@ public final class GameWorld {
             PARTICLEITERATION=3;
     private static final float TIMESTEP = 1 / 50f; //60FPS
 
-    public static boolean home;
-    public static GameObject.GameObjectType finish=null;
+    //Game status
+    public static byte gameStatus; //0=home, 1=level, 2=endGame
+    public GameObject.GameObjectType endGameType=null;
+
+
     public final Bitmap frameBuffer;
     private final Canvas canvas;
 
@@ -65,17 +68,19 @@ public final class GameWorld {
         this.gameAudio = gameAudio;
         this.gameInput = gameInput;
         this.gameNetworking=gameNetworking;
-        home = true;
+        gameStatus = 0;
         frameBuffer = Bitmap.createBitmap(BUFFERWIDTH, BUFFERHEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(frameBuffer);
         myContactListener=contactListener;
+        myContactListener.setGameWorld(this);
     }
 
     public void updateWorld() {
         InputObject.AccelerometerObject accelerometer=gameInput.getAccelerometerEvent();
-        if (finish != null)
+        gameAudio.checkAudio();
+        if (gameStatus==2)
             endGameScreen();
-         else if (home)
+         else if (gameStatus==0)
             menuScreen();
          else
             levelScreen(accelerometer);
@@ -107,8 +112,6 @@ public final class GameWorld {
                 if (physicComponent != null)
                     physicComponent.updatePosition();
             }
-
-            gameAudio.checkAudio();
         }
 
     public void renderWorld() {
@@ -139,13 +142,13 @@ public final class GameWorld {
     }
 
     private void endGameScreen(){
-        toBeRendered = gameObFactory.buildFinish(finish);
-        for (int i = 0; i < level.size(); i++)
-            level.get(i).recycle();
-        level=toBeRendered;
-        GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
-        GameAudio.AUDIOLIBRARY.get(finish).play();
-        finish = null;
+        if (level.size()>2) {
+            toBeRendered = gameObFactory.buildFinish(endGameType);
+            for (int i = 0; i < level.size(); i++)
+                level.get(i).recycle();
+            level = toBeRendered;
+            GameAudio.AUDIOLIBRARY.get(endGameType).play();
+        }
     }
 
     private void menuScreen(){
@@ -171,12 +174,12 @@ public final class GameWorld {
             world=new World(XGRAVITY,YGRAVITY);
             world.setContactListener(myContactListener);
             gameObFactory.setWorld(world);
-            MyContactListener.finish=false;
+            gameStatus=1;
             level = gameObFactory.buildLevel(casualLevel());
             toBeRendered = level;
             GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).play();
-        } else if (!MyContactListener.finish)
-            gameObFactory.buildSpawner(toBeRendered);
+        }
+        gameObFactory.buildSpawner(toBeRendered);
 
         world.setGravity(accelerometer.y, accelerometer.x);
         world.step(TIMESTEP, VELOCITYITERATION, POSITIONITERATION, PARTICLEITERATION);

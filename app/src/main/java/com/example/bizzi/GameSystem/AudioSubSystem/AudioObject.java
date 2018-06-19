@@ -20,11 +20,14 @@ public interface AudioObject extends Recyclable {
         private final SoundPool soundPool;
         final int soundId;
         static float VOLUME=1;
-
+        private float volume;
         @Override
         public void play() {
             if (!GameAudio.SILENCE)
-                soundPool.play(soundId,VOLUME,VOLUME,0,0,1);
+                volume=VOLUME;
+            else
+                volume=0;
+            soundPool.play(soundId,volume,volume,0,0,1);
         }
 
         @Override
@@ -46,18 +49,21 @@ public interface AudioObject extends Recyclable {
     final class MusicObject implements AudioObject{
         final MediaPlayer player;
         static float VOLUME=0.6f;
+        private float volume;
         public MusicObject(MediaPlayer player){
             this.player=player;
         }
 
         @Override
         public void play() {
-            player.setVolume(VOLUME,VOLUME);
-            if (!GameAudio.SILENCE) {
+            if (!GameAudio.SILENCE)
+                volume=VOLUME;
+            else
+                volume=0;
+            player.setVolume(volume,volume);
                 if (player.isPlaying())
                     return;
                 player.start();
-            }
         }
 
         @Override
@@ -80,6 +86,10 @@ public interface AudioObject extends Recyclable {
             catch (IllegalStateException ex){
                 stop();
             }
+        }
+
+        public boolean isPlaying(){
+            return player.isPlaying();
         }
     }
 }

@@ -8,7 +8,6 @@ import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
-import com.example.bizzi.GameSystem.JLiquidFunUtility.MyContactListener;
 
 public abstract class ControllableComponent extends Component {
 
@@ -61,7 +60,7 @@ public abstract class ControllableComponent extends Component {
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                         if (audio != null)
                             audio.play();
-                        GameWorld.home=false;
+                        GameWorld.gameStatus=1;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
                         break;
 
@@ -82,14 +81,12 @@ public abstract class ControllableComponent extends Component {
 
                     case HOMEBUTTON:
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
-                        if (audio != null);
-                            audio.play();
-                        GameWorld.home=true;
+                        audio.play();
+                        GameWorld.gameStatus=0;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.DEFEAT1).stop();
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.DEFEAT2).stop();
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.VICTORY).stop();
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
-                        MyContactListener.finish=false;
                         break;
                 }
             }

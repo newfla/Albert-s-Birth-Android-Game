@@ -40,7 +40,7 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             if (i!= GamesCallbackStatusCodes.OK)
                 Log.d("Debug","Issue with Online Room");
             gameNetworking.room=null;
-            GameWorld.home=true;
+            GameWorld.gameStatus=0;
 
         }
 

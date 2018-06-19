@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.Spritesheet;
@@ -116,6 +117,8 @@ public final class GameObBuilder implements Builder {
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
         animated.x = (int) 7.5f * GameWorld.BUFFERWIDTH / 8;
         animated.y = GameWorld.BUFFERHEIGHT / 10;
+        if (GameAudio.SILENCE)
+            animated.animation=2;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
