@@ -1,22 +1,31 @@
 package com.example.bizzi.AlbertBirthActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.GameBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.kaushikthedeveloper.doublebackpress.DoubleBackPress;
 import com.kaushikthedeveloper.doublebackpress.helper.DoubleBackPressAction;
 import com.kaushikthedeveloper.doublebackpress.setup.display.ToastDisplay;
 
 
 public final class MainActivity extends AppCompatActivity{
+
+    private static final int RC_SIGN_IN = 9001;
 
     private GameView gameView;
     private View.OnTouchListener touchListener;
@@ -42,7 +51,7 @@ public final class MainActivity extends AppCompatActivity{
         //Keep screen ON
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-
+        startActivityForResult(GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).getSignInIntent(),RC_SIGN_IN);
 
         //SetUp GameBuilder
         GameBuilder gameFactory=new GameBuilder(this);
@@ -114,4 +123,19 @@ public final class MainActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_SIGN_IN ) {
+
+            Task<GoogleSignInAccount> task =
+                    GoogleSignIn.getSignedInAccountFromIntent(data);
+
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+            } catch (ApiException apiException) {
+                String message = apiException.getMessage();
+                Log.d("Debug","Issue sign-in activity "+message);
+            }
+        }
+    }
 }

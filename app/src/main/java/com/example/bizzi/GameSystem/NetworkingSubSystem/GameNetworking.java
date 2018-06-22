@@ -2,32 +2,28 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObNetworking;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerNetworking;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.games.Games;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 public final class GameNetworking {
 
     final static int MINPLAYERS=2, MAXPLAYERS=2;
 
+    //Google Play Games variables
     GoogleSignInClient googleSignInClient;
-
-    private RealTimeMultiplayerClient client;
+    GoogleSignInAccount googleSignInAccount;
+    RealTimeMultiplayerClient realTimeMultiplayerClient;
+    String myPlayerId; //Play Games id different from idMessage
 
     RoomConfig roomConfig;
 
@@ -35,7 +31,7 @@ public final class GameNetworking {
 
     Room room;
 
-    String myPlayerId, myMessageId, friendMessageId;
+    String myMessageId, friendMessageId;
 
     private Boolean server;
     private boolean slidingWall=false;
@@ -77,28 +73,6 @@ public final class GameNetworking {
         }
     }
 
-    public void autoMatch(){
-        GoogleSignInAccount account=null;
-        while (account==null)
-            account=GoogleSignIn.getLastSignedInAccount(context);
-
-        //Room Creation
-        Games.getRealTimeMultiplayerClient(context, account).create(roomConfig);
-
-        Games.getPlayersClient(context,account)
-                .getCurrentPlayerId().addOnSuccessListener(new OnSuccessListener<String>() {
-            @Override
-            public void onSuccess(String s) {
-                myPlayerId=s;
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("Debug","Issue  getting myPlayerId");
-                    }
-                });
-    }
 
     private byte[] serializeAccelerometerSlidingWall(InputObject.AccelerometerObject accelerometer){
        byte[] array=accelerometerNetworking.serializeAccelerometer(accelerometer);
