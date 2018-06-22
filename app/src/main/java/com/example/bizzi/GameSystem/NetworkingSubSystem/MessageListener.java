@@ -12,7 +12,7 @@ final class MessageListener implements OnRealTimeMessageReceivedListener {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
             synchronized (gameNetworking) {
-                gameNetworking.messagesBuffer.append(gameNetworking.messagesBuffer.size(), realTimeMessage);
+               gameNetworking.last=realTimeMessage;
             }
         }
 

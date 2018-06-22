@@ -3,6 +3,8 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObNetworking;
+import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerNetworking;
 import com.example.bizzi.GameSystem.Utility.Builder;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -14,7 +16,7 @@ final public class NetworkingBuilder implements Builder {
     private final Context context;
 
     public NetworkingBuilder(Context context){
-        gameNetworking=new GameNetworking(context);
+        gameNetworking=new GameNetworking(context,new AccelerometerNetworking(), new GameObNetworking());
         this.context=context;
     }
 

@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.GameObSubSystem.GameObNetworking;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
+import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerNetworking;
+import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,22 +37,43 @@ public final class GameNetworking {
 
     String myPlayerId, myMessageId, friendMessageId;
 
-    SparseArray<RealTimeMessage> messagesBuffer;
+    private Boolean server;
+    private boolean slidingWall=false;
 
-    public boolean server=false;
+    RealTimeMessage last;
 
-    private RealTimeMessage last=null;
+    private byte[] lastMessage;
+
+    SparseArray<GameObject> list;
+    InputObject.AccelerometerObject accelerometer;
+
+    //List of NetworkingUtility
+    private final AccelerometerNetworking accelerometerNetworking;
+    private final GameObNetworking gameObNetworking;
 
 
-   public GameNetworking(Context context){
+   public GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking){
         this.context=context;
-        messagesBuffer=new SparseArray<>();
+        this.accelerometerNetworking=accelerometerNetworking;
+        this.gameObNetworking=gameObNetworking;
     }
 
-    public void consumeMessages(){
-        synchronized (this){
-            last=messagesBuffer.get(0);
-            messagesBuffer.remove(0);
+    public void consumeMessage(){
+        synchronized (this) {
+            lastMessage = last.getMessageData();
+            switch (lastMessage[0]) {
+                case 3:
+                    gameObNetworking.deserealizeGameObDimensions(lastMessage);
+                    break;
+
+                case 4:
+                    gameObNetworking.deserializeGameOb(lastMessage,list);
+                    break;
+
+                default:
+                    accelerometer=accelerometerNetworking.deserializeAccelerometer(lastMessage);
+                    break;
+            }
         }
     }
 
@@ -76,30 +100,41 @@ public final class GameNetworking {
                 });
     }
 
-    public void sendFirstMessageToCLient(SparseArray<GameObject> array){
-       byte[]arrayByte=new byte[20*array.size()];
-        for (int i = 0; i < array.size(); i++) {
-            GameObject go=array.get(i);
-            byte[] temp=GameObject.serializeGameObject(go,true);
-            for (int j = 0; j < temp.length; j++)
-                arrayByte[i*20]=temp[j];
-            client.sendUnreliableMessage(arrayByte,room.getRoomId(),friendMessageId);
-        }
+    private byte[] serializeAccelerometerSlidingWall(InputObject.AccelerometerObject accelerometer){
+       byte[] array=accelerometerNetworking.serializeAccelerometer(accelerometer);
+       array[0]=1;
+       return array;
     }
 
-    public void receiveFirstMessageFromServer(byte[]array){
-       int j=(array.length+1)/20;
-        for (int i = 0; i < j; i++) {
-            GameObject.deSerializeGameObject(array,i,20);
-        }
+    private byte[] serializeAccelerometerWorld(InputObject.AccelerometerObject accelerometer){
+       byte[] array=accelerometerNetworking.serializeAccelerometer(accelerometer);
+       array[0]=2;
+       return array;
     }
 
-    public void initCommunication(SparseArray<GameObject> array){
-       if (server)
-           sendFirstMessageToCLient(array);
+    void startOnline(SparseArray<GameObject>list){
+       if (myPlayerId.compareTo(friendMessageId)<0) {
+           server = true;
+           gameObNetworking.serializeGameObDimensions(list);
+       }
        else {
-           consumeMessages();
-           receiveFirstMessageFromServer(last.getMessageData());
+           server = false;
+           slidingWall=true;
        }
     }
+
+    public void send(InputObject.AccelerometerObject accelerometerObject, SparseArray<GameObject> list){
+       byte[] array;
+       if (server){
+           array=gameObNetworking.serializeGameObCenter(list);
+       }
+       else {
+           if (slidingWall)
+               array=serializeAccelerometerSlidingWall(accelerometerObject);
+           else
+               array=serializeAccelerometerWorld(accelerometerObject);
+       }
+        //TODO sendMessage
+    }
+
 }
