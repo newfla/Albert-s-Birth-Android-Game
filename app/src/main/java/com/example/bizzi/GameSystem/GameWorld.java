@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.support.v4.util.ArraySet;
 import android.util.SparseArray;
 
+import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.AnimatedComponent;
 import com.example.bizzi.GameSystem.GameObSubSystem.Component;
@@ -30,9 +31,8 @@ public final class GameWorld {
     private static final float TIMESTEP = 1 / 50f; //60FPS
 
     //Game status
-    public static byte gameStatus; //0=home, 1=level, 2=endGame
+    public static byte gameStatus; //0=home, 1=level, 2=endGame, 3=loadingScreen, 4=launchWaitingRoom, 5=inWaitingRoom
     public GameObject.GameObjectType endGameType=null;
-
 
     public final Bitmap frameBuffer;
     private final Canvas canvas;
@@ -48,6 +48,7 @@ public final class GameWorld {
 
     //Audio SubSystem ref
     private final GameAudio gameAudio;
+    private final AudioObject.MusicObject menuMusic;
 
     //Input SubSystem ref
     private final GameInput gameInput;
@@ -73,18 +74,29 @@ public final class GameWorld {
         canvas = new Canvas(frameBuffer);
         myContactListener=contactListener;
         myContactListener.setGameWorld(this);
+        menuMusic=(AudioObject.MusicObject)GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU);
     }
 
     public void updateWorld() {
         InputObject.AccelerometerObject accelerometer=gameInput.getAccelerometerEvent();
         gameAudio.checkAudio();
-        if (gameStatus==2)
-            endGameScreen();
-         else if (gameStatus==0)
-            menuScreen();
-         else
-            levelScreen(accelerometer);
-
+        switch (gameStatus){
+            case 0:
+                menuScreen();
+                break;
+            case 1:
+                levelScreen(accelerometer);
+                break;
+            case 2:
+                endGameScreen();
+                break;
+            case 3:
+                waitScreen();
+                break;
+            case 4:
+                gameNetworking.quickGame();
+                break;
+        }
             //Parse all touch events
             SparseArray<InputObject.TouchObject> touches = gameInput.getTouchEvents();
             for (int i = 0; i < touches.size(); i++) {
@@ -115,20 +127,22 @@ public final class GameWorld {
         }
 
     public void renderWorld() {
-        canvas.drawARGB(255, 0, 0, 0);
+
         GameObject gameObject;
 
-        for (int i = 0; i < toBeRendered.size(); i++) {
-            gameObject = toBeRendered.get(i);
-            DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
-            if (drawableComponent != null)
-                drawableComponent.draw(canvas);
+        if (gameStatus<5) {
+            canvas.drawARGB(255, 0, 0, 0);
+            for (int i = 0; i < toBeRendered.size(); i++) {
+                gameObject = toBeRendered.get(i);
+                DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
+                if (drawableComponent != null)
+                    drawableComponent.draw(canvas);
 
-            AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
-            if (animatedComponent != null)
-                animatedComponent.draw(canvas);
+                AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
+                if (animatedComponent != null)
+                    animatedComponent.draw(canvas);
+            }
         }
-
 
     }
 
@@ -158,10 +172,35 @@ public final class GameWorld {
             world.delete();
             level=null;
         }
-        if (mainMenu == null) {
-            mainMenu = gameObFactory.buildMenu();
-            toBeRendered = mainMenu;
+        if(mainMenu!=null){
+            for (int i = 0; i <mainMenu.size() ; i++)
+                mainMenu.get(i).recycle();
+
         }
+
+        mainMenu = gameObFactory.buildMenu();
+        toBeRendered = mainMenu;
+        if (!menuMusic.isPlaying())
+            menuMusic.play();
+
+
+    }
+
+    private void waitScreen(){
+        if (level != null) {
+            for (int i = 0; i < level.size(); i++)
+                level.get(i).recycle();
+            world.delete();
+            level=null;
+        }
+        if (mainMenu != null) {
+            for (int i = 0; i < mainMenu.size(); i++)
+                mainMenu.get(i).recycle();
+            mainMenu=null;
+        }
+        mainMenu=gameObFactory.buildWait();
+        toBeRendered=mainMenu;
+        gameStatus=4;
     }
 
     private void levelScreen(InputObject.AccelerometerObject accelerometer){

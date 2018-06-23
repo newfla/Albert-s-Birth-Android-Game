@@ -12,7 +12,7 @@ public final class GameObject implements Recyclable {
 
     public enum GameObjectType{MENU, EINSTEIN, STARTBUTTON, QUITBUTTON, MENUTITLE,SOUNDBUTTON,
         ENCLOSURE, SPERMATOZOON, BACKGROUND, DOOR, PILL, WALL,
-        EGGCELL, VICTORY, DEFEAT1, DEFEAT2, HOMEBUTTON}
+        EGGCELL, VICTORY, DEFEAT1, DEFEAT2, HOMEBUTTON, WAIT}
 
     private static int count=0;
 

@@ -43,15 +43,15 @@ public abstract class ControllableComponent extends Component {
             DrawableComponent drawable = (DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
             AnimatedComponent animated = (AnimatedComponent) owner.getComponent(ComponentType.ANIMATED);
             if (drawable != null) {
-                rect.left = (int) drawable.x - (drawable.bitmap.getWidth() / 2);
-                rect.top = (int) drawable.y - (drawable.bitmap.getHeight() / 2);
-                rect.right = (int) drawable.x + (drawable.bitmap.getWidth() / 2);
-                rect.bottom = (int) drawable.y + (drawable.bitmap.getHeight() / 2);
+                rect.left = drawable.x - (drawable.semiWidth);
+                rect.top = drawable.y - (drawable.semiHeight);
+                rect.right = drawable.x + (drawable.semiWidth);
+                rect.bottom = drawable.y + (drawable.semiHeight);
             } else {
-                rect.left = (int) animated.x - (animated.frameWidth / 2);
-                rect.top = (int) animated.y - (animated.frameHeight / 2);
-                rect.right = (int) animated.x + (animated.frameWidth / 2);
-                rect.bottom = (int) animated.y + (animated.frameHeight / 2);
+                rect.left = animated.x - (animated.semiWidth);
+                rect.top =  animated.y - (animated.semiHeight);
+                rect.right =  animated.x + (animated.semiWidth);
+                rect.bottom = animated.y + (animated.semiHeight);
             }
             if (touch.type == MotionEvent.ACTION_UP && rect.contains((int) touch.x, (int) touch.y)) {
                 AudioObject audio;
@@ -60,7 +60,7 @@ public abstract class ControllableComponent extends Component {
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                         if (audio != null)
                             audio.play();
-                        GameWorld.gameStatus=1;
+                        GameWorld.gameStatus=3;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
                         break;
 

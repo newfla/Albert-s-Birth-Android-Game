@@ -15,8 +15,9 @@ final class TouchListener implements View.OnTouchListener {
     private final GameInput gameInput;
 
     TouchListener (GameInput gameInput, Point point){
-        scaleX= GameWorld.BUFFERWIDTH/point.x;
-        scaleY=GameWorld.BUFFERHEIGHT/point.y;
+
+        scaleX= ((float) GameWorld.BUFFERWIDTH)/point.x;
+        scaleY= ((float) GameWorld.BUFFERHEIGHT)/point.y;
         this.gameInput=gameInput;
     }
 

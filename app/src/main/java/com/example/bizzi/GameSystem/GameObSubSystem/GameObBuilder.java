@@ -127,6 +127,19 @@ public final class GameObBuilder implements Builder {
         return array;
     }
 
+    public SparseArray<GameObject> buildWait(){
+        SparseArray<GameObject> array = new SparseArray<>();
+        GameObject gameOB=getGameOB();
+        gameOB.type= GameObject.GameObjectType.WAIT;
+        Bitmap bitmap=GameGraphics.STATICSPRITE.get(GameObject.GameObjectType.WAIT);
+        DrawableComponent drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
+        drawable.x = GameWorld.BUFFERWIDTH / 2;
+        drawable.y = GameWorld.BUFFERHEIGHT / 2;
+        gameOB.components.put(drawable.getType(), drawable);
+        array.append(array.size(), gameOB);
+        return array;
+    }
+
     public SparseArray<GameObject> buildLevel(String level) {
         einstein=null;
         SparseArray<GameObject> array = new SparseArray<>();

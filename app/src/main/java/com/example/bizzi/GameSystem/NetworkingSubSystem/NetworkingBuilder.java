@@ -37,16 +37,16 @@ final public class NetworkingBuilder implements Builder {
            @Override
            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
                if (task.isSuccessful()) {
-                   Log.d("Debug", "signIn success");
+                   Log.d("Debug", " Networking-Builder signIn success");
                    onConnected(task.getResult());
                } else {
-                   Log.d("Debug", "signInfailure", task.getException());
-                   //onDisconnected();
+                   Log.d("Debug", "Networking-Builder signIn failure", task.getException());
+                   onDisconnected();
                }
            }
        });
 
-       Bundle autoMatchCriteria= RoomConfig.createAutoMatchCriteria(gameNetworking.MINPLAYERS,gameNetworking.MAXPLAYERS,0);
+       Bundle autoMatchCriteria= RoomConfig.createAutoMatchCriteria(GameNetworking.MINOPPONENTS,GameNetworking.MAXOPPONENTS,0);
        gameNetworking.roomConfig=RoomConfig.builder(new MyRoomUpdateCallBack(gameNetworking))
                .setOnMessageReceivedListener(new MessageListener(gameNetworking))
                .setRoomStatusUpdateCallback(new MyRoomStatusUpdateCallback(gameNetworking))
@@ -72,5 +72,10 @@ final public class NetworkingBuilder implements Builder {
                         Log.d("Debug", "There was a problem getting the player id!");
                     }
                 });
+    }
+
+    private void onDisconnected(){
+        Log.d("Debug","Disconnected");
+        gameNetworking.realTimeMultiplayerClient=null;
     }
 }

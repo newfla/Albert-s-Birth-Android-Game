@@ -48,10 +48,10 @@ public class DrawableComponent extends Component {
     }
     
     private void buildBorder(){
-        DEST.left = (int) (x-semiWidth);
-        DEST.top = (int) (y-semiHeight);
-        DEST.right = (int) (x + semiWidth) ;
-        DEST.bottom = (int) (y + semiHeight);
+        DEST.left = x-semiWidth;
+        DEST.top = y-semiHeight;
+        DEST.right = x + semiWidth;
+        DEST.bottom = y + semiHeight;
         
     }
 

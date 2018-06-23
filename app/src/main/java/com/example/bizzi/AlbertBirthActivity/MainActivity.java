@@ -1,5 +1,6 @@
 package com.example.bizzi.AlbertBirthActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -13,23 +14,32 @@ import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.GameBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
+import com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.tasks.Task;
 import com.kaushikthedeveloper.doublebackpress.DoubleBackPress;
 import com.kaushikthedeveloper.doublebackpress.helper.DoubleBackPressAction;
 import com.kaushikthedeveloper.doublebackpress.setup.display.ToastDisplay;
 
+import static com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking.RCSIGNIN;
+
 
 public final class MainActivity extends AppCompatActivity{
 
-    private static final int RC_SIGN_IN = 9001;
+
 
     private GameView gameView;
     private View.OnTouchListener touchListener;
     private SensorEventListener accelerometerListener;
+    private GameNetworking gameNetworking;
+
+    public void setGameNetworking(GameNetworking gameNetworking) {
+        this.gameNetworking = gameNetworking;
+    }
 
     private DoubleBackPress doubleBackPress=new DoubleBackPress()
             .withDoublePressDuration(3000)
@@ -51,7 +61,7 @@ public final class MainActivity extends AppCompatActivity{
         //Keep screen ON
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        startActivityForResult(GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).getSignInIntent(),RC_SIGN_IN);
+        startActivityForResult(GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).getSignInIntent(),RCSIGNIN);
 
         //SetUp GameBuilder
         GameBuilder gameFactory=new GameBuilder(this);
@@ -85,8 +95,8 @@ public final class MainActivity extends AppCompatActivity{
         super.onPause();
         //stop accelerometer listner
         ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).unregisterListener(accelerometerListener);
-        gameView.pause();
-
+        if (gameView!=null)
+            gameView.pause();
     }
 
     @Override
@@ -118,6 +128,7 @@ public final class MainActivity extends AppCompatActivity{
 
     public void registerAccelerometerListener(){
         SensorManager manager= (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        assert manager != null;
         Sensor sensor=manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         manager.registerListener(accelerometerListener,sensor,SensorManager.SENSOR_DELAY_GAME);
 
@@ -125,8 +136,7 @@ public final class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN ) {
-
+        if (requestCode == RCSIGNIN) {
             Task<GoogleSignInAccount> task =
                     GoogleSignIn.getSignedInAccountFromIntent(data);
 
@@ -134,8 +144,21 @@ public final class MainActivity extends AppCompatActivity{
                 GoogleSignInAccount account = task.getResult(ApiException.class);
             } catch (ApiException apiException) {
                 String message = apiException.getMessage();
-                Log.d("Debug","Issue sign-in activity "+message);
+                Log.d("Debug","Activity signIn failure ", apiException.fillInStackTrace());
             }
         }
+        else if (requestCode == GameNetworking.RCWAITINGROOM) {
+            //Is this Magic? basic-samples copy
+            if (resultCode == Activity.RESULT_OK) {
+
+                Log.d("Debug", "Starting game (waiting room returned OK).");
+            } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                // player indicated that they want to leave the room
+                gameNetworking.leaveRoom();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                gameNetworking.leaveRoom();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

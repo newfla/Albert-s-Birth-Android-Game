@@ -7,6 +7,12 @@
     },
 
     {
+      "gameobject": "WAIT",
+      "type": "static",
+      "file": "wait_background.png"
+    },
+
+    {
       "gameobject": "STARTBUTTON",
       "type": "static",
       "file": "start_button.png"
