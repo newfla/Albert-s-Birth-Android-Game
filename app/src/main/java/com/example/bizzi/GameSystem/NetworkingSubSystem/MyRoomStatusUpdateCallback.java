@@ -2,7 +2,6 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.android.gms.games.multiplayer.realtime.Room;
@@ -20,60 +19,58 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
 
     @Override
     public void onRoomConnecting(@Nullable Room room) {
-        updateRoom(room);
+        gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onRoomAutoMatching(@Nullable Room room) {
-       updateRoom(room);
+       gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onPeerInvitedToRoom(@Nullable Room room, @NonNull List<String> list) {
-        updateRoom(room);
+        gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onPeerDeclined(@Nullable Room room, @NonNull List<String> list) {
-       updateRoom(room);
+       gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onPeerJoined(@Nullable Room room, @NonNull List<String> list) {
-        updateRoom(room);
+        gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onPeerLeft(@Nullable Room room, @NonNull List<String> list) {
-       updateRoom(room);
+       gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onConnectedToRoom(@Nullable Room room) {
-        updateRoom(room);
-        try {
-            gameNetworking.myMessageId=room.getParticipantId(gameNetworking.myPlayerId);
-        }catch (NullPointerException e){
-            Log.d("Debug","Unable to get myMessageId");
-        }
-
+        gameNetworking.updateRoom(room);
+        if ( room!=null && gameNetworking.roomId==null)
+            gameNetworking.roomId=room.getRoomId();
+        gameNetworking.myMessageId=room.getParticipantId(gameNetworking.myPlayerId);
     }
 
     @Override
     public void onDisconnectedFromRoom(@Nullable Room room) {
-        updateRoom(room);
+        gameNetworking.room=null;
+        gameNetworking.roomId=null;
         gameNetworking.myMessageId=null;
         GameWorld.gameStatus=0;
     }
 
     @Override
     public void onPeersConnected(@Nullable Room room, @NonNull List<String> list) {
-        updateRoom(room);
+        gameNetworking.updateRoom(room);
     }
 
     @Override
     public void onPeersDisconnected(@Nullable Room room, @NonNull List<String> list) {
-        updateRoom(room);
+        gameNetworking.updateRoom(room);
     }
 
     @Override
@@ -84,15 +81,5 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     @Override
     public void onP2PDisconnected(@NonNull String s) {
 
-    }
-    
-    private void updateRoom(Room room){
-        if (room!=null) {
-            gameNetworking.room=room;
-        }
-        else{
-            gameNetworking.room=null;
-            GameWorld.gameStatus=0;
-        }
     }
 }

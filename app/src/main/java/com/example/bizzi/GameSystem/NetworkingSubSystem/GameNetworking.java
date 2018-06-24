@@ -30,141 +30,175 @@ import java.util.ArrayList;
 
 public final class GameNetworking {
 
-    final static int MINOPPONENTS=1, MAXOPPONENTS=1;
-    public final static  int RCSIGNIN = 9001, RCWAITINGROOM = 10002;
+    final static int MINOPPONENTS = 1, MAXOPPONENTS = 1;
+    public final static int RCSIGNIN = 9001, RCWAITINGROOM = 10002;
+    private final Context context;
+    //List of NetworkingUtility
+    private final AccelerometerNetworking accelerometerNetworking;
+    private final GameObNetworking gameObNetworking;
 
     //Google Play Games variables
     GoogleSignInClient googleSignInClient;
     GoogleSignInAccount googleSignInAccount;
     RealTimeMultiplayerClient realTimeMultiplayerClient;
-    String myPlayerId; //Play Games id different from idMessage
+    String myPlayerId;
 
     //Room variables
     Room room;
     RoomConfig roomConfig;
     ArrayList<Participant> participants;
-
-    private final Context context;
-
+    String roomId, myMessageId, friendMessageId;
 
 
-    String myMessageId, friendMessageId;
+    //Multyplayer variables
+    private GameWorld gameWorld;
+    public boolean server = false;
+    private boolean slidingWall = false;
+    SparseArray<GameObject> level;
+    public InputObject.AccelerometerObject myAccelerometer;
+    private InputObject.AccelerometerObject friendAccelerometer;
+    public InputObject.AccelerometerObject[] accelerometers= new InputObject.AccelerometerObject[2];
 
-    private Boolean server;
-    private boolean slidingWall=false;
-
-    RealTimeMessage last;
-
-    private byte[] lastMessage;
-
-    SparseArray<GameObject> list;
-    InputObject.AccelerometerObject accelerometer;
-
-    //List of NetworkingUtility
-    private final AccelerometerNetworking accelerometerNetworking;
-    private final GameObNetworking gameObNetworking;
-
-
-   public GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking){
-        this.context=context;
-        this.accelerometerNetworking=accelerometerNetworking;
-        this.gameObNetworking=gameObNetworking;
-       ((MainActivity)context).setGameNetworking(this);
+    public void setLevel(SparseArray<GameObject> level) {
+        this.level = level;
     }
 
-    public void consumeMessage(){
+    public void setGameWorld(GameWorld gameWorld) {
+        this.gameWorld = gameWorld;
+    }
+
+    public GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking) {
+        this.context = context;
+        this.accelerometerNetworking = accelerometerNetworking;
+        this.gameObNetworking = gameObNetworking;
+        ((MainActivity) context).setGameNetworking(this);
+    }
+
+    public void consumeMessage(RealTimeMessage message) {
         synchronized (this) {
-            lastMessage = last.getMessageData();
+           byte[] lastMessage = message.getMessageData();
             switch (lastMessage[0]) {
                 case 3:
                     gameObNetworking.deserealizeGameObDimensions(lastMessage);
                     break;
 
-                case 4:
-                    gameObNetworking.deserializeGameOb(lastMessage,list);
+                case 2:
+                    gameObNetworking.deserializeGameOb(lastMessage, level);
+                    break;
+
+                case 1:
+                    gameWorld.endGameType= GameObject.GameObjectType.values()[lastMessage[1]];
+                    GameWorld.gameStatus=8;
                     break;
 
                 default:
-                    accelerometer=accelerometerNetworking.deserializeAccelerometer(lastMessage);
+                    friendAccelerometer = accelerometerNetworking.deserializeAccelerometer(lastMessage);
                     break;
             }
         }
     }
 
-    public void quickGame(){
-       Log.d("Debug","QuickGame");
-       realTimeMultiplayerClient.create(roomConfig);
-        GameWorld.gameStatus=5;
+    public void quickGame() {
+        Log.d("Debug", "QuickGame");
+        realTimeMultiplayerClient.create(roomConfig);
+        GameWorld.gameStatus = 5;
     }
 
-    private byte[] serializeAccelerometerSlidingWall(InputObject.AccelerometerObject accelerometer){
-       byte[] array=accelerometerNetworking.serializeAccelerometer(accelerometer);
-       array[0]=1;
-       return array;
+
+    public void chooseRoles() {
+        String temp = null;
+        //Find
+        for (int i = 0; i < participants.size(); i++) {
+            temp = participants.get(i).getParticipantId();
+            if (temp.equals(myMessageId)) {
+                friendMessageId = temp;
+                temp = participants.get(i).getDisplayName();
+                break;
+            }
+        }
+        if (myPlayerId.compareTo(temp) < 0)
+            server = true;
+        else
+            slidingWall = true;
     }
 
-    private byte[] serializeAccelerometerWorld(InputObject.AccelerometerObject accelerometer){
-       byte[] array=accelerometerNetworking.serializeAccelerometer(accelerometer);
-       array[0]=2;
-       return array;
+    public void firstSend() {
+        if (server) {
+           realTimeMultiplayerClient.sendUnreliableMessage(gameObNetworking.serializeGameObDimensions(level),roomId,friendMessageId);
+           realTimeMultiplayerClient.sendUnreliableMessage(gameObNetworking.serializeGameObCenter(level),roomId,friendMessageId);
+        }
     }
 
-    void startOnline(SparseArray<GameObject>list){
-       if (myPlayerId.compareTo(friendMessageId)<0) {
-           server = true;
-           gameObNetworking.serializeGameObDimensions(list);
-       }
-       else {
-           server = false;
-           slidingWall=true;
-       }
+    public void send() {
+        byte[] array;
+        if (server)
+            array = gameObNetworking.serializeGameObCenter(level);
+        else
+            array = accelerometerNetworking.serializeAccelerometer(myAccelerometer);
+
+        realTimeMultiplayerClient.sendUnreliableMessage(array,roomId,friendMessageId);
     }
 
-    public void send(InputObject.AccelerometerObject accelerometerObject, SparseArray<GameObject> list){
-       byte[] array;
-       if (server){
-           array=gameObNetworking.serializeGameObCenter(list);
-       }
-       else {
-           if (slidingWall)
-               array=serializeAccelerometerSlidingWall(accelerometerObject);
-           else
-               array=serializeAccelerometerWorld(accelerometerObject);
-       }
-        //TODO sendMessage
+    public void lastSend(GameObject.GameObjectType end){
+        byte[] array=new byte[2];
+        array[0]=1;
+        array[1]=(byte) end.ordinal();
+        if (server){
+            realTimeMultiplayerClient.sendUnreliableMessage(array,roomId,friendMessageId);
+        }
     }
 
-    void showWaitingRoom(){
+    void showWaitingRoom() {
         realTimeMultiplayerClient.getWaitingRoomIntent(room, MINOPPONENTS)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
-                        Log.d("Debug","Start waiting room");
+                        Log.d("Debug", "Start waiting room");
                         // show waiting room UI
-                        ((Activity)context).startActivityForResult(intent, RCWAITINGROOM);
+                        ((Activity) context).startActivityForResult(intent, RCWAITINGROOM);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("Debug","There was a problem getting the waiting room!");
-                        GameWorld.gameStatus=0;
+                        Log.d("Debug", "There was a problem getting the waiting room!");
+                        GameWorld.gameStatus = 0;
                     }
                 });
     }
 
-    public void leaveRoom(){
-        if (room!=null){
-            realTimeMultiplayerClient.leave(roomConfig,room.getRoomId())
+    public void leaveRoom() {
+        if (roomId != null) {
+            realTimeMultiplayerClient.leave(roomConfig, roomId)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            room=null;
-                            GameWorld.gameStatus=0;
+                            room = null;
+                            roomId = null;
+                            if (GameWorld.gameStatus!=2)
+                                GameWorld.gameStatus = 0;
                         }
                     });
         }
     }
 
+    void updateRoom(Room room) {
+        if (room != null) {
+            participants = room.getParticipants();
+            this.room = room;
+        }
+    }
 
+    public void switchAccelerometer(){
+        //array[0] world gravity
+        //array[1] force on walls
+        if (slidingWall){
+            accelerometers[1]=myAccelerometer;
+            accelerometers[0]=friendAccelerometer;
+        }
+        else {
+            accelerometers[0]=myAccelerometer;
+            accelerometers[1]=friendAccelerometer;
+        }
+    }
 }

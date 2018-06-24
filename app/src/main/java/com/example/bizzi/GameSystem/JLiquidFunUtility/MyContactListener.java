@@ -2,9 +2,7 @@ package com.example.bizzi.GameSystem.JLiquidFunUtility;
 
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
-import com.example.bizzi.GameSystem.GameObSubSystem.GameObBuilder;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.fpl.liquidfun.Body;
@@ -43,15 +41,8 @@ public final class MyContactListener extends ContactListener {
                     GameAudio.AUDIOLIBRARY.get(b.getType()).play();
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
-
-                   //EndGame music should wait eggCell sound
-                    GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
-                    AudioObject.MusicObject music=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL);
-                    music.play();
-                    while (music.isPlaying()){}
-
                     //Stop future contacts
-                    GameWorld.gameStatus=2;
+                    GameWorld.gameStatus=7;
 
                     //Choose a endGameScreen
                     GameObject Pretender;

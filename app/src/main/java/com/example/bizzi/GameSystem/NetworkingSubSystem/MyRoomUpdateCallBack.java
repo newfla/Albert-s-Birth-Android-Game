@@ -22,9 +22,9 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             issue(i);
         else {
             gameNetworking.room = room;
+            gameNetworking.roomId=room.getRoomId();
             gameNetworking.showWaitingRoom();
         }
-
     }
 
     @Override
@@ -33,6 +33,7 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             issue(i);
         else {
             gameNetworking.room = room;
+            gameNetworking.roomId=room.getRoomId();
             gameNetworking.showWaitingRoom();
         }
 
@@ -41,7 +42,6 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
     @Override
     public void onLeftRoom(int i, @NonNull String s) {
        issue(i);
-
     }
 
     @Override
@@ -49,19 +49,14 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
         if (i != GamesCallbackStatusCodes.OK)
             issue(i);
         else {
-         updatePartecipants(room);
-        }
-    }
-
-    private void updatePartecipants(Room room) {
-        if (room != null) {
-            gameNetworking.participants = room.getParticipants();
+         gameNetworking.updateRoom(room);
         }
     }
 
     private void issue(int i){
         Log.d("Debug", "Issue with Online Room " + i);
         gameNetworking.room = null;
+        gameNetworking.roomId=null;
         GameWorld.gameStatus = 0;
     }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.bizzi.GameSystem.GameBuilder;
+import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameView;
 import com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -109,6 +110,12 @@ public final class MainActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onStop() {
+        gameNetworking.leaveRoom();
+        super.onStop();
+    }
+
+    @Override
     public void onBackPressed() {
         doubleBackPress.onBackPressed();
     }
@@ -150,8 +157,8 @@ public final class MainActivity extends AppCompatActivity{
         else if (requestCode == GameNetworking.RCWAITINGROOM) {
             //Is this Magic? basic-samples copy
             if (resultCode == Activity.RESULT_OK) {
-
                 Log.d("Debug", "Starting game (waiting room returned OK).");
+                GameWorld.gameStatus=6;
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
                 gameNetworking.leaveRoom();

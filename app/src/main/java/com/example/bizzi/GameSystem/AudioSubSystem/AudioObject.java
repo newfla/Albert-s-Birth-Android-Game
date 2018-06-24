@@ -77,14 +77,14 @@ public interface AudioObject extends Recyclable {
         public void stop() {
             if(player.isPlaying()) {
                 player.stop();
-            }
-            try {
-                player.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (IllegalStateException ex){
-                stop();
+
+                try {
+                    player.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException ex) {
+                    stop();
+                }
             }
         }
 
