@@ -16,7 +16,7 @@ public class DrawableComponent extends Component {
 
     private final static Rect DEST=new Rect();
 
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     static DrawableComponent getDrawableComponent(GameObject owner, Bitmap bitmap) {
         DrawableComponent object = POOL.acquire();

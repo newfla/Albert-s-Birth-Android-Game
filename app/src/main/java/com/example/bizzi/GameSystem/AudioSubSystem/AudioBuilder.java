@@ -34,11 +34,11 @@ public final class AudioBuilder implements Builder {
                 type=jsonObject.getString("type");
                 sound=jsonObject.getString("file");
                 if (type.equalsIgnoreCase("sound"))
-                    gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
+                    GameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
                 else
-                    gameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject), gameAudio.addMusic(sound));
+                    GameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject), gameAudio.addMusic(sound));
             }
-            gameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
+            GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
         } catch (JSONException e) {
             Log.d("Debug", "Unable to create JsonOB for audio");
         }

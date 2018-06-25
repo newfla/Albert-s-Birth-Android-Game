@@ -99,7 +99,6 @@ public final class GameWorld {
             case 7:
                 sendResult();
                 break;
-
             case 8:
                 leaveRoom();
                 break;
@@ -166,6 +165,7 @@ public final class GameWorld {
         music.play();
 
         while (music.isPlaying()){}
+
         if (level.size() > 2) {
             toBeRendered = gameObFactory.buildFinish(endGameType);
             for (int i = 0; i < level.size(); i++)
@@ -315,6 +315,5 @@ public final class GameWorld {
         }
 
     }
-
 
 }

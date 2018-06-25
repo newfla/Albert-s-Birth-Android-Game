@@ -22,7 +22,9 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             issue(i);
         else {
             gameNetworking.room = room;
-            gameNetworking.roomId=room.getRoomId();
+            if (room != null) {
+                gameNetworking.roomId=room.getRoomId();
+            }
             gameNetworking.showWaitingRoom();
         }
     }
@@ -33,7 +35,9 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
             issue(i);
         else {
             gameNetworking.room = room;
-            gameNetworking.roomId=room.getRoomId();
+            if (room != null) {
+                gameNetworking.roomId=room.getRoomId();
+            }
             gameNetworking.showWaitingRoom();
         }
 

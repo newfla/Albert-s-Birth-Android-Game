@@ -34,7 +34,9 @@ public final class InputBuilder implements Builder {
         //create and register Touch Listener
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
-        windowManager.getDefaultDisplay().getRealSize(point);
+        if (windowManager != null) {
+            windowManager.getDefaultDisplay().getRealSize(point);
+        }
         touchListener = new TouchListener(gameInput, point);
         ((MainActivity) context).setTouchListener(touchListener);
     }

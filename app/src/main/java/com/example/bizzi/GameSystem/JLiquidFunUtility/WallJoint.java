@@ -8,7 +8,7 @@ import com.google.fpl.liquidfun.PrismaticJointDef;
 import com.google.fpl.liquidfun.World;
 
 public  final class WallJoint {
-    static SparseArray<Joint> joint = new SparseArray<Joint>();
+    private static SparseArray<Joint> joint = new SparseArray<>();
     public static void buildPrismaticDoor(Body a, Body b, World word, float cx, float cy, float aHeight,float bHeight) {
 
         //a is sliding

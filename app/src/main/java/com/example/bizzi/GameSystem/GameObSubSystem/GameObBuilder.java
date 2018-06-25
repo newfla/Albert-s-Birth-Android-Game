@@ -30,7 +30,6 @@ import static com.example.bizzi.GameSystem.GameObSubSystem.GameObject.getGameOB;
 
 public final class GameObBuilder implements Builder {
 
-    private static final int MAXPOOLSIZE = 300;
     private static final String LEVELS = "levels/";
     private final Context context;
     private World world;
@@ -79,7 +78,6 @@ public final class GameObBuilder implements Builder {
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = GameWorld.BUFFERWIDTH / 2;
         drawable.y = GameWorld.BUFFERHEIGHT / 2 + 40;
-        ;
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
         float previousY = drawable.y + bitmap.getHeight() / 2;

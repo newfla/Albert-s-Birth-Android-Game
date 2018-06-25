@@ -29,9 +29,9 @@ public final class GameView extends SurfaceView implements Runnable {
     public void run() {
         long fpsTime = System.nanoTime(),
                 frameCounter = 0,
-                currentTime=0;
+                currentTime;
 
-        float fpsDeltaTime=0;
+        float fpsDeltaTime;
 
         Rect dstRect = new Rect();
         Canvas canvas;

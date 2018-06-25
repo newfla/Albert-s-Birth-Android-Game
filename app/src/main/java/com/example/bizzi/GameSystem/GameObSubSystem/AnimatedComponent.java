@@ -15,7 +15,7 @@ public final class AnimatedComponent extends Component {
     int animation=1;
     private int lastAnimation, lastFrame;
     private Bitmap sheet;
-    int frameWidth, frameHeight, animations, lenght;
+    private int frameWidth, frameHeight, animations, lenght;
     private final static Rect RECTSHEET=new Rect(), RECTCANVAS=new Rect();
 
     static AnimatedComponent getAnimatedComponent(GameObject owner, Spritesheet spritesheet) {

@@ -35,7 +35,7 @@ public interface AudioObject extends Recyclable {
             soundPool.unload(soundId);
         }
 
-        public SoundObject(SoundPool soundPool, int soundId){
+        SoundObject(SoundPool soundPool, int soundId){
             this.soundPool=soundPool;
             this.soundId=soundId;
         }
@@ -50,7 +50,7 @@ public interface AudioObject extends Recyclable {
         final MediaPlayer player;
         static float VOLUME=0.6f;
         private float volume;
-        public MusicObject(MediaPlayer player){
+         MusicObject(MediaPlayer player){
             this.player=player;
         }
 

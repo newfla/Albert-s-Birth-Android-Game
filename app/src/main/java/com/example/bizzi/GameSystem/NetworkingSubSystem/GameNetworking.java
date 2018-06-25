@@ -67,7 +67,7 @@ public final class GameNetworking {
         this.gameWorld = gameWorld;
     }
 
-    public GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking) {
+    GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking) {
         this.context = context;
         this.accelerometerNetworking = accelerometerNetworking;
         this.gameObNetworking = gameObNetworking;
@@ -116,6 +116,7 @@ public final class GameNetworking {
                 break;
             }
         }
+        assert temp != null;
         if (myPlayerId.compareTo(temp) < 0)
             server = true;
         else

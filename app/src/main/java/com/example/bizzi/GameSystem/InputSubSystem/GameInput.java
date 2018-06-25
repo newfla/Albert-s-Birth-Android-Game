@@ -6,7 +6,8 @@ import android.util.SparseArray;
 public final class GameInput {
 
     InputObject.AccelerometerObject accelerometerObject;
-    SparseArray<InputObject.TouchObject>touchBuffer, touchFront;
+    SparseArray<InputObject.TouchObject>touchBuffer;
+    private SparseArray<InputObject.TouchObject> touchFront;
 
     GameInput(){
         touchBuffer=new SparseArray<>();

@@ -58,7 +58,7 @@ public final class GameAudio {
         try {
             AssetFileDescriptor fd=assets.openFd(AUDIO+filename);
             MediaPlayer mediaPlayer= new MediaPlayer();
-            mediaPlayer.setDataSource(fd);
+            mediaPlayer.setDataSource(fd.getFileDescriptor(),fd.getStartOffset(),fd.getLength());
             mediaPlayer.prepare();
             if (!filename.contains("eggcell"))
                 mediaPlayer.setLooping(true);

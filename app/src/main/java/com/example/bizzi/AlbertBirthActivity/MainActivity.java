@@ -26,6 +26,8 @@ import com.kaushikthedeveloper.doublebackpress.DoubleBackPress;
 import com.kaushikthedeveloper.doublebackpress.helper.DoubleBackPressAction;
 import com.kaushikthedeveloper.doublebackpress.setup.display.ToastDisplay;
 
+import java.util.Objects;
+
 import static com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking.RCSIGNIN;
 
 
@@ -95,7 +97,7 @@ public final class MainActivity extends AppCompatActivity{
     protected void onPause() {
         super.onPause();
         //stop accelerometer listner
-        ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).unregisterListener(accelerometerListener);
+        ((SensorManager) Objects.requireNonNull(getSystemService(Context.SENSOR_SERVICE))).unregisterListener(accelerometerListener);
         if (gameView!=null)
             gameView.pause();
     }
@@ -148,9 +150,8 @@ public final class MainActivity extends AppCompatActivity{
                     GoogleSignIn.getSignedInAccountFromIntent(data);
 
             try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
+                task.getResult(ApiException.class);
             } catch (ApiException apiException) {
-                String message = apiException.getMessage();
                 Log.d("Debug","Activity signIn failure ", apiException.fillInStackTrace());
             }
         }
