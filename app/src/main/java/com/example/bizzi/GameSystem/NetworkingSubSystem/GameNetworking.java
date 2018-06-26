@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 
 import com.example.bizzi.AlbertBirthActivity.MainActivity;
+import com.example.bizzi.GameSystem.AudioSubSystem.GameAudioNetworking;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObNetworking;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
@@ -34,9 +36,11 @@ public final class GameNetworking implements Recyclable {
     final static int MINOPPONENTS = 1, MAXOPPONENTS = 1;
     public final static int RCSIGNIN = 9001, RCWAITINGROOM = 10002;
     private final Context context;
+
     //List of NetworkingUtility
     private final AccelerometerNetworking accelerometerNetworking;
     private final GameObNetworking gameObNetworking;
+    private final GameAudioNetworking gameAudioNetworking;
 
     //Google Play Games variables
     GoogleSignInClient googleSignInClient;
@@ -59,6 +63,7 @@ public final class GameNetworking implements Recyclable {
     public InputObject.AccelerometerObject myAccelerometer;
     private InputObject.AccelerometerObject friendAccelerometer;
     public final InputObject.AccelerometerObject[] accelerometers= new InputObject.AccelerometerObject[2];
+    public SparseIntArray audio;
 
     @Override
     public void recycle() {
@@ -73,6 +78,7 @@ public final class GameNetworking implements Recyclable {
         myMessageId=null;
         friendMessageId=null;
         participants=null;
+        audio=null;
         if (GameWorld.gameStatus!=2)
             GameWorld.gameStatus = 0;
     }
@@ -81,10 +87,11 @@ public final class GameNetworking implements Recyclable {
         this.gameWorld = gameWorld;
     }
 
-    GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking) {
+    GameNetworking(Context context, AccelerometerNetworking accelerometerNetworking, GameObNetworking gameObNetworking, GameAudioNetworking gameAudioNetworking) {
         this.context = context;
         this.accelerometerNetworking = accelerometerNetworking;
         this.gameObNetworking = gameObNetworking;
+        this.gameAudioNetworking = gameAudioNetworking;
         ((MainActivity) context).setGameNetworking(this);
     }
 
@@ -106,8 +113,12 @@ public final class GameNetworking implements Recyclable {
                     GameWorld.gameStatus=8;
                     break;
 
-                default:
+                case 0:
                     friendAccelerometer = accelerometerNetworking.deserializeAccelerometer(lastMessage);
+                    break;
+
+                case 2:
+                    gameAudioNetworking.deserializeAudio(lastMessage);
                     break;
             }
         }
@@ -147,8 +158,17 @@ public final class GameNetworking implements Recyclable {
 
     public void send() {
         byte[] array;
-        if (server)
+        if (server) {
             array = gameObNetworking.serializeGameObCenter(level);
+            realTimeMultiplayerClient.sendUnreliableMessage(array,roomId,friendMessageId);
+            synchronized (gameWorld) {
+                array = gameAudioNetworking.serializeGameAudio(audio);
+                audio.clear();
+                if (array.length<=1)
+                    return;
+            }
+
+        }
         else
             array = accelerometerNetworking.serializeAccelerometer(myAccelerometer);
 
@@ -213,4 +233,5 @@ public final class GameNetworking implements Recyclable {
             accelerometers[1]=friendAccelerometer;
         }
     }
+
 }

@@ -108,7 +108,6 @@ public final class MainActivity extends AppCompatActivity{
         immersiveMode();
         registerAccelerometerListener();
         gameView.resume();
-
     }
 
     @Override
@@ -157,7 +156,6 @@ public final class MainActivity extends AppCompatActivity{
         }
         else if (requestCode == GameNetworking.RCWAITINGROOM) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.d("Debug", "Starting game (waiting room returned OK).");
                 GameWorld.gameStatus=6;
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room

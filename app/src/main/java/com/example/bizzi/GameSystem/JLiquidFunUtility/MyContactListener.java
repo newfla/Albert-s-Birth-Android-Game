@@ -29,16 +29,23 @@ public final class MyContactListener extends ContactListener {
             Object userdataA = ba.getUserData(), userdataB = bb.getUserData();
             GameObject a = (GameObject) userdataA,
                     b = (GameObject) userdataB;
+            GameObject.GameObjectType type=null;
 
             //It's time to play sound effects
             if (GameWorld.gameStatus==1) {
                 if ((a.getType() == GameObject.GameObjectType.EINSTEIN && b.getType() == GameObject.GameObjectType.WALL)
                         || a.getType() == GameObject.GameObjectType.SPERMATOZOON && b.getType() == GameObject.GameObjectType.WALL)
-                    GameAudio.AUDIOLIBRARY.get(a.getType()).play();
+                    type=a.getType();
 
                 else if ((b.getType() == GameObject.GameObjectType.EINSTEIN && a.getType() == GameObject.GameObjectType.WALL)
                         || b.getType() == GameObject.GameObjectType.SPERMATOZOON && a.getType() == GameObject.GameObjectType.WALL)
-                    GameAudio.AUDIOLIBRARY.get(b.getType()).play();
+                    type=b.getType();
+                if (type!=null) {
+                    GameAudio.AUDIOLIBRARY.get(type).play();
+                     synchronized (gameWorld){
+                       gameWorld.audio.put(gameWorld.audio.size(),type.ordinal());
+                     }
+                }
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
                                         //Choose a endGameScreen

@@ -89,6 +89,7 @@ public final class GameAudio {
     }
 
     public void checkAudio(){
+        //Log.d("Debug","silence: "+SILENCE+"--last"+LASTSILENCE);
         if (SILENCE && !LASTSILENCE) {
             mute();
             LASTSILENCE=true;

@@ -3,6 +3,7 @@ package com.example.bizzi.GameSystem;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
@@ -54,10 +55,14 @@ public final class GameWorld {
     //GameNetwork
     private final GameNetworking gameNetworking;
 
+
     //GameObject collections
     private SparseArray<GameObject> mainMenu;
     private SparseArray<GameObject> level;
     private SparseArray<GameObject> toBeRendered;
+
+    //Audio array
+    public SparseIntArray audio=new SparseIntArray();
 
 
     GameWorld(MyContactListener contactListener, GameAudio gameAudio, GameInput gameInput, GameObBuilder gameObFactory, GameNetworking gameNetworking) {
@@ -96,6 +101,7 @@ public final class GameWorld {
                     gameNetworking.level=level;
                     toBeRendered = level;
                     gameNetworking.myAccelerometer = gameInput.getAccelerometerEvent();
+                    gameNetworking.audio=audio;
                 }
                 gameNetworking.quickGame();
                 break;
