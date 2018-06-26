@@ -82,7 +82,7 @@ public final class GameWorld {
                 break;
             case 1:
                 //levelScreen(gameInput.getAccelerometerEvent());
-                levelScreen();
+               levelScreen();
                 break;
             case 2:
                 endGameScreen();
@@ -91,6 +91,12 @@ public final class GameWorld {
                 waitScreen();
                 break;
             case 4:
+                if (level==null) {
+                    level = new SparseArray<>();
+                    gameNetworking.level=level;
+                    toBeRendered = level;
+                    gameNetworking.myAccelerometer = gameInput.getAccelerometerEvent();
+                }
                 gameNetworking.quickGame();
                 break;
             case 6:
@@ -148,7 +154,6 @@ public final class GameWorld {
         }
     }
 
-
     public void pause() {
         gameAudio.pauseAudio();
     }
@@ -161,12 +166,10 @@ public final class GameWorld {
     private void endGameScreen() {
         //EndGame music should wait eggCell sound
         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.BACKGROUND).stop();
-        AudioObject.MusicObject music=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL);
-        music.play();
-
-        while (music.isPlaying()){}
-
         if (level.size() > 2) {
+            AudioObject.MusicObject music=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.EGGCELL);
+            music.play();
+            while (music.isPlaying()){}
             toBeRendered = gameObFactory.buildFinish(endGameType);
             for (int i = 0; i < level.size(); i++)
                 level.get(i).recycle();
@@ -181,7 +184,8 @@ public final class GameWorld {
         if (level != null) {
             for (int i = 0; i < level.size(); i++)
                 level.get(i).recycle();
-            world.delete();
+            if (world!=null)
+                world.delete();
             level = null;
         }
         //status=3 loadingScreen
@@ -210,6 +214,7 @@ public final class GameWorld {
                 mainMenu.get(i).recycle();
             mainMenu = null;
         }
+        GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
         mainMenu = gameObFactory.buildWait();
         toBeRendered = mainMenu;
         gameStatus = 4;
@@ -222,18 +227,11 @@ public final class GameWorld {
                 mainMenu.get(i).recycle();
             mainMenu = null;
         }
-
         //Choose roles
         gameNetworking.chooseRoles();
-        gameNetworking.myAccelerometer = gameInput.getAccelerometerEvent();
-        if (!gameNetworking.server) {
-            level = new SparseArray<>();
-            toBeRendered = level;
-            gameNetworking.setLevel(level);
-        }
 
         //Build Level in server
-        if (gameNetworking.server && level == null) {
+        if (gameNetworking.server) {
             world = new World(XGRAVITY, YGRAVITY);
             world.setContactListener(myContactListener);
             gameObFactory.setWorld(world);
@@ -242,11 +240,10 @@ public final class GameWorld {
 
             //Scale on FrameBuffer
             updatePhysicsPosition();
-            gameNetworking.setLevel(level);
+            gameNetworking.level=level;
             gameNetworking.firstSend();
+            gameStatus = 1;
         }
-
-        gameStatus = 1;
     }
 
     private void levelScreen(InputObject.AccelerometerObject accelerometer) {
@@ -277,10 +274,11 @@ public final class GameWorld {
         gameNetworking.myAccelerometer.y = accelerometerObject.y;
 
         if (gameNetworking.server) {
-            gameObFactory.buildSpawner(toBeRendered);
+            //gameObFactory.buildSpawner(toBeRendered);
             gameNetworking.switchAccelerometer();
             parseAccelerometer(gameNetworking.accelerometers);
             world.step(TIMESTEP, VELOCITYITERATION, POSITIONITERATION, PARTICLEITERATION);
+            updatePhysicsPosition();
         }
         gameNetworking.send();
     }
@@ -304,13 +302,15 @@ public final class GameWorld {
             canvas.drawARGB(255, 0, 0, 0);
             for (int i = 0; i < toBeRendered.size(); i++) {
                 gameObject = toBeRendered.get(i);
-                DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
-                if (drawableComponent != null)
-                    drawableComponent.draw(canvas);
+                if (gameObject!=null) {
+                    DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
+                    if (drawableComponent != null)
+                        drawableComponent.draw(canvas);
 
-                AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
-                if (animatedComponent != null)
-                    animatedComponent.draw(canvas);
+                    AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
+                    if (animatedComponent != null)
+                        animatedComponent.draw(canvas);
+                }
             }
         }
 

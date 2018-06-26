@@ -63,7 +63,8 @@ final public class NetworkingBuilder implements Builder {
                 .addOnSuccessListener(new OnSuccessListener<Player>() {
                     @Override
                     public void onSuccess(Player player) {
-                        gameNetworking.myPlayerId=player.getPlayerId();
+                        while (gameNetworking.myPlayerId==null)
+                            gameNetworking.myPlayerId=player.getPlayerId();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

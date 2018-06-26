@@ -47,7 +47,11 @@
       "type": "static",
       "file": "wallText.png"
     },
-
+    {
+      "gameobject": "ENCLOSURE",
+      "type": "static",
+      "file": "wallText.png"
+    },
     {
       "gameobject": "PILL",
       "type": "static",

@@ -5,23 +5,31 @@ import android.util.SparseArray;
 import android.util.SparseIntArray;
 
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GameGraphics;
+import com.example.bizzi.GameSystem.Utility.Recyclable;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.EnumMap;
 
-public final class GameObNetworking {
+public final class GameObNetworking implements Recyclable {
 
     private final EnumMap<GameObject.GameObjectType,SparseArray<Point>> dimensions=new EnumMap<>(GameObject.GameObjectType.class);
+
+    private final SparseArray<GameObject> tempList=new SparseArray<>();
+
     private final SparseIntArray indexDimensions=new SparseIntArray();
 
-    public byte[] serializeGameObDimensions(SparseArray<GameObject> list){
+    private boolean ready=false;
 
+    public byte[] serializeGameObDimensions(SparseArray<GameObject> list){
+        tempList.clear();
         GameObject go;
         int n=list.size(),offset=0, width, height;
-        byte[] array=new byte[1+ 9*n];
+
         //Declare arrayOfDimensions
+        byte[] array=new byte[1+ 9*n];
         array[0]=3;
+
         for (int i = 0; i < n; i++) {
             go=list.get(i);
             //Find GameObType
@@ -36,23 +44,23 @@ public final class GameObNetworking {
                 width=animatedComponent.semiWidth;
                 height=animatedComponent.semiHeight;
             }
-            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.LITTLE_ENDIAN).putInt(width);
+            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).putInt(width);
             offset+=4;
-            ByteBuffer.wrap(array,offset,4).order(ByteOrder.LITTLE_ENDIAN).putInt(height);
+            ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).putInt(height);
+            offset+=3;
         }
         return array;
     }
 
     public void deserealizeGameObDimensions(byte[]array){
-        int offset=0, width, height;
-        while (offset<array.length){
-
-            //Extract info from right array portion
-            GameObject.GameObjectType type= GameObject.GameObjectType.values()[++offset];
-            width=ByteBuffer.wrap(array,++offset,4).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        tempList.clear();
+        int offset=0, width, height, n=array.length-1;
+        while (offset<n){
+            GameObject.GameObjectType type= GameObject.GameObjectType.values()[array[++offset]];
+            width=ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
             offset+=4;
-            height=ByteBuffer.wrap(array,offset,4).order(ByteOrder.LITTLE_ENDIAN).getInt();
-
+            height=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
+            offset+=3;
             SparseArray<Point> points=dimensions.get(type);
 
             //First time? Add link in Map
@@ -64,6 +72,7 @@ public final class GameObNetworking {
             //Fill SparseArray
             points.append(points.size(),new Point(width,height));
         }
+        ready=true;
     }
 
     public byte[] serializeGameObCenter(SparseArray<GameObject> list){
@@ -106,10 +115,12 @@ public final class GameObNetworking {
                 rotation[0]=4;
                 rotation[1]=(byte)animatedComponent.animation;
             }
-
-            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.LITTLE_ENDIAN).putInt(x);
+            array[++offset]=rotation[0];
+            array[++offset]=rotation[1];
+            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).putInt(x);
             offset+=4;
-            ByteBuffer.wrap(array,offset,4).order(ByteOrder.LITTLE_ENDIAN).putInt(y);
+            ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).putInt(y);
+            offset+=3;
         }
         return array;
     }
@@ -120,11 +131,6 @@ public final class GameObNetworking {
         SparseArray<Point> dim=dimensions.get(go.type);
         Point point;
 
-        //Skip
-        if ((animatedComponent!=null && animatedComponent.semiHeight!=0) ||
-                (drawableComponent!=null && drawableComponent.semiHeight!=0))
-            return;
-
         if (dim.size()==1)
             point=dim.get(0);
         else {
@@ -132,63 +138,92 @@ public final class GameObNetworking {
             point=dim.get(index);
             indexDimensions.put(go.type.ordinal(),++index);
         }
+     //   Log.d("Debug","tipo: "+go.type+" Width: "+point.x+" Heigth: "+point.y);
 
 
         if (drawableComponent!=null){
-            if (drawableComponent.semiWidth==0){
                 drawableComponent.semiWidth=point.x;
                 drawableComponent.semiHeight=point.y;
-            }
         }
         else {
-            if (animatedComponent.semiWidth==0){
                 animatedComponent.semiWidth=point.x;
                 animatedComponent.semiHeight=point.y;
-            }
         }
     }
 
     public void deserializeGameOb(byte[] array, SparseArray<GameObject> list){
-        int offset=1, x,y, n=array.length;
+        int offset=1, x,y, n=array.length, id, type;
+        int[] rotation=new int[2];
         GameObject go;
         while (offset<n) {
             //Find the right go
-            go = list.get(array[offset]);
-
+            id=array[offset];
+            go = tempList.get(id);
+            type=array[++offset];
+            rotation[0]=array[++offset];
+            rotation[1]=array[++offset];
             //Update x-y
-            x=ByteBuffer.wrap(array,offset+2,4).order(ByteOrder.LITTLE_ENDIAN).getInt();
-            y=ByteBuffer.wrap(array,offset+6,4).order(ByteOrder.LITTLE_ENDIAN).getInt();
+            x=ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
+            offset+=4;
+            y=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
+            offset+=4;
+
+            while(!ready){}
 
             //First time here?
             if (go == null) {
                 go = GameObject.getGameOB();
-                go.id = array[offset];
-                list.put(go.id,go);
-                go.type = GameObject.GameObjectType.values()[array[++offset]];
-                if (array[offset + 9] < 4) {
-                    DrawableComponent drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
-                    drawableComponent.rotation = array[offset + 9] * 90 + array[offset + 10];
+                go.id = id;
+                tempList.put(go.id,go);
+                list.append(list.size(),go);
+                go.type = GameObject.GameObjectType.values()[type];
+                if (rotation[0] < 4) {
+                    DrawableComponent drawableComponent;
+                    if(go.type == GameObject.GameObjectType.ENCLOSURE||go.type == GameObject.GameObjectType.WALL||go.type== GameObject.GameObjectType.DOOR)
+                        drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
+                    else
+                        drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
+
+                    drawableComponent.rotation = rotation[0] * 90 + rotation[1];
                     go.setComponent(drawableComponent);
-                } else {
+                    drawableComponent.x =x;
+                    drawableComponent.y=y;
+                }
+                else {
                     AnimatedComponent animatedComponent = AnimatedComponent.getAnimatedComponent(go, GameGraphics.ANIMATEDSPRITE.get(go.type));
-                    animatedComponent.animation = array[offset + 10];
+                    animatedComponent.animation = rotation[1];
                     go.setComponent(animatedComponent);
+                    animatedComponent.x=x;
+                    animatedComponent.y=y;
                 }
                 addDimensionsToGameObject(go);
             }
-
-            if (array[offset + 9] < 4) {
-                DrawableComponent drawableComponent = (DrawableComponent) go.getComponent(Component.ComponentType.DRAWABLE);
-                drawableComponent.x =x;
-                drawableComponent.y=y;
-            } else {
-                AnimatedComponent animatedComponent = AnimatedComponent.getAnimatedComponent(go, GameGraphics.ANIMATEDSPRITE.get(go.type));
-                animatedComponent.x=x;
-                animatedComponent.y=y;
+            else {
+                if (rotation[0] < 4) {
+                    DrawableComponent drawableComponent=(DrawableComponent) go.getComponent(Component.ComponentType.DRAWABLE);
+                    drawableComponent.rotation = rotation[0] * 90 + rotation[1];
+                    go.setComponent(drawableComponent);
+                    drawableComponent.x =x;
+                    drawableComponent.y=y;
+                }
+                else {
+                    AnimatedComponent animatedComponent =(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
+                    animatedComponent.animation = rotation[1];
+                    go.setComponent(animatedComponent);
+                    animatedComponent.x=x;
+                    animatedComponent.y=y;
+                }
             }
         }
 
     }
 
 
+    @Override
+    public void recycle() {
+        dimensions.clear();
+        tempList.clear();
+        indexDimensions.clear();
+        ready=false;
+    }
 }

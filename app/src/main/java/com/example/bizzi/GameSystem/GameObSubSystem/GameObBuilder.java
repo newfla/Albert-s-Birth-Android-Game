@@ -472,7 +472,6 @@ public final class GameObBuilder implements Builder {
         CircleShape testa2 = new CircleShape();
         PolygonShape coda = new PolygonShape();
 
-
         try {
             width = (float) spermatozoon.getDouble("width");
             heigth = (float) spermatozoon.getDouble("height");
@@ -663,7 +662,7 @@ public final class GameObBuilder implements Builder {
         bdef.delete();
         box.delete();
 
-        go.type = GameObject.GameObjectType.WALL;
+        go.type = GameObject.GameObjectType.ENCLOSURE;
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
@@ -684,7 +683,7 @@ public final class GameObBuilder implements Builder {
         bdef.delete();
         box.delete();
 
-        go.type = GameObject.GameObjectType.WALL;
+        go.type = GameObject.GameObjectType.ENCLOSURE;
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
@@ -705,7 +704,7 @@ public final class GameObBuilder implements Builder {
         bdef.delete();
         box.delete();
 
-        go.type = GameObject.GameObjectType.WALL;
+        go.type = GameObject.GameObjectType.ENCLOSURE;
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
@@ -728,7 +727,7 @@ public final class GameObBuilder implements Builder {
         bdef.delete();
         box.delete();
 
-        go.type = GameObject.GameObjectType.WALL;
+        go.type = GameObject.GameObjectType.ENCLOSURE;
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
         go.setComponent(drawableComponent);
 
@@ -765,6 +764,7 @@ public final class GameObBuilder implements Builder {
             }
         }
     }
+
     public SparseArray<GameObject> buildFinish(GameObject.GameObjectType type){
 
         SparseArray<GameObject> array=new SparseArray<>(2);

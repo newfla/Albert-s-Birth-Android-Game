@@ -41,16 +41,13 @@ public final class MyContactListener extends ContactListener {
                     GameAudio.AUDIOLIBRARY.get(b.getType()).play();
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
-                    //Stop future contacts
-                    GameWorld.gameStatus=7;
-
-                    //Choose a endGameScreen
-                    GameObject Pretender;
+                                        //Choose a endGameScreen
+                    GameObject pretender;
                     if (b.getType() != GameObject.GameObjectType.EGGCELL)
-                        Pretender = b;
+                        pretender = b;
                     else
-                        Pretender = a;
-                    switch (Pretender.getType()) {
+                        pretender = a;
+                    switch (pretender.getType()) {
 
                         case PILL:
                             //NESSUN FIGLIO;
@@ -72,6 +69,9 @@ public final class MyContactListener extends ContactListener {
                             break;
 
                     }
+
+                    //Stop future contacts
+                    GameWorld.gameStatus=7;
                 }
             }
         }

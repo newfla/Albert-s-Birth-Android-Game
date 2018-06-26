@@ -3,7 +3,6 @@ package com.example.bizzi.GameSystem.NetworkingSubSystem;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.bizzi.GameSystem.GameWorld;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateCallback;
 
@@ -60,7 +59,6 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
         gameNetworking.room=null;
         gameNetworking.roomId=null;
         gameNetworking.myMessageId=null;
-        GameWorld.gameStatus=0;
     }
 
     @Override

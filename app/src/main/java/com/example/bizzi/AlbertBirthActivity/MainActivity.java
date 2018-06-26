@@ -64,7 +64,7 @@ public final class MainActivity extends AppCompatActivity{
         //Keep screen ON
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        startActivityForResult(GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).getSignInIntent(),RCSIGNIN);
+       startActivityForResult(GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).getSignInIntent(),RCSIGNIN);
 
         //SetUp GameBuilder
         GameBuilder gameFactory=new GameBuilder(this);
@@ -150,13 +150,12 @@ public final class MainActivity extends AppCompatActivity{
                     GoogleSignIn.getSignedInAccountFromIntent(data);
 
             try {
-                task.getResult(ApiException.class);
+                GoogleSignInAccount account= task.getResult(ApiException.class);
             } catch (ApiException apiException) {
                 Log.d("Debug","Activity signIn failure ", apiException.fillInStackTrace());
             }
         }
         else if (requestCode == GameNetworking.RCWAITINGROOM) {
-            //Is this Magic? basic-samples copy
             if (resultCode == Activity.RESULT_OK) {
                 Log.d("Debug", "Starting game (waiting room returned OK).");
                 GameWorld.gameStatus=6;

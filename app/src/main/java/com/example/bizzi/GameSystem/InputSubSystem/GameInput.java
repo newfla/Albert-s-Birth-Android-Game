@@ -20,6 +20,7 @@ public final class GameInput {
                 backup=new InputObject.AccelerometerObject();
                 backup.x=accelerometerObject.x;
                 backup.y=accelerometerObject.y;
+
             }
             return backup;
     }

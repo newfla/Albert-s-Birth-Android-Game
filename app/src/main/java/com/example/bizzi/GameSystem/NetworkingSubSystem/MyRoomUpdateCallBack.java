@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.bizzi.GameSystem.GameWorld;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback;
@@ -61,6 +60,5 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
         Log.d("Debug", "Issue with Online Room " + i);
         gameNetworking.room = null;
         gameNetworking.roomId=null;
-        GameWorld.gameStatus = 0;
     }
 }

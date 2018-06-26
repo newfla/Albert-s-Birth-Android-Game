@@ -14,6 +14,7 @@ import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerNetworking;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
+import com.example.bizzi.GameSystem.Utility.Recyclable;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
@@ -28,7 +29,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-public final class GameNetworking {
+public final class GameNetworking implements Recyclable {
 
     final static int MINOPPONENTS = 1, MAXOPPONENTS = 1;
     public final static int RCSIGNIN = 9001, RCWAITINGROOM = 10002;
@@ -54,13 +55,26 @@ public final class GameNetworking {
     private GameWorld gameWorld;
     public boolean server = false;
     private boolean slidingWall = false;
-    SparseArray<GameObject> level;
+    public SparseArray<GameObject> level;
     public InputObject.AccelerometerObject myAccelerometer;
     private InputObject.AccelerometerObject friendAccelerometer;
-    public InputObject.AccelerometerObject[] accelerometers= new InputObject.AccelerometerObject[2];
+    public final InputObject.AccelerometerObject[] accelerometers= new InputObject.AccelerometerObject[2];
 
-    public void setLevel(SparseArray<GameObject> level) {
-        this.level = level;
+    @Override
+    public void recycle() {
+        room = null;
+        roomId = null;
+        server=false;
+        level=null;
+        myAccelerometer=null;
+        friendAccelerometer=null;
+        accelerometers[0]=null;
+        accelerometers[1]=null;
+        myMessageId=null;
+        friendMessageId=null;
+        participants=null;
+        if (GameWorld.gameStatus!=2)
+            GameWorld.gameStatus = 0;
     }
 
     public void setGameWorld(GameWorld gameWorld) {
@@ -82,8 +96,9 @@ public final class GameNetworking {
                     gameObNetworking.deserealizeGameObDimensions(lastMessage);
                     break;
 
-                case 2:
+                case 4:
                     gameObNetworking.deserializeGameOb(lastMessage, level);
+                    GameWorld.gameStatus=1;
                     break;
 
                 case 1:
@@ -100,27 +115,27 @@ public final class GameNetworking {
 
     public void quickGame() {
         Log.d("Debug", "QuickGame");
+        gameObNetworking.recycle();
         realTimeMultiplayerClient.create(roomConfig);
         GameWorld.gameStatus = 5;
     }
 
-
     public void chooseRoles() {
-        String temp = null;
+        String temp;
         //Find
         for (int i = 0; i < participants.size(); i++) {
             temp = participants.get(i).getParticipantId();
-            if (temp.equals(myMessageId)) {
+            if (!temp.equals(myMessageId)) {
                 friendMessageId = temp;
-                temp = participants.get(i).getDisplayName();
                 break;
             }
         }
-        assert temp != null;
-        if (myPlayerId.compareTo(temp) < 0)
+        if (myMessageId.compareTo(friendMessageId) < 0)
             server = true;
         else
             slidingWall = true;
+     //   Log.d("Debug","FriendMessageId: "+friendMessageId+" MyMessageId: "+myMessageId +" server: "+server);
+        Log.d("Debug","server: "+server+" - slidingWall: "+slidingWall);
     }
 
     public void firstSend() {
@@ -144,9 +159,8 @@ public final class GameNetworking {
         byte[] array=new byte[2];
         array[0]=1;
         array[1]=(byte) end.ordinal();
-        if (server){
+        if (server)
             realTimeMultiplayerClient.sendUnreliableMessage(array,roomId,friendMessageId);
-        }
     }
 
     void showWaitingRoom() {
@@ -174,10 +188,7 @@ public final class GameNetworking {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            room = null;
-                            roomId = null;
-                            if (GameWorld.gameStatus!=2)
-                                GameWorld.gameStatus = 0;
+                            recycle();
                         }
                     });
         }
