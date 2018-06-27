@@ -12,7 +12,7 @@ public class DrawableComponent extends Component {
 
     private static final Pools.Pool<DrawableComponent> POOL = new Pools.SimplePool<>(50);
 
-    int x, y, rotation, semiWidth, semiHeight;
+    short x, y, rotation, semiWidth, semiHeight;
 
     private final static Rect DEST=new Rect();
 
@@ -29,8 +29,8 @@ public class DrawableComponent extends Component {
 
     private void setAttributes(GameObject owner, Bitmap bitmap) {
         this.bitmap = bitmap;
-        semiWidth = bitmap.getWidth() / 2;
-        semiHeight = bitmap.getHeight() / 2;
+        semiWidth = (short)(bitmap.getWidth() / 2);
+        semiHeight = (short)(bitmap.getHeight() / 2);
         this.owner = owner;
     }
 

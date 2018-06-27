@@ -11,11 +11,11 @@ public final class AnimatedComponent extends Component {
 
     private static final Pools.Pool<AnimatedComponent> POOL = new Pools.SimplePool<>(50);
 
-    int x,y,semiWidth, semiHeight;
+    short x,y,semiWidth, semiHeight;
     int animation=1;
     private int lastAnimation, lastFrame;
     private Bitmap sheet;
-    private int frameWidth, frameHeight, animations, lenght;
+    private short frameWidth, frameHeight, animations, lenght;
     private final static Rect RECTSHEET=new Rect(), RECTCANVAS=new Rect();
 
     static AnimatedComponent getAnimatedComponent(GameObject owner, Spritesheet spritesheet) {
@@ -29,12 +29,12 @@ public final class AnimatedComponent extends Component {
 
     private void setAttributes(GameObject owner, Spritesheet spritesheet) {
         sheet = spritesheet.getSheet();
-        frameHeight = spritesheet.getFrameHeight();
-        frameWidth = spritesheet.getFrameWidth();
-        animations = spritesheet.getAnimations();
-        lenght = spritesheet.getLenght();
-        semiWidth = frameWidth / 2;
-        semiHeight = frameHeight / 2;
+        frameHeight =(short) spritesheet.getFrameHeight();
+        frameWidth =(short) spritesheet.getFrameWidth();
+        animations = (short)spritesheet.getAnimations();
+        lenght = (short)spritesheet.getLenght();
+        semiWidth = (short)(frameWidth / 2);
+        semiHeight =(short)( frameHeight / 2);
         this.owner = owner;
     }
 
@@ -60,10 +60,10 @@ public final class AnimatedComponent extends Component {
     }
 
     private void buildBorder(){
-        RECTCANVAS.left = (int) (x-semiWidth);
-        RECTCANVAS.top = (int) (y-semiHeight);
-        RECTCANVAS.right = (int) (x + semiWidth) ;
-        RECTCANVAS.bottom = (int) (y + semiHeight);
+        RECTCANVAS.left = (x-semiWidth);
+        RECTCANVAS.top =  (y-semiHeight);
+        RECTCANVAS.right = (x + semiWidth) ;
+        RECTCANVAS.bottom =  (y + semiHeight);
 
     }
     

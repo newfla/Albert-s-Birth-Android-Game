@@ -88,7 +88,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = GameWorld.BUFFERWIDTH / 2;
-        drawable.y = (int) previousY + 100;
+        drawable.y = (short) (previousY + 100);
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);
@@ -102,7 +102,7 @@ public final class GameObBuilder implements Builder {
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
         drawable.x = GameWorld.BUFFERWIDTH / 2;
-        drawable.y = (int) previousY + bitmap.getHeight() + 50;
+        drawable.y = (short)( previousY + bitmap.getHeight() + 50);
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);

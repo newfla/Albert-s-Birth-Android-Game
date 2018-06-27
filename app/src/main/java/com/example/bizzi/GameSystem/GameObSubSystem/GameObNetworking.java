@@ -24,10 +24,11 @@ public final class GameObNetworking implements Recyclable {
     public byte[] serializeGameObDimensions(SparseArray<GameObject> list){
         tempList.clear();
         GameObject go;
-        int n=list.size(),offset=0, width, height;
+        int n=list.size(),offset=0;
+        short width, height;
 
         //Declare arrayOfDimensions
-        byte[] array=new byte[1+ 9*n];
+        byte[] array=new byte[1+ 5*n];
         array[0]=3;
 
         for (int i = 0; i < n; i++) {
@@ -44,10 +45,10 @@ public final class GameObNetworking implements Recyclable {
                 width=animatedComponent.semiWidth;
                 height=animatedComponent.semiHeight;
             }
-            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).putInt(width);
-            offset+=4;
-            ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).putInt(height);
-            offset+=3;
+            ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).putShort(width);
+            offset+=2;
+            ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).putShort(height);
+            offset++;
         }
         return array;
     }
@@ -57,10 +58,10 @@ public final class GameObNetworking implements Recyclable {
         int offset=0, width, height, n=array.length-1;
         while (offset<n){
             GameObject.GameObjectType type= GameObject.GameObjectType.values()[array[++offset]];
-            width=ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
-            offset+=4;
-            height=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
-            offset+=3;
+            width=ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
+            offset+=2;
+            height=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getShort();
+            offset++;
             SparseArray<Point> points=dimensions.get(type);
 
             //First time? Add link in Map
@@ -77,9 +78,10 @@ public final class GameObNetworking implements Recyclable {
 
     public byte[] serializeGameObCenter(SparseArray<GameObject> list){
         GameObject go;
-        int n=list.size(), offset=0, x, y;
+        int n=list.size(), offset=0;
+        short x, y;
 
-        byte[] array=new byte[1+n*12], rotation=new byte[2];
+        byte[] array=new byte[1+n*8], rotation=new byte[2];
         array[offset]=4;
 
         for (int i = 0; i < n; i++) {
@@ -117,10 +119,10 @@ public final class GameObNetworking implements Recyclable {
             }
             array[++offset]=rotation[0];
             array[++offset]=rotation[1];
-            ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).putInt(x);
-            offset+=4;
-            ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).putInt(y);
-            offset+=3;
+            ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).putShort(x);
+            offset+=2;
+            ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).putInt(y);
+            offset++;
         }
         return array;
     }
@@ -142,17 +144,18 @@ public final class GameObNetworking implements Recyclable {
 
 
         if (drawableComponent!=null){
-                drawableComponent.semiWidth=point.x;
-                drawableComponent.semiHeight=point.y;
+                drawableComponent.semiWidth=(short)point.x;
+                drawableComponent.semiHeight=(short)point.y;
         }
         else {
-                animatedComponent.semiWidth=point.x;
-                animatedComponent.semiHeight=point.y;
+                animatedComponent.semiWidth=(short)point.x;
+                animatedComponent.semiHeight=(short) point.y;
         }
     }
 
     public void deserializeGameOb(byte[] array, SparseArray<GameObject> list){
-        int offset=1, x,y, n=array.length, id, type;
+        int offset=1, n=array.length, id, type;
+        short x,y;
         int[] rotation=new int[2];
         GameObject go;
         while (offset<n) {
@@ -163,10 +166,10 @@ public final class GameObNetworking implements Recyclable {
             rotation[0]=array[++offset];
             rotation[1]=array[++offset];
             //Update x-y
-            x=ByteBuffer.wrap(array,++offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
-            offset+=4;
-            y=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getInt();
-            offset+=4;
+            x=ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
+            offset+=2;
+            y=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getShort();
+            offset+=2;
 
             while(!ready){}
 
@@ -184,7 +187,7 @@ public final class GameObNetworking implements Recyclable {
                     else
                         drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
 
-                    drawableComponent.rotation = rotation[0] * 90 + rotation[1];
+                    drawableComponent.rotation =(short)( rotation[0] * 90 + rotation[1]);
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
@@ -201,7 +204,7 @@ public final class GameObNetworking implements Recyclable {
             else {
                 if (rotation[0] < 4) {
                     DrawableComponent drawableComponent=(DrawableComponent) go.getComponent(Component.ComponentType.DRAWABLE);
-                    drawableComponent.rotation = rotation[0] * 90 + rotation[1];
+                    drawableComponent.rotation = (short)(rotation[0] * 90 + rotation[1]);
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
