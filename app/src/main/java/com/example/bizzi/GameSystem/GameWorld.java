@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
@@ -278,6 +279,8 @@ public final class GameWorld {
         InputObject.AccelerometerObject accelerometerObject = gameInput.getAccelerometerEvent();
         gameNetworking.myAccelerometer.x = accelerometerObject.x;
         gameNetworking.myAccelerometer.y = accelerometerObject.y;
+
+       // Log.d("Debug","L'accellerometro dell'altro "+gameNetworking.friendAccelerometer.x+gameNetworking.friendAccelerometer.y);
 
         if (gameNetworking.server) {
             //gameObFactory.buildSpawner(toBeRendered);

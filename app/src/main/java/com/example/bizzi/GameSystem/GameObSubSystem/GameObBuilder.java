@@ -36,6 +36,9 @@ public final class GameObBuilder implements Builder {
     private static final SparseArray<Long> TimeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
     private Body einstein;
+    private SparseArray<Body> Walls = new SparseArray<>();
+
+
     private JSONArray enemies;
 
     private String level;
@@ -219,11 +222,11 @@ public final class GameObBuilder implements Builder {
         float cx = PhysicComponent.XMIN + (PhysicComponent.PHYSICALWIDTH * i / (tot + 1));
         bdef.setPosition(cx, cy);
         //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
-        bdef.setType(BodyType.dynamicBody);
+        bdef.setType(BodyType.kinematicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-
+        //body.app
         PolygonShape box = new PolygonShape();
         box.setAsBox(THICKNESS / 2, wallHeight / 2);
         FixtureDef fixturedef = new FixtureDef();
@@ -233,11 +236,12 @@ public final class GameObBuilder implements Builder {
         fixturedef.setDensity(0);     // default 0
         body.createFixture(fixturedef);
 
+
         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, bitmap);
         go.setComponent(drawableComponent);
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, wallHeight);
         go.setComponent(physicComponent);
-
+        Walls.append(Walls.size(),body);
         // clean up native objects
         fixturedef.delete();
         bdef.delete();
@@ -344,13 +348,25 @@ public final class GameObBuilder implements Builder {
         Random rand = new Random();
         //if Einstein == NULL=> Build level call  buildSpermatozoon
         // else  buildSpawner call it
-
+        float x=0;
         if(einstein!=null) {
-            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS)+PhysicComponent.YMIN+THICKNESS);
+            x=einstein.getPositionX();
+           //Check Overlapping
+            for(int i =0;i<Walls.size();i++) {
+                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
+                    x+=THICKNESS+width;
+                }
+            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS)+PhysicComponent.YMIN+THICKNESS);
             //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
         }
         else {
-            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
+            x=rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS;
+           //Check Overlapping
+            for(int i =0;i<Walls.size();i++) {
+                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
+                    x+=THICKNESS+width;
+            }
+            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
         }
 
         Body body = world.createBody(bdef);
@@ -576,13 +592,23 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
-
+        float x=0;
         Random rand = new Random();
         if(einstein!=null) {
-            bdef.setPosition(einstein.getPositionX(),rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
+            x=einstein.getPositionX();
+            for(int i =0;i<Walls.size();i++) {
+                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
+                    x+=THICKNESS+width;
+            }
+            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
         }
         else {
-            bdef.setPosition(rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
+            x=rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS;
+            for(int i =0;i<Walls.size();i++) {
+                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
+                    x+=THICKNESS+width;
+            }
+            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
 
         }
         bdef.setType(BodyType.dynamicBody);
