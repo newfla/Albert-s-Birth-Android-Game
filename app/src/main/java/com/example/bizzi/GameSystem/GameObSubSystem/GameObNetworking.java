@@ -1,6 +1,7 @@
 package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.graphics.Point;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
@@ -60,7 +61,7 @@ public final class GameObNetworking implements Recyclable {
             GameObject.GameObjectType type= GameObject.GameObjectType.values()[array[++offset]];
             width=ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
             offset+=2;
-            height=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getShort();
+            height=ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
             offset++;
             SparseArray<Point> points=dimensions.get(type);
 
@@ -109,6 +110,8 @@ public final class GameObNetworking implements Recyclable {
                     rotation[0] = 3;
                     rotation[1]=(byte) (drawableComponent.rotation - 270);
                 }
+                if(go.type== GameObject.GameObjectType.EINSTEIN)
+                    Log.d("Debug","Rotation :"+ rotation[0]*90+rotation[1]);
             }
             else {
                 AnimatedComponent animatedComponent=(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
@@ -121,7 +124,7 @@ public final class GameObNetworking implements Recyclable {
             array[++offset]=rotation[1];
             ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).putShort(x);
             offset+=2;
-            ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).putInt(y);
+            ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).putShort(y);
             offset++;
         }
         return array;
@@ -168,7 +171,7 @@ public final class GameObNetworking implements Recyclable {
             //Update x-y
             x=ByteBuffer.wrap(array,++offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
             offset+=2;
-            y=ByteBuffer.wrap(array,offset,4).order(ByteOrder.BIG_ENDIAN).getShort();
+            y=ByteBuffer.wrap(array,offset,2).order(ByteOrder.BIG_ENDIAN).getShort();
             offset+=2;
 
             while(!ready){}
