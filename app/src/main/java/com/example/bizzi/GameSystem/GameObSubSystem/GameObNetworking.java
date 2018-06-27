@@ -94,24 +94,8 @@ public final class GameObNetworking implements Recyclable {
             if (drawableComponent!=null){
                 x=drawableComponent.x;
                 y=drawableComponent.y;
-                if (!(drawableComponent.rotation>90)) {
-                    rotation[0] = 0;
-                    rotation[1]=(byte) drawableComponent.rotation;
-                }
-                else if (!(drawableComponent.rotation>180)){
-                    rotation[0] = 1;
-                    rotation[1]=(byte) (drawableComponent.rotation - 90);
-                }
-                else if (!(drawableComponent.rotation>270)){
-                    rotation[0] = 2;
-                    rotation[1]=(byte) (drawableComponent.rotation - 180);
-                }
-                else if (!(drawableComponent.rotation>360)){
-                    rotation[0] = 3;
-                    rotation[1]=(byte) (drawableComponent.rotation - 270);
-                }
-                if(go.type== GameObject.GameObjectType.EINSTEIN)
-                    Log.d("Debug","Rotation :"+ rotation[0]*90+rotation[1]);
+                ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).putShort(drawableComponent.rotation);
+                Log.d("Debug","Rotation server:"+ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).getShort()+" id:"+go.id);
             }
             else {
                 AnimatedComponent animatedComponent=(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
@@ -159,7 +143,7 @@ public final class GameObNetworking implements Recyclable {
     public void deserializeGameOb(byte[] array, SparseArray<GameObject> list){
         int offset=1, n=array.length, id, type;
         short x,y;
-        int[] rotation=new int[2];
+        byte[] rotation=new byte[2];
         GameObject go;
         while (offset<n) {
             //Find the right go
@@ -183,19 +167,17 @@ public final class GameObNetworking implements Recyclable {
                 tempList.put(go.id,go);
                 list.append(list.size(),go);
                 go.type = GameObject.GameObjectType.values()[type];
-                if (rotation[0] < 4) {
+                if (GameGraphics.ANIMATEDSPRITE.get(go.type)==null) {
                     DrawableComponent drawableComponent;
                     if(go.type == GameObject.GameObjectType.ENCLOSURE||go.type == GameObject.GameObjectType.WALL||go.type== GameObject.GameObjectType.DOOR)
                         drawableComponent = DrawableComponent.PaintDrawableComponent.getPaintDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
                     else
                         drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
 
-                    drawableComponent.rotation =(short)( rotation[0] * 90 + rotation[1]);
+                    drawableComponent.rotation =ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).getShort();
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
-                    if (go.type== GameObject.GameObjectType.EINSTEIN)
-                        Log.d("Debug","Rotation: "+rotation);
                 }
                 else {
                     AnimatedComponent animatedComponent = AnimatedComponent.getAnimatedComponent(go, GameGraphics.ANIMATEDSPRITE.get(go.type));
@@ -207,12 +189,13 @@ public final class GameObNetworking implements Recyclable {
                 addDimensionsToGameObject(go);
             }
             else {
-                if (rotation[0] < 4) {
+                if (GameGraphics.ANIMATEDSPRITE.get(go.type)==null) {
                     DrawableComponent drawableComponent=(DrawableComponent) go.getComponent(Component.ComponentType.DRAWABLE);
-                    drawableComponent.rotation = (short)(rotation[0] * 90 + rotation[1]);
+                    drawableComponent.rotation = ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).getShort();
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
+                    Log.d("Debug","Rotation: "+drawableComponent.rotation+" id:"+go.id);
                 }
                 else {
                     AnimatedComponent animatedComponent =(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
