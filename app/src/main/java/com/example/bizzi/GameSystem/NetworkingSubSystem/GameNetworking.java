@@ -146,7 +146,7 @@ public final class GameNetworking implements Recyclable {
         else
             slidingWall = true;
      //   Log.d("Debug","FriendMessageId: "+friendMessageId+" MyMessageId: "+myMessageId +" server: "+server);
-        Log.d("Debug","server: "+server+" - slidingWall: "+slidingWall);
+    //    Log.d("Debug","server: "+server+" - slidingWall: "+slidingWall);
     }
 
     public void firstSend() {

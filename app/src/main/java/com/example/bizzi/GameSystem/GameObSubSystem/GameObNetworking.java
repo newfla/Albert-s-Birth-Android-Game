@@ -194,6 +194,8 @@ public final class GameObNetworking implements Recyclable {
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
+                    if (go.type== GameObject.GameObjectType.EINSTEIN)
+                        Log.d("Debug","Rotation: "+rotation);
                 }
                 else {
                     AnimatedComponent animatedComponent = AnimatedComponent.getAnimatedComponent(go, GameGraphics.ANIMATEDSPRITE.get(go.type));
