@@ -26,7 +26,9 @@ import com.kaushikthedeveloper.doublebackpress.DoubleBackPress;
 import com.kaushikthedeveloper.doublebackpress.helper.DoubleBackPressAction;
 import com.kaushikthedeveloper.doublebackpress.setup.display.ToastDisplay;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Random;
 
 import static com.example.bizzi.GameSystem.NetworkingSubSystem.GameNetworking.RCSIGNIN;
 
@@ -39,9 +41,15 @@ public final class MainActivity extends AppCompatActivity{
     private View.OnTouchListener touchListener;
     private SensorEventListener accelerometerListener;
     private GameNetworking gameNetworking;
+    private GameWorld gameWorld;
+
 
     public void setGameNetworking(GameNetworking gameNetworking) {
         this.gameNetworking = gameNetworking;
+    }
+
+    public void setGameWorld(GameWorld gameWorld) {
+        this.gameWorld = gameWorld;
     }
 
     private DoubleBackPress doubleBackPress=new DoubleBackPress()
@@ -57,6 +65,7 @@ public final class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Load jLiquidFun library
         System.loadLibrary("liquidfun");
         System.loadLibrary("liquidfun_jni");
@@ -155,15 +164,21 @@ public final class MainActivity extends AppCompatActivity{
             }
         }
         else if (requestCode == GameNetworking.RCWAITINGROOM) {
-            if (resultCode == Activity.RESULT_OK) {
-                GameWorld.gameStatus=6;
-            } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
-                // player indicated that they want to leave the room
-                gameNetworking.leaveRoom();
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                gameNetworking.leaveRoom();
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    gameWorld.gameStatus = 6;
+                    break;
+                case GamesActivityResultCodes.RESULT_LEFT_ROOM:
+                    // player indicated that they want to leave the room
+                    gameNetworking.leaveRoom();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    gameNetworking.leaveRoom();
+                    break;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
 }

@@ -19,7 +19,7 @@ public final class JsonUtility {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
             result = sb.toString();
         } catch (IOException e) {

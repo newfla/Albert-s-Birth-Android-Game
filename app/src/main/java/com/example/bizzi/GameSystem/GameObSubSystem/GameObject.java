@@ -20,7 +20,7 @@ public final class GameObject implements Recyclable {
 
     final Map<Component.ComponentType,Component> components;
 
-    private static final Pools.Pool<GameObject> POOL=new Pools.SimplePool<>(200);
+    private static final Pools.Pool<GameObject> POOL=new Pools.SimplePool<>(100);
 
     GameObjectType type;
 

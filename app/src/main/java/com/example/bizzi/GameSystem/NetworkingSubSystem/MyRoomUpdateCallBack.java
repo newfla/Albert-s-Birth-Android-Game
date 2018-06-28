@@ -45,6 +45,7 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
     @Override
     public void onLeftRoom(int i, @NonNull String s) {
        issue(i);
+       gameNetworking.leaveRoom();
     }
 
     @Override

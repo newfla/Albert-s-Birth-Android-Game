@@ -7,8 +7,11 @@ import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.bizzi.AlbertBirthActivity.MainActivity;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameWorld;
+
+import java.util.Arrays;
 
 public final class GameView extends SurfaceView implements Runnable {
 
@@ -17,12 +20,15 @@ public final class GameView extends SurfaceView implements Runnable {
     private Thread renderThread;
     private final SurfaceHolder surfaceHolder;
     private volatile boolean running = false;
+    private final MainActivity activity;
 
-    public GameView(GameWorld game, Context context){
+
+    public GameView(GameWorld game, MainActivity context){
         super(context);
         this.game=game;
         frameBuffer=game.frameBuffer;
         surfaceHolder=getHolder();
+        activity=context;
     }
 
     @Override
@@ -35,7 +41,6 @@ public final class GameView extends SurfaceView implements Runnable {
 
         Rect dstRect = new Rect();
         Canvas canvas;
-
         while (running){
             if (!surfaceHolder.getSurface().isValid())
                 continue;

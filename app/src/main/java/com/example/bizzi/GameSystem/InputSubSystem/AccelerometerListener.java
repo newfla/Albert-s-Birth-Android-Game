@@ -16,7 +16,6 @@ final class AccelerometerListener implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        //TODO add penality?
         synchronized (gameInput) {
             ACCELEROMETER.x = event.values[0];
             ACCELEROMETER.y = event.values[1];

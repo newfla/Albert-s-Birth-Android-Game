@@ -14,10 +14,10 @@ public  final class WallJoint {
         //a is sliding
         //b is sudWall
         PrismaticJointDef jointDef = new PrismaticJointDef();
+
         jointDef.setBodyA(a); //A is the sliding
         jointDef.setBodyB(b); //B is the south
-        //  jointDef.setLocalAnchorB(0,-(PhysicComponent.PHYSICALHEIGHT-thickness-wallHeight)/2);
-        //Log.d("Debug","cx e cy :"+cx+"    "+cy);
+
         jointDef.setLocalAnchorA(0, aHeight/2);
         jointDef.setLocalAnchorB(0,bHeight/2);
 
@@ -27,7 +27,6 @@ public  final class WallJoint {
         jointDef.setEnableLimit(true);
 
         jointDef.setUpperTranslation(aHeight);
-
 
         jointDef.setEnableMotor(false);
         jointDef.setMotorSpeed(-20f);

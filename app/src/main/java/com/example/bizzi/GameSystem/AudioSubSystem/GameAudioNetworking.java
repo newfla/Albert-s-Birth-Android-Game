@@ -1,5 +1,6 @@
 package com.example.bizzi.GameSystem.AudioSubSystem;
 
+import android.util.Log;
 import android.util.SparseIntArray;
 
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObject;
@@ -20,7 +21,8 @@ public final class GameAudioNetworking {
         int n=array.length;
         GameObject.GameObjectType[] values=GameObject.GameObjectType.values();
         for (int i = 1; i < n; i++) {
-           AudioObject audioObject= GameAudio.AUDIOLIBRARY.get(values[i]);
+           AudioObject audioObject= GameAudio.AUDIOLIBRARY.get(values[array[i]]);
+         //   Log.d("Debug","sound:"+i);
            if (audioObject!=null)
                audioObject.play();
         }

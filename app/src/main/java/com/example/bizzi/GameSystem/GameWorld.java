@@ -24,15 +24,19 @@ import com.google.fpl.liquidfun.World;
 public final class GameWorld {
 
     //Rendering variables
-    public static final int BUFFERWIDTH = 1920,
+    public static int BUFFERWIDTH = 1920,
             BUFFERHEIGHT = 1080,
             VELOCITYITERATION = 8,
             POSITIONITERATION = 3,
             PARTICLEITERATION = 3;
     private static final float TIMESTEP = 1 / 50f; //60FPS
 
+    public void tunePhysic(long timePrime){
+        //TODO dobbiamo vedere un pò qui
+    }
+
     //Game status
-    public static byte gameStatus; //0=home, 1=level, 2=endGame, 3=loadingScreen, 4=launchWaitingRoom, 5=inWaitingRoom, 6=initMultiplayer, 7=sendResult, 8=leaveRoom
+    public byte gameStatus; //0=home, 1=level, 2=endGame, 3=loadingScreen, 4=launchWaitingRoom, 5=inWaitingRoom, 6=initMultiplayer, 7=sendResult, 8=leaveRoom
     public GameObject.GameObjectType endGameType = null;
 
     public final Bitmap frameBuffer;
@@ -78,6 +82,7 @@ public final class GameWorld {
         myContactListener.setGameWorld(this);
         menuMusic = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU);
         gameNetworking.setGameWorld(this);
+        ControllableComponent.setGameWorld(this);
     }
 
     public void updateWorld() {
@@ -107,12 +112,15 @@ public final class GameWorld {
                 gameNetworking.quickGame();
                 break;
             case 6:
-                initMultiplayer();
+                initMultiplayer1();
                 break;
             case 7:
-                sendResult();
+                initMultiplayer2();
                 break;
             case 8:
+                sendResult();
+                break;
+            case 9:
                 leaveRoom();
                 break;
         }
@@ -149,6 +157,7 @@ public final class GameWorld {
                         controllableComponent.notifyTouch(touch);
                 }
             }
+            assert touch != null;
             touch.recycle();
         }
     }
@@ -197,8 +206,7 @@ public final class GameWorld {
         }
         //status=3 loadingScreen
         if (mainMenu != null && mainMenu.size() == 1) {
-            for (int i = 0; i < mainMenu.size(); i++)
-                mainMenu.get(i).recycle();
+            mainMenu.get(0).recycle();
             mainMenu = null;
         }
         if (mainMenu == null) {
@@ -227,16 +235,19 @@ public final class GameWorld {
         gameStatus = 4;
     }
 
-    private void initMultiplayer() {
+    private void initMultiplayer1() {
         //Clean mainMenu
         if (mainMenu != null) {
             for (int i = 0; i < mainMenu.size(); i++)
                 mainMenu.get(i).recycle();
             mainMenu = null;
+            //findId + bootTime
+            gameNetworking.findId();
+            gameNetworking.sendBootTime();
         }
-        //Choose roles
-        gameNetworking.chooseRoles();
+    }
 
+    private void initMultiplayer2(){
         //Build Level in server
         if (gameNetworking.server) {
             world = new World(XGRAVITY, YGRAVITY);
@@ -252,6 +263,7 @@ public final class GameWorld {
             gameStatus = 1;
         }
     }
+
 
     private void levelScreen(InputObject.AccelerometerObject accelerometer) {
         if (mainMenu != null) {
@@ -280,10 +292,8 @@ public final class GameWorld {
         gameNetworking.myAccelerometer.x = accelerometerObject.x;
         gameNetworking.myAccelerometer.y = accelerometerObject.y;
 
-       // Log.d("Debug","L'accellerometro dell'altro "+gameNetworking.friendAccelerometer.x+gameNetworking.friendAccelerometer.y);
-
         if (gameNetworking.server) {
-            //gameObFactory.buildSpawner(toBeRendered);
+            gameObFactory.buildSpawner(toBeRendered);
             gameNetworking.switchAccelerometer();
             parseAccelerometer(gameNetworking.accelerometers);
             world.step(TIMESTEP, VELOCITYITERATION, POSITIONITERATION, PARTICLEITERATION);
@@ -294,7 +304,7 @@ public final class GameWorld {
 
     private void sendResult(){
         gameNetworking.lastSend(endGameType);
-        gameStatus=8;
+        gameStatus=9;
     }
 
     private void leaveRoom(){

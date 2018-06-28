@@ -16,6 +16,7 @@ public final class GameInput {
 
     public InputObject.AccelerometerObject getAccelerometerEvent(){
         InputObject.AccelerometerObject backup;
+
             synchronized (this){
                 backup=new InputObject.AccelerometerObject();
                 backup.x=accelerometerObject.x;
@@ -26,12 +27,13 @@ public final class GameInput {
     }
 
     public SparseArray<InputObject.TouchObject> getTouchEvents(){
+
         synchronized (this) {
             touchFront.clear();
             SparseArray<InputObject.TouchObject> temp = touchFront;
             touchFront = touchBuffer;
             touchBuffer = temp;
-            return touchFront;
         }
+        return touchFront;
     }
 }

@@ -14,12 +14,12 @@ public final class InputBuilder implements Builder {
     private TouchListener touchListener;
 
 
-    private final Context context;
+    private final MainActivity mainActivity;
 
     public final GameInput gameInput;
 
-    public InputBuilder(Context context) {
-        this.context = context;
+    public InputBuilder(MainActivity activity) {
+        mainActivity =activity;
 
         gameInput = new GameInput();
     }
@@ -28,16 +28,16 @@ public final class InputBuilder implements Builder {
     public void build() {
         //create and register Accelerometer Listener
         accelerometerListener = new AccelerometerListener(gameInput);
-        ((MainActivity) context).setAccelerometerListener(accelerometerListener);
+        mainActivity.setAccelerometerListener(accelerometerListener);
 
 
         //create and register Touch Listener
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) mainActivity.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         if (windowManager != null) {
             windowManager.getDefaultDisplay().getRealSize(point);
         }
         touchListener = new TouchListener(gameInput, point);
-        ((MainActivity) context).setTouchListener(touchListener);
+        mainActivity.setTouchListener(touchListener);
     }
 }

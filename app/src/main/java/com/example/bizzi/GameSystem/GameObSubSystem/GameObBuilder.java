@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -33,14 +34,11 @@ public final class GameObBuilder implements Builder {
     private static final String LEVELS = "levels/";
     private final Context context;
     private World world;
-    private static final SparseArray<Long> TimeStamps = new SparseArray<>();
+    private static final SparseArray<Long> timeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
     private Body einstein;
-    private SparseArray<Body> Walls = new SparseArray<>();
-
-
+    private SparseArray<Body> walls = new SparseArray<>();
     private JSONArray enemies;
-
     private String level;
 
 
@@ -68,8 +66,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.MENU;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = GameWorld.BUFFERWIDTH / 2;
-        drawable.y = GameWorld.BUFFERHEIGHT / 2;
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawable.y = (short) (GameWorld.BUFFERHEIGHT / 2);
         gameOB.components.put(drawable.getType(), drawable);
 
         array.append(array.size(), gameOB);
@@ -79,8 +77,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.MENUTITLE;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = GameWorld.BUFFERWIDTH / 2;
-        drawable.y = GameWorld.BUFFERHEIGHT / 2 + 40;
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawable.y = (short) (GameWorld.BUFFERHEIGHT / 2 + 40);
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
         float previousY = drawable.y + bitmap.getHeight() / 2;
@@ -90,7 +88,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.STARTBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = GameWorld.BUFFERWIDTH / 2;
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
         drawable.y = (short) (previousY + 100);
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -104,7 +102,7 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.QUITBUTTON;
         bitmap = GameGraphics.STATICSPRITE.get(gameOB.type);
         drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = GameWorld.BUFFERWIDTH / 2;
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
         drawable.y = (short)( previousY + bitmap.getHeight() + 50);
         gameOB.components.put(drawable.getType(), drawable);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -116,8 +114,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type = GameObject.GameObjectType.SOUNDBUTTON;
         Spritesheet spritesheet = GameGraphics.ANIMATEDSPRITE.get(gameOB.type);
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
-        animated.x = (int) 7.5f * GameWorld.BUFFERWIDTH / 8;
-        animated.y = GameWorld.BUFFERHEIGHT / 10;
+        animated.x = (short) (7.5f * GameWorld.BUFFERWIDTH / 8);
+        animated.y = (short) (GameWorld.BUFFERHEIGHT / 10);
         if (GameAudio.SILENCE)
             animated.animation=2;
         gameOB.components.put(animated.getType(), animated);
@@ -134,8 +132,8 @@ public final class GameObBuilder implements Builder {
         gameOB.type= GameObject.GameObjectType.WAIT;
         Bitmap bitmap=GameGraphics.STATICSPRITE.get(GameObject.GameObjectType.WAIT);
         DrawableComponent drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
-        drawable.x = GameWorld.BUFFERWIDTH / 2;
-        drawable.y = GameWorld.BUFFERHEIGHT / 2;
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawable.y = (short) (GameWorld.BUFFERHEIGHT / 2);
         gameOB.components.put(drawable.getType(), drawable);
         array.append(array.size(), gameOB);
         return array;
@@ -173,12 +171,12 @@ public final class GameObBuilder implements Builder {
                         for (int z = 0; z < enemies.getJSONObject(i).getInt("number"); z++)
                             array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
 
-                        TimeStamps.append(i, System.currentTimeMillis() / 1000);
+                        timeStamps.append(i, System.currentTimeMillis() / 1000);
                         break;
                     case "pill":
                         for (int z = 0; z < enemies.getJSONObject(i).getInt("number"); z++)
                             array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)));
-                        TimeStamps.append(i, System.currentTimeMillis() / 1000);
+                        timeStamps.append(i, System.currentTimeMillis() / 1000);
                         break;
                 }
             }
@@ -241,7 +239,7 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, wallHeight);
         go.setComponent(physicComponent);
-        Walls.append(Walls.size(),body);
+        walls.append(walls.size(),body);
         // clean up native objects
         fixturedef.delete();
         bdef.delete();
@@ -320,7 +318,7 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.SPERMATOZOON;
         //PhysicComponent
-        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius = width / 8;
+        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius;
         float cWidht, cHeight;
         PhysicComponent physicComponent;
         FixtureDef fixturedef = new FixtureDef(), fixtesta = new FixtureDef(), fixtesta2 = new FixtureDef();
@@ -348,26 +346,15 @@ public final class GameObBuilder implements Builder {
         Random rand = new Random();
         //if Einstein == NULL=> Build level call  buildSpermatozoon
         // else  buildSpawner call it
-        float x=0;
-        if(einstein!=null) {
+        float x;
+        if(einstein!=null)
             x=einstein.getPositionX();
-           //Check Overlapping
-            for(int i =0;i<Walls.size();i++) {
-                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
-                    x+=THICKNESS+width;
-                }
-            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS)+PhysicComponent.YMIN+THICKNESS);
-            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
-        }
-        else {
+        else
             x=rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS;
-           //Check Overlapping
-            for(int i =0;i<Walls.size();i++) {
-                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
-                    x+=THICKNESS+width;
-            }
-            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
-        }
+
+        //Check Overlapping
+        x=checkOverlapping(x,width);
+        bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT+2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
 
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
@@ -479,7 +466,7 @@ public final class GameObBuilder implements Builder {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.EINSTEIN;
         //PhysicComponent
-        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius = width / 8;
+        float width = 1.5f, heigth = 0.5f, tFriction = 0.3f, tRestitution = 0.4f, tDensity = 0.05f, cFriction = 0.3f, cRestitution = 0.3f, cDensity = 0.4f, radius;
         float cWidht, cHeight;
         PhysicComponent physicComponent;
         FixtureDef fixturedef = new FixtureDef(), fixtesta = new FixtureDef(), fixtesta2 = new FixtureDef();
@@ -592,25 +579,16 @@ public final class GameObBuilder implements Builder {
         } catch (JSONException e) {
             Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
-        float x=0;
+        float x;
         Random rand = new Random();
-        if(einstein!=null) {
-            x=einstein.getPositionX();
-            for(int i =0;i<Walls.size();i++) {
-                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
-                    x+=THICKNESS+width;
-            }
-            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);            //bdef.setPosition(einstein.getPositionX(), 3/5*(PhysicComponent.PHYSICALHEIGHT));
-        }
-        else {
+        if(einstein!=null)
+            x=checkOverlapping(einstein.getPositionX(),width);
+        else
             x=rand.nextInt(PhysicComponent.PHYSICALWIDTH/2-(int)THICKNESS) +PhysicComponent.XMIN+THICKNESS;
-            for(int i =0;i<Walls.size();i++) {
-                if (Walls.get(i).getPositionX() - THICKNESS / 2 <= x && Walls.get(i).getPositionX() + THICKNESS / 2 >= x)
-                    x+=THICKNESS+width;
-            }
-            bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-2*(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
+        x=checkOverlapping(x,width);
+        bdef.setPosition(x,rand.nextInt(PhysicComponent.PHYSICALHEIGHT-(int)THICKNESS) +PhysicComponent.YMIN+THICKNESS);
 
-        }
+
         bdef.setType(BodyType.dynamicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
@@ -656,13 +634,25 @@ public final class GameObBuilder implements Builder {
         return go;
     }
 
+    private float checkOverlapping(float x, float width){
+        Body wall;
+        for(int i =0;i<walls.size();i++) {
+            wall=walls.get(i);
+            if (wall.getPositionX() - THICKNESS / 2 <= x)
+                x-=1.8*width -2*(wall.getPositionX() - THICKNESS / 2) ;
+            else
+                x+=1.8*width+2*(wall.getPositionX() - THICKNESS / 2);
+        }
+
+        return x;
+    }
     private GameObject buildBackgroundLevel() {
         GameObject go = getGameOB();
         go.type = GameObject.GameObjectType.BACKGROUND;
         DrawableComponent drawableComponent;
         drawableComponent = DrawableComponent.getDrawableComponent(go, GameGraphics.STATICSPRITE.get(go.type));
-        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT / 2;
+        drawableComponent.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawableComponent.y = (short) (GameWorld.BUFFERHEIGHT / 2);
         go.setComponent(drawableComponent);
         return go;
     }
@@ -766,21 +756,21 @@ public final class GameObBuilder implements Builder {
         if (array.size() < 35) {
             try {
                 for (int i = 0; i < enemies.length(); i++) {
-                    Long last = this.TimeStamps.get(i);
+                    Long last = timeStamps.get(i);
                     Long now = System.currentTimeMillis() / 1000;
                     switch (enemies.getJSONObject(i).getString("type")) {
                         case "spermatozoon":
                             if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
                                 for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
                                     array.append(array.size(), buildEnemySpermatozoon(enemies.getJSONObject(i)));
-                                TimeStamps.append(i, now);
+                                timeStamps.append(i, now);
                             }
                             break;
                         case "pill":
                             if (now - last >= enemies.getJSONObject(i).getLong("rate")) {
                                 for (int z = 0; z < enemies.getJSONObject(i).getInt("numberS"); z++)
                                     array.append(array.size(), buildEnemyPill(enemies.getJSONObject(i)));
-                                TimeStamps.append(i, now);
+                                timeStamps.append(i, now);
                             }
                             break;
                     }
@@ -799,17 +789,17 @@ public final class GameObBuilder implements Builder {
         GameObject gameOB = getGameOB();
         gameOB.type = type;
         DrawableComponent drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
-        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT / 2;
+        drawableComponent.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawableComponent.y = (short) (GameWorld.BUFFERHEIGHT / 2);
         gameOB.setComponent(drawableComponent);
         array.append(array.size(),gameOB);
-
+        walls.clear();
         //Create backHomeButton
         gameOB = getGameOB();
         gameOB.type = GameObject.GameObjectType.HOMEBUTTON;
         drawableComponent = DrawableComponent.getDrawableComponent(gameOB, GameGraphics.STATICSPRITE.get(gameOB.type));
-        drawableComponent.x = GameWorld.BUFFERWIDTH / 2;
-        drawableComponent.y = GameWorld.BUFFERHEIGHT/2+400;
+        drawableComponent.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawableComponent.y = (short) (GameWorld.BUFFERHEIGHT/2+400);
         gameOB.components.put(drawableComponent.getType(), drawableComponent);
         ControllableComponent controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
         gameOB.components.put(controllable.getType(), controllable);

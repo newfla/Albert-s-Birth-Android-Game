@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.bizzi.AlbertBirthActivity.MainActivity;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudioNetworking;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObNetworking;
 import com.example.bizzi.GameSystem.InputSubSystem.AccelerometerNetworking;
@@ -26,9 +27,9 @@ final public class NetworkingBuilder implements Builder {
     public final GameNetworking gameNetworking;
     private final Context context;
 
-    public NetworkingBuilder(Context context){
-        gameNetworking=new GameNetworking(context,new AccelerometerNetworking(), new GameObNetworking(),new GameAudioNetworking());
-        this.context=context;
+    public NetworkingBuilder(MainActivity activity){
+        gameNetworking=new GameNetworking(activity,new AccelerometerNetworking(), new GameObNetworking(),new GameAudioNetworking());
+        this.context=activity;
     }
 
     @Override

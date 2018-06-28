@@ -11,6 +11,12 @@ import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
 
 public abstract class ControllableComponent extends Component {
 
+    private static GameWorld gameWorld;
+
+    public static void setGameWorld(GameWorld gameWorld) {
+        ControllableComponent.gameWorld = gameWorld;
+    }
+
     private ControllableComponent(GameObject owner) {
         super(ComponentType.CONTROLLABLE, owner);
     }
@@ -60,7 +66,7 @@ public abstract class ControllableComponent extends Component {
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                         if (audio != null)
                             audio.play();
-                        GameWorld.gameStatus=3;
+                        gameWorld.gameStatus=3;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
                         break;
 
@@ -82,7 +88,7 @@ public abstract class ControllableComponent extends Component {
                     case HOMEBUTTON:
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                         audio.play();
-                        GameWorld.gameStatus=0;
+                        gameWorld.gameStatus=0;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.DEFEAT1).stop();
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.DEFEAT2).stop();
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.VICTORY).stop();

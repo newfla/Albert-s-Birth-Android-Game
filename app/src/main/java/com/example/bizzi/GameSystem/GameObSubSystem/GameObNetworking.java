@@ -95,7 +95,6 @@ public final class GameObNetworking implements Recyclable {
                 x=drawableComponent.x;
                 y=drawableComponent.y;
                 ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).putShort(drawableComponent.rotation);
-                Log.d("Debug","Rotation server:"+ByteBuffer.wrap(rotation).order(ByteOrder.BIG_ENDIAN).getShort()+" id:"+go.id);
             }
             else {
                 AnimatedComponent animatedComponent=(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
@@ -124,10 +123,11 @@ public final class GameObNetworking implements Recyclable {
             point=dim.get(0);
         else {
             int index= indexDimensions.get(go.type.ordinal());
+            if (index>=dim.size())
+                index=0;
             point=dim.get(index);
             indexDimensions.put(go.type.ordinal(),++index);
         }
-     //   Log.d("Debug","tipo: "+go.type+" Width: "+point.x+" Heigth: "+point.y);
 
 
         if (drawableComponent!=null){
@@ -195,7 +195,6 @@ public final class GameObNetworking implements Recyclable {
                     go.setComponent(drawableComponent);
                     drawableComponent.x =x;
                     drawableComponent.y=y;
-                    Log.d("Debug","Rotation: "+drawableComponent.rotation+" id:"+go.id);
                 }
                 else {
                     AnimatedComponent animatedComponent =(AnimatedComponent) go.getComponent(Component.ComponentType.ANIMATED);
@@ -209,12 +208,11 @@ public final class GameObNetworking implements Recyclable {
 
     }
 
-
     @Override
     public void recycle() {
+        ready=false;
         dimensions.clear();
         tempList.clear();
         indexDimensions.clear();
-        ready=false;
     }
 }

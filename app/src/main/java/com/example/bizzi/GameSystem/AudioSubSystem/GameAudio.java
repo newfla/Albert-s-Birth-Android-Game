@@ -28,7 +28,7 @@ public final class GameAudio {
     private static final int SIMULTANEOUS_CHANNELS = 5;
     private static final String AUDIO="audio/";
     private final SparseIntArray sounds=new SparseIntArray();
-    private final SparseArray<AudioObject.MusicObject> musics=new SparseArray();
+    private final SparseArray<AudioObject.MusicObject> musics=new SparseArray<>();
 
     GameAudio(Context context){
         assets=context.getAssets();

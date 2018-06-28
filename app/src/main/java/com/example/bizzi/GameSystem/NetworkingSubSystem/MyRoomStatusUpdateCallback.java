@@ -51,14 +51,13 @@ final class MyRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
         gameNetworking.updateRoom(room);
         if ( room!=null && gameNetworking.roomId==null)
             gameNetworking.roomId=room.getRoomId();
-        gameNetworking.myMessageId=room.getParticipantId(gameNetworking.myPlayerId);
+        gameNetworking.myMessageId= room.getParticipantId(gameNetworking.myPlayerId);
     }
 
     @Override
     public void onDisconnectedFromRoom(@Nullable Room room) {
-        gameNetworking.room=null;
-        gameNetworking.roomId=null;
-        gameNetworking.myMessageId=null;
+        gameNetworking.leaveRoom();
+
     }
 
     @Override
