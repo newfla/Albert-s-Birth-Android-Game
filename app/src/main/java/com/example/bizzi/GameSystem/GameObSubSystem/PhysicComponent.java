@@ -4,6 +4,7 @@ import android.support.v4.util.Pools;
 
 import com.example.bizzi.GameSystem.GameWorld;
 import com.google.fpl.liquidfun.Body;
+import com.google.fpl.liquidfun.Vec2;
 
 public final class PhysicComponent extends Component {
 
@@ -71,6 +72,10 @@ public final class PhysicComponent extends Component {
             animated.semiWidth=(short) width;
             animated.semiHeight=(short)height;
         }
+    }
+
+    void applyForce(Vec2 vect){
+        body.setLinearVelocity(vect);
     }
 
     @Override

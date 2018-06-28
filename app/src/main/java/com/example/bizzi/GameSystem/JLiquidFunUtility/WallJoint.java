@@ -33,5 +33,6 @@ public  final class WallJoint {
         jointDef.setMaxMotorForce(-20f);
         joint.append(joint.size(),word.createJoint(jointDef));
         jointDef.delete();
+        
     }
 }

@@ -2,12 +2,14 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.graphics.Rect;
 import android.support.v4.util.Pools;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameWorld;
 import com.example.bizzi.GameSystem.InputSubSystem.InputObject;
+import com.google.fpl.liquidfun.Vec2;
 
 public abstract class ControllableComponent extends Component {
 
@@ -111,19 +113,25 @@ public abstract class ControllableComponent extends Component {
 
     public static final class ControllableAccelerometerComponent extends ControllableComponent {
 
+        private Vec2 vect=new Vec2();
+        private PhysicComponent physicComponent;
         private static final Pools.Pool<ControllableAccelerometerComponent> POOL = new Pools.SimplePool<>(10);
 
-        static ControllableComponent getControllableWidgetComponent(GameObject owner) {
+        static ControllableComponent getControllableAccelorometerComponent(GameObject owner) {
             ControllableAccelerometerComponent object = POOL.acquire();
             if (object == null)
                 object = new ControllableAccelerometerComponent(owner);
-            else
+            else {
                 object.owner = owner;
+                object.physicComponent = (PhysicComponent) owner.getComponent(ComponentType.PHYSIC);
+            }
             return object;
         }
 
         private ControllableAccelerometerComponent(GameObject owner) {
             super(owner);
+            physicComponent= (PhysicComponent) owner.getComponent(ComponentType.PHYSIC);
+
         }
 
         @Override
@@ -132,8 +140,10 @@ public abstract class ControllableComponent extends Component {
         }
 
         @Override
-        public void notifyAccelerometer(InputObject.AccelerometerObject accelorometer) {
-
+        public void notifyAccelerometer(InputObject.AccelerometerObject accelerometer) {
+            vect.set(0,accelerometer.y/2.2f);
+            Log.d("Debug","Forza y:"+accelerometer.y);
+            physicComponent.applyForce(vect);
         }
 
         @Override

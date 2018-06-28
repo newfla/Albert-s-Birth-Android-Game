@@ -239,6 +239,7 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, wallHeight);
         go.setComponent(physicComponent);
+        go.setComponent(ControllableComponent.ControllableAccelerometerComponent.getControllableAccelorometerComponent(go));
         walls.append(walls.size(),body);
         // clean up native objects
         fixturedef.delete();
@@ -253,7 +254,6 @@ public final class GameObBuilder implements Builder {
         array.append(array.size(), nw);
         array.append(array.size(), sw);
     }
-
 
     private GameObject buildSudWall(float cx, float cy, float height) {
         GameObject go = getGameOB();
