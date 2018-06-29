@@ -25,14 +25,21 @@ public final class GameWorld {
 
     //Rendering variables
     public static int BUFFERWIDTH = 1920,
-            BUFFERHEIGHT = 1080,
-            VELOCITYITERATION = 8,
-            POSITIONITERATION = 3,
-            PARTICLEITERATION = 3;
-    private static final float TIMESTEP = 1 / 50f; //60FPS
+            BUFFERHEIGHT = 1080;
+
+    //Reference time
+    private static final long REDMINOTE4TIME=632188;
 
     public void tunePhysic(long timePrime){
-        //TODO dobbiamo vedere un pò qui
+        if (timePrime>REDMINOTE4TIME){
+            float scale=2.5f* timePrime/REDMINOTE4TIME;
+            TIMESTEP*=scale;
+            int scaleInt=(int)scale;
+            if (scale<POSITIONITERATION && scaleInt>0){
+                POSITIONITERATION/=scaleInt;
+                PARTICLEITERATION/=scaleInt; //we don't really need it
+            }
+        };
     }
 
     //Game status
@@ -44,6 +51,8 @@ public final class GameWorld {
 
     //Physic subsystem
     private static final int XGRAVITY = 0, YGRAVITY = 0;
+    private static  int VELOCITYITERATION = 8, POSITIONITERATION = 3, PARTICLEITERATION = 3;
+    private static float TIMESTEP = 1 / 50f; //60FPS
     private final MyContactListener myContactListener;
     private World world;
 
@@ -92,7 +101,10 @@ public final class GameWorld {
                 menuScreen();
                 break;
             case 1:
+                //singlePlayer
                 //levelScreen(gameInput.getAccelerometerEvent());
+
+                //MultiPlayer
                levelScreen();
                 break;
             case 2:
@@ -250,6 +262,7 @@ public final class GameWorld {
     private void initMultiplayer2(){
         //Build Level in server
         if (gameNetworking.server) {
+            tunePhysic(gameNetworking.timePrime);
             world = new World(XGRAVITY, YGRAVITY);
             world.setContactListener(myContactListener);
             gameObFactory.setWorld(world);
@@ -263,7 +276,6 @@ public final class GameWorld {
             gameStatus = 1;
         }
     }
-
 
     private void levelScreen(InputObject.AccelerometerObject accelerometer) {
         if (mainMenu != null) {
@@ -282,6 +294,13 @@ public final class GameWorld {
         gameObFactory.buildSpawner(toBeRendered);
 
         world.setGravity(accelerometer.y, accelerometer.x);
+        if (accelerometer != null) {
+            for (int j = 0; j < toBeRendered.size(); j++) {
+                ControllableComponent controllableComponent = (ControllableComponent) toBeRendered.get(j).getComponent(Component.ComponentType.CONTROLLABLE);
+                if (controllableComponent != null)
+                    controllableComponent.notifyAccelerometer(accelerometer);
+            }
+        }
         world.step(TIMESTEP, VELOCITYITERATION, POSITIONITERATION, PARTICLEITERATION);
         updatePhysicsPosition();
     }

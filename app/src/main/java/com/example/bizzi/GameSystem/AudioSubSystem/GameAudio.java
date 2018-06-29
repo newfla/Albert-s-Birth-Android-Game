@@ -101,8 +101,9 @@ public final class GameAudio {
     }
 
     public static void resumeAudio(){
+        boolean temp=SILENCE;
         SILENCE=LASTSILENCE;
-        LASTSILENCE=!LASTSILENCE;
+        LASTSILENCE=temp;
     }
 
     public void pauseAudio(){

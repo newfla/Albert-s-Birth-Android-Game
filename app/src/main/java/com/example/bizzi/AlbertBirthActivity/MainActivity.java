@@ -62,10 +62,11 @@ public final class MainActivity extends AppCompatActivity{
                     System.exit(0);
                 }
             });
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Load jLiquidFun library
         System.loadLibrary("liquidfun");
         System.loadLibrary("liquidfun_jni");
@@ -179,6 +180,5 @@ public final class MainActivity extends AppCompatActivity{
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
 }

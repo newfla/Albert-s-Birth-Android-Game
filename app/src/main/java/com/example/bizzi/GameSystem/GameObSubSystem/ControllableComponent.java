@@ -68,6 +68,10 @@ public abstract class ControllableComponent extends Component {
                         audio = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.STARTBUTTON);
                         if (audio != null)
                             audio.play();
+                        //SinglePlayer
+                        //gameWorld.gameStatus=1;
+
+                        //Multiplayer
                         gameWorld.gameStatus=3;
                         GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).stop();
                         break;
@@ -142,7 +146,7 @@ public abstract class ControllableComponent extends Component {
         @Override
         public void notifyAccelerometer(InputObject.AccelerometerObject accelerometer) {
             vect.set(0,accelerometer.y/2.2f);
-            Log.d("Debug","Forza y:"+accelerometer.y);
+           // Log.d("Debug","Forza y:"+accelerometer.y);
             physicComponent.applyForce(vect);
         }
 

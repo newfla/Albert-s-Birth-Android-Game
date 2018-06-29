@@ -43,12 +43,12 @@
     {
       "gameobject": "EINSTEIN",
       "type": "sound",
-      "file":"spermatozoon_sound.mp3"
+      "file":"spermatozoon_sound.wav"
     },
     {
       "gameobject": "SPERMATOZOON",
       "type": "sound",
-      "file":"spermatozoon_sound.mp3"
+      "file":"spermatozoon_sound.wav"
     }
   ]
 }

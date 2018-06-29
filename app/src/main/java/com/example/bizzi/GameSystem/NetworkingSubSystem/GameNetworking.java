@@ -37,7 +37,7 @@ import java.util.Arrays;
 
 public final class GameNetworking implements Recyclable {
 
-    private float bootTime;
+    private static final int NPRIMES=6000;
 
     private final MainActivity mainActivity;
     //List of NetworkingUtility
@@ -69,7 +69,7 @@ public final class GameNetworking implements Recyclable {
     private InputObject.AccelerometerObject friendAccelerometer;
     public final InputObject.AccelerometerObject[] accelerometers= new InputObject.AccelerometerObject[2];
     public SparseIntArray audio;
-    private long timePrime;
+    public long timePrime;
 
     @Override
     public void recycle() {
@@ -136,7 +136,7 @@ public final class GameNetworking implements Recyclable {
     public void quickGame() {
         gameObNetworking.recycle();
         realTimeMultiplayerClient.create(roomConfig);
-        sieveOfEratosthenes(6000);
+        sieveOfEratosthenes(NPRIMES);
         gameWorld.gameStatus = 5;
 
     }
@@ -174,12 +174,12 @@ public final class GameNetworking implements Recyclable {
             byte[] array2=new  byte[2];
             array2[0]=5;
            // Log.d("Debug", "Ricevuto il time");
-            long friendBootTime = ByteBuffer.wrap(array, 1, 8).order(ByteOrder.BIG_ENDIAN).getLong();
-            int result = Long.compare(timePrime, friendBootTime);
+            long friendTime = ByteBuffer.wrap(array, 1, 8).order(ByteOrder.BIG_ENDIAN).getLong();
+            int result = Long.compare(timePrime, friendTime);
             if (result <= 0) {
                 server = true;
                 slidingWall = false;
-                gameWorld.tunePhysic(timePrime);
+
                 array2[1]=0;
             } else {
                 slidingWall = true;
@@ -193,6 +193,7 @@ public final class GameNetworking implements Recyclable {
                    // Log.d("Debug","inviato server avversario");
                 }
             });
+            //Log.d("Debug","myTime "+timePrime+" friendTime"+friendTime);
             gameWorld.gameStatus=7;
         }
         else {
@@ -293,7 +294,7 @@ public final class GameNetworking implements Recyclable {
 
     private void sieveOfEratosthenes(int n) {
         //http://www.baeldung.com/java-generate-prime-numbers
-        long temp=System.currentTimeMillis(), x=0;
+        long temp=System.nanoTime(), x=0;
         boolean prime[] = new boolean[n + 1];
         Arrays.fill(prime, true);
         for (int p = 2; p * p <= n; p++) {
@@ -307,6 +308,6 @@ public final class GameNetworking implements Recyclable {
             if (prime[i])
                 x+=i;
         }
-        timePrime= System.currentTimeMillis()-temp;
+        timePrime= System.nanoTime()-temp;
     }
 }
