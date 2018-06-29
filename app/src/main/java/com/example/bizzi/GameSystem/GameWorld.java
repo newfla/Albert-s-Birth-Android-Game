@@ -337,17 +337,19 @@ public final class GameWorld {
         GameObject gameObject;
 
         if (gameStatus < 5) {
-            canvas.drawARGB(255, 0, 0, 0);
-            for (int i = 0; i < toBeRendered.size(); i++) {
-                gameObject = toBeRendered.get(i);
-                if (gameObject!=null) {
-                    DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
-                    if (drawableComponent != null)
-                        drawableComponent.draw(canvas);
+            synchronized (toBeRendered) {
+                canvas.drawARGB(255, 0, 0, 0);
+                for (int i = 0; i < toBeRendered.size(); i++) {
+                    gameObject = toBeRendered.get(i);
+                    if (gameObject != null) {
+                        DrawableComponent drawableComponent = (DrawableComponent) gameObject.getComponent(Component.ComponentType.DRAWABLE);
+                        if (drawableComponent != null)
+                            drawableComponent.draw(canvas);
 
-                    AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
-                    if (animatedComponent != null)
-                        animatedComponent.draw(canvas);
+                        AnimatedComponent animatedComponent = (AnimatedComponent) gameObject.getComponent(Component.ComponentType.ANIMATED);
+                        if (animatedComponent != null)
+                            animatedComponent.draw(canvas);
+                    }
                 }
             }
         }

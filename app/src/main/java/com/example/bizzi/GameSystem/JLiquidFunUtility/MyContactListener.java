@@ -43,7 +43,7 @@ public final class MyContactListener extends ContactListener {
                 if (type!=null) {
                     GameAudio.AUDIOLIBRARY.get(type).play();
                    // Log.d("Debug","sound:"+type.ordinal());
-                     synchronized (gameWorld){
+                     synchronized (gameWorld.audio){
                        gameWorld.audio.put(gameWorld.audio.size(),type.ordinal());
                      }
                 }

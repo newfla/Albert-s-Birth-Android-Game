@@ -110,7 +110,9 @@ public final class GameNetworking implements Recyclable {
                     break;
 
                 case 4:
-                    gameObNetworking.deserializeGameOb(lastMessage, level);
+                    synchronized (level) {
+                        gameObNetworking.deserializeGameOb(lastMessage, level);
+                    }
                     gameWorld.gameStatus=1;
                     break;
 
@@ -218,7 +220,7 @@ public final class GameNetworking implements Recyclable {
         if (server) {
             array = gameObNetworking.serializeGameObCenter(level);
             realTimeMultiplayerClient.sendUnreliableMessage(array,roomId,friendMessageId);
-            synchronized (gameWorld) {
+            synchronized (gameWorld.audio) {
                 array = gameAudioNetworking.serializeGameAudio(audio);
                 audio.clear();
                 if (array.length<1)
