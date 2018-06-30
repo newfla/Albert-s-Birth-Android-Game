@@ -17,6 +17,9 @@ public final class PhysicComponent extends Component {
 
     private Body body;
 
+
+
+
     static PhysicComponent getPhysicComponent(GameObject owner, Body body, float width, float height) {
         PhysicComponent object = POOL.acquire();
         if (object == null)
@@ -36,6 +39,8 @@ public final class PhysicComponent extends Component {
     Body getBody(){
         return this.body;
     }
+
+
 
     public void updatePosition() {
         DrawableComponent drawable = (DrawableComponent) owner.getComponent(ComponentType.DRAWABLE);
@@ -75,7 +80,9 @@ public final class PhysicComponent extends Component {
     }
 
     void applyForce(Vec2 vect){
+        //body.applyForceToCenter(vect,true);
         body.setLinearVelocity(vect);
+
     }
 
     @Override

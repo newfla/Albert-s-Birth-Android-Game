@@ -67,6 +67,10 @@ public class DrawableComponent extends Component {
         POOL.release(this);
     }
 
+    public short getSemiHeight() {
+        return semiHeight;
+    }
+
     public final static class PaintDrawableComponent extends DrawableComponent {
 
         private static final Pools.Pool<PaintDrawableComponent> POOL = new Pools.SimplePool<>(25);

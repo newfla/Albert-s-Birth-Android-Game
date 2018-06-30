@@ -117,23 +117,26 @@ public abstract class ControllableComponent extends Component {
 
     public static final class ControllableAccelerometerComponent extends ControllableComponent {
 
+        private float height;
         private Vec2 vect=new Vec2();
         private PhysicComponent physicComponent;
         private static final Pools.Pool<ControllableAccelerometerComponent> POOL = new Pools.SimplePool<>(10);
 
-        static ControllableComponent getControllableAccelorometerComponent(GameObject owner) {
+        static ControllableComponent getControllableAccelorometerComponent(GameObject owner, float height) {
             ControllableAccelerometerComponent object = POOL.acquire();
             if (object == null)
-                object = new ControllableAccelerometerComponent(owner);
+                object = new ControllableAccelerometerComponent(owner, height);
             else {
+                object.height=height;
                 object.owner = owner;
                 object.physicComponent = (PhysicComponent) owner.getComponent(ComponentType.PHYSIC);
             }
             return object;
         }
 
-        private ControllableAccelerometerComponent(GameObject owner) {
+        private ControllableAccelerometerComponent(GameObject owner, float height) {
             super(owner);
+            this.height= height;
             physicComponent= (PhysicComponent) owner.getComponent(ComponentType.PHYSIC);
 
         }
@@ -145,9 +148,16 @@ public abstract class ControllableComponent extends Component {
 
         @Override
         public void notifyAccelerometer(InputObject.AccelerometerObject accelerometer) {
-            vect.set(0,accelerometer.y/2.2f);
-           // Log.d("Debug","Forza y:"+accelerometer.y);
-            physicComponent.applyForce(vect);
+            vect.set(0,accelerometer.y/2);
+            float position;
+            position = physicComponent.getBody().getPositionY();
+
+            //Wall Superior Bound                                                    Wall Inferior Bound
+           if(((position > (height))&& accelerometer.y>0)||( ( position < (-height) )&& accelerometer.y<0))
+               vect.set(0,0);
+
+           physicComponent.applyForce(vect);
+
         }
 
         @Override

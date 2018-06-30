@@ -2,7 +2,6 @@ package com.example.bizzi.GameSystem.GameObSubSystem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -219,12 +218,10 @@ public final class GameObBuilder implements Builder {
         float cy = (PhysicComponent.YMIN + PhysicComponent.YMAX) / 2;
         float cx = PhysicComponent.XMIN + (PhysicComponent.PHYSICALWIDTH * i / (tot + 1));
         bdef.setPosition(cx, cy);
-        //TODO Modificare in KinematicBody  e  usare o applyForce o setVelocity
         bdef.setType(BodyType.kinematicBody);
         Body body = world.createBody(bdef);
         body.setSleepingAllowed(false);
         body.setUserData(go);
-        //body.app
         PolygonShape box = new PolygonShape();
         box.setAsBox(THICKNESS / 2, wallHeight / 2);
         FixtureDef fixturedef = new FixtureDef();
@@ -239,7 +236,7 @@ public final class GameObBuilder implements Builder {
         go.setComponent(drawableComponent);
         PhysicComponent physicComponent = PhysicComponent.getPhysicComponent(go, body, THICKNESS, wallHeight);
         go.setComponent(physicComponent);
-        go.setComponent(ControllableComponent.ControllableAccelerometerComponent.getControllableAccelorometerComponent(go));
+        go.setComponent(ControllableComponent.ControllableAccelerometerComponent.getControllableAccelorometerComponent(go,wallHeight));
         walls.append(walls.size(),body);
         // clean up native objects
         fixturedef.delete();
@@ -581,6 +578,8 @@ public final class GameObBuilder implements Builder {
         }
         float x;
         Random rand = new Random();
+        //If Einstein = null ->  Start Game Spawn
+        //Else               ->  Spawner
         if(einstein!=null)
             x=checkOverlapping(einstein.getPositionX(),width);
         else
