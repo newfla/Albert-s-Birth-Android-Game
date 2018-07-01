@@ -3,7 +3,8 @@
     {
       "gameobject": "MENU",
       "type": "music",
-      "file":"menu_music.mp3"
+      "file":"menu_music.mp3",
+      "loop":"true"
     },
     {
       "gameobject": "STARTBUTTON" ,
@@ -18,27 +19,38 @@
     {
       "gameobject": "BACKGROUND",
       "type": "music",
-      "file":"background_music.mp3"
+      "file":"background_music.mp3",
+      "loop":"true"
+    },
+    {
+      "gameobject": "SCHEMA",
+      "type": "music",
+      "file":"albert_voice.mp3",
+      "loop":"false"
     },
     {
       "gameobject": "DEFEAT1",
       "type": "music",
-      "file":"defeat1_music.mp3"
+      "file":"defeat1_music.mp3",
+      "loop":"true"
     },
     {
       "gameobject": "DEFEAT2",
       "type": "music",
-      "file":"defeat2_music.mp3"
+      "file":"defeat2_music.mp3",
+      "loop":"true"
     },
     {
       "gameobject": "VICTORY",
       "type": "music",
-      "file":"victory_music.mp3"
+      "file":"victory_music.mp3",
+      "loop":"true"
     },
     {
       "gameobject": "EGGCELL",
       "type": "music",
-      "file":"eggcell_music.mp3"
+      "file":"eggcell_music.mp3",
+      "loop":"false"
     },
     {
       "gameobject": "EINSTEIN",

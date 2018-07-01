@@ -54,14 +54,14 @@ public final class GameAudio {
         return null;
     }
 
-    AudioObject addMusic(String filename){
+    AudioObject addMusic(String filename, boolean loop){
         try {
             AssetFileDescriptor fd=assets.openFd(AUDIO+filename);
             MediaPlayer mediaPlayer= new MediaPlayer();
             mediaPlayer.setDataSource(fd.getFileDescriptor(),fd.getStartOffset(),fd.getLength());
             mediaPlayer.prepare();
-            if (!filename.contains("eggcell"))
-                mediaPlayer.setLooping(true);
+           // if (!filename.contains("eggcell"))
+            mediaPlayer.setLooping(loop);
             AudioObject.MusicObject music=new AudioObject.MusicObject(mediaPlayer);
             musics.append(musics.size(),music);
             return music;

@@ -138,6 +138,23 @@ public final class GameObBuilder implements Builder {
         return array;
     }
 
+    public SparseArray<GameObject> buildControlSchema(boolean slidingWall){
+        SparseArray<GameObject> array = new SparseArray<>();
+        GameObject gameOB=getGameOB();
+        gameOB.type= GameObject.GameObjectType.SCHEMA;
+        Bitmap bitmap;
+        if (slidingWall)
+            bitmap=GameGraphics.STATICSPRITE.get(GameObject.GameObjectType.SCHEMAWALL);
+        else
+            bitmap=GameGraphics.STATICSPRITE.get(GameObject.GameObjectType.SCHEMAWORLD);
+        DrawableComponent drawable = DrawableComponent.getDrawableComponent(gameOB, bitmap);
+        drawable.x = (short) (GameWorld.BUFFERWIDTH / 2);
+        drawable.y = (short) (GameWorld.BUFFERHEIGHT / 2);
+        gameOB.components.put(drawable.getType(), drawable);
+        array.append(array.size(), gameOB);
+        return array;
+    }
+
     public SparseArray<GameObject> buildLevel(String level) {
         einstein=null;
         SparseArray<GameObject> array = new SparseArray<>();

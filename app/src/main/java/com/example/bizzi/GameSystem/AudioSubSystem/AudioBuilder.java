@@ -27,6 +27,7 @@ public final class AudioBuilder implements Builder {
         try {
             JSONObject jsonObject=new JSONObject(JsonUtility.readJsonFromFile(assets,"audio.json"));
             String gameObject, type, sound;
+            boolean loop;
             JSONArray jsonArray=jsonObject.getJSONArray("audio");
             for (int i = 0; i < jsonArray.length(); i++) {
                 jsonObject=jsonArray.getJSONObject(i);
@@ -35,8 +36,10 @@ public final class AudioBuilder implements Builder {
                 sound=jsonObject.getString("file");
                 if (type.equalsIgnoreCase("sound"))
                     GameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject),gameAudio.addSound(sound));
-                else
-                    GameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject), gameAudio.addMusic(sound));
+                else {
+                    loop=jsonObject.getBoolean("loop");
+                    GameAudio.AUDIOLIBRARY.put(GameObject.GameObjectType.valueOf(gameObject), gameAudio.addMusic(sound,loop));
+                }
             }
             GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
         } catch (JSONException e) {

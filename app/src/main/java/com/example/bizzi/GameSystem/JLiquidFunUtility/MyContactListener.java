@@ -79,7 +79,7 @@ public final class MyContactListener extends ContactListener {
                     }
 
                     //Stop future contacts
-                    gameWorld.gameStatus=8;
+                    gameWorld.gameStatus=9;
                 }
             }
         }

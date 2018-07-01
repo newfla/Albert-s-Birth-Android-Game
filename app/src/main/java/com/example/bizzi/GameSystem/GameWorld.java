@@ -127,12 +127,15 @@ public final class GameWorld {
                 initMultiplayer1();
                 break;
             case 7:
-                initMultiplayer2();
+                showControlSchema();
                 break;
             case 8:
-                sendResult();
+                initMultiplayer2();
                 break;
             case 9:
+                sendResult();
+                break;
+            case 10:
                 leaveRoom();
                 break;
         }
@@ -259,7 +262,22 @@ public final class GameWorld {
         }
     }
 
+    private void showControlSchema(){
+        if (mainMenu != null) {
+            for (int i = 0; i < mainMenu.size(); i++)
+                mainMenu.get(i).recycle();
+            mainMenu = null;
+        }
+        mainMenu=gameObFactory.buildControlSchema(gameNetworking.slidingWall);
+        toBeRendered=mainMenu;
+        gameStatus=8;
+    }
+
     private void initMultiplayer2(){
+        AudioObject.MusicObject musicObject=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.SCHEMA);
+        musicObject.play();
+        while (musicObject.isPlaying()){}
+        gameStatus=5;
         //Build Level in server
         if (gameNetworking.server) {
             tunePhysic(gameNetworking.timePrime);
@@ -273,7 +291,7 @@ public final class GameWorld {
             updatePhysicsPosition();
             gameNetworking.level=level;
             gameNetworking.firstSend();
-            gameStatus = 1;
+            gameStatus=1;
         }
     }
 

@@ -62,8 +62,7 @@ public final class GameNetworking implements Recyclable {
 
     //Multyplayer variables
     private GameWorld gameWorld;
-    public boolean server;
-    private boolean slidingWall = false;
+    public boolean server, slidingWall = false;
     public SparseArray<GameObject> level;
     public InputObject.AccelerometerObject myAccelerometer;
     private InputObject.AccelerometerObject friendAccelerometer;
@@ -118,7 +117,7 @@ public final class GameNetworking implements Recyclable {
 
                 case 1:
                     gameWorld.endGameType= GameObject.GameObjectType.values()[lastMessage[1]];
-                    gameWorld.gameStatus=8;
+                    gameWorld.gameStatus=9;
                     break;
 
                 case 0:
@@ -196,7 +195,6 @@ public final class GameNetworking implements Recyclable {
                 }
             });
             //Log.d("Debug","myTime "+timePrime+" friendTime"+friendTime);
-            gameWorld.gameStatus=7;
         }
         else {
            // Log.d("Debug","Ricevuto ruolo");
@@ -204,8 +202,8 @@ public final class GameNetworking implements Recyclable {
                 server=false;
             else
                 server=true;
-            gameWorld.gameStatus=7;
         }
+        gameWorld.gameStatus=7;
     }
 
     public void firstSend() {
