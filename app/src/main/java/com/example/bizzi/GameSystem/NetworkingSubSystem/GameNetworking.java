@@ -155,7 +155,7 @@ public final class GameNetworking implements Recyclable {
     }
 
     public void sendBootTime(){
-       // Log.d("Debug","myMessage"+myMessageId+"  friend"+friendMessageId);
+       // //Log.d("Debug","myMessage"+myMessageId+"  friend"+friendMessageId);
         if (myMessageId.compareTo(friendMessageId)<0){
             byte[] array=new byte[9];
             array[0]=5;
@@ -163,7 +163,7 @@ public final class GameNetworking implements Recyclable {
             realTimeMultiplayerClient.sendReliableMessage(array, roomId, friendMessageId, new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                 @Override
                 public void onRealTimeMessageSent(int i, int i1, String s) {
-                   // Log.d("Debug","invio primes");
+                    //Log.d("Debug","invio primes");
                 }
             });
         }
@@ -174,13 +174,12 @@ public final class GameNetworking implements Recyclable {
         if (array.length > 2) {
             byte[] array2=new  byte[2];
             array2[0]=5;
-           // Log.d("Debug", "Ricevuto il time");
+           // //Log.d("Debug", "Ricevuto il time");
             long friendTime = ByteBuffer.wrap(array, 1, 8).order(ByteOrder.BIG_ENDIAN).getLong();
             int result = Long.compare(timePrime, friendTime);
             if (result <= 0) {
                 server = true;
                 slidingWall = false;
-
                 array2[1]=0;
             } else {
                 slidingWall = true;
@@ -191,19 +190,24 @@ public final class GameNetworking implements Recyclable {
             realTimeMultiplayerClient.sendReliableMessage(array2, roomId, friendMessageId, new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                 @Override
                 public void onRealTimeMessageSent(int i, int i1, String s) {
-                   // Log.d("Debug","inviato server avversario");
+                    gameWorld.gameStatus=7;
+                   // //Log.d("Debug","inviato server avversario");
                 }
             });
-            //Log.d("Debug","myTime "+timePrime+" friendTime"+friendTime);
+            ////Log.d("Debug","myTime "+timePrime+" friendTime"+friendTime);
         }
         else {
-           // Log.d("Debug","Ricevuto ruolo");
-            if (array[1]==0)
-                server=false;
-            else
-                server=true;
+            // //Log.d("Debug","Ricevuto ruolo");
+            if (array[1] == 0) {
+                server = false;
+                slidingWall=true;
+            }
+            else {
+                server = true;
+                slidingWall=false;
+            }
+            gameWorld.gameStatus=7;
         }
-        gameWorld.gameStatus=7;
     }
 
     public void firstSend() {
@@ -245,7 +249,7 @@ public final class GameNetworking implements Recyclable {
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
-                        Log.d("Debug", "Start waiting room");
+                        //Log.d("Debug", "Start waiting room");
                         // show waiting room UI
                         mainActivity.startActivityForResult(intent, RCWAITINGROOM);
                     }
@@ -253,7 +257,7 @@ public final class GameNetworking implements Recyclable {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("Debug", "There was a problem getting the waiting room!");
+                        //Log.d("Debug", "There was a problem getting the waiting room!");
                         gameWorld.gameStatus = 0;
                     }
                 });
@@ -290,7 +294,6 @@ public final class GameNetworking implements Recyclable {
             accelerometers[1]=friendAccelerometer;
         }
     }
-
 
     private void sieveOfEratosthenes(int n) {
         //http://www.baeldung.com/java-generate-prime-numbers

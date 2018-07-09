@@ -53,7 +53,7 @@ public final class GraphicsBuilder implements Builder {
                 }
             }
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for graphic");
+            //Log.d("Debug", "Unable to create JsonOB for graphic");
         }
     }
 
@@ -64,7 +64,7 @@ public final class GraphicsBuilder implements Builder {
             in.close();
             return bitmap;
         } catch (IOException e) {
-            Log.d("Debug","Couldn't load graphics "+fileName);
+            //Log.d("Debug","Couldn't load graphics "+fileName);
         }
         return null;
     }

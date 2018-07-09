@@ -32,6 +32,7 @@ public final class GameObBuilder implements Builder {
 
     private static final String LEVELS = "levels/";
     private final Context context;
+    private final GameAudio gameAudio;
     private World world;
     private static final SparseArray<Long> timeStamps = new SparseArray<>();
     private final static float THICKNESS = 1;
@@ -41,8 +42,9 @@ public final class GameObBuilder implements Builder {
     private String level;
 
 
-    public GameObBuilder(Context context) {
+    public GameObBuilder(Context context, GameAudio gameAudio) {
         this.context = context;
+        this.gameAudio=gameAudio;
     }
 
     public void setWorld(World world) {
@@ -115,7 +117,7 @@ public final class GameObBuilder implements Builder {
         AnimatedComponent animated = AnimatedComponent.getAnimatedComponent(gameOB, spritesheet);
         animated.x = (short) (7.5f * GameWorld.BUFFERWIDTH / 8);
         animated.y = (short) (GameWorld.BUFFERHEIGHT / 10);
-        if (GameAudio.SILENCE)
+        if (gameAudio.mute)
             animated.animation=2;
         gameOB.components.put(animated.getType(), animated);
         controllable = ControllableComponent.ControllableWidgetComponent.getControllableWidgetComponent(gameOB);
@@ -204,7 +206,7 @@ public final class GameObBuilder implements Builder {
 
 
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for level: " + level);
+            //Log.d("Debug", "Unable to create JsonOB for level: " + level);
             return null;
         }
 
@@ -228,7 +230,7 @@ public final class GameObBuilder implements Builder {
             j = wall.getInt("rmin");
             n = wall.getInt("rmax") - j;
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to get height SlidingWall");
+            //Log.d("Debug", "Unable to get height SlidingWall");
         }
         float wallHeight = random.nextInt(n) + j;
         BodyDef bdef = new BodyDef();
@@ -261,9 +263,10 @@ public final class GameObBuilder implements Builder {
         box.delete();
         GameObject sw = buildSudWall(cx, cy, wallHeight);
         GameObject nw = buildNordWall(cx, cy, wallHeight);
-        WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
+        //SinglePlayer
+      /* WallJoint.buildPrismaticDoor(((PhysicComponent) go.getComponent(Component.ComponentType.PHYSIC)).getBody(),
                 ((PhysicComponent) sw.getComponent(Component.ComponentType.PHYSIC)).getBody(),
-                world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);
+                world, cx, cy, PhysicComponent.YMAX - THICKNESS - wallHeight / 2, wallHeight);*/
         array.append(array.size(), go);
         array.append(array.size(), nw);
         array.append(array.size(), sw);
@@ -351,7 +354,7 @@ public final class GameObBuilder implements Builder {
             cRestitution = (float) spermatozoon.getDouble("cRestitution");
             cDensity = (float) spermatozoon.getDouble("cDensity");
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
+            //Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
         }
 
 
@@ -455,7 +458,7 @@ public final class GameObBuilder implements Builder {
             width = (float) EggCell.getDouble("width");
 
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to get Egg Cell Radius");
+            //Log.d("Debug", "Unable to get Egg Cell Radius");
         }
         bdef.setPosition(PhysicComponent.XMIN + 7 * PhysicComponent.PHYSICALWIDTH / 8, (PhysicComponent.YMAX + PhysicComponent.YMIN) / 2);
         bdef.setType(BodyType.staticBody);
@@ -499,7 +502,7 @@ public final class GameObBuilder implements Builder {
             cRestitution = (float) spermatozoon.getDouble("cRestitution");
             cDensity = (float) spermatozoon.getDouble("cDensity");
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
+            //Log.d("Debug", "Unable to get width,heigth enemey spermatozoon");
         }
 
         if(einstein!=null)
@@ -591,7 +594,7 @@ public final class GameObBuilder implements Builder {
             density = (float) pill.getDouble("density");
             restitution = (float) pill.getDouble("restitution");
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
+            //Log.d("Debug", "Unable to get width,heigth ecc.. enemey pill");
         }
         float x;
         Random rand = new Random();
@@ -792,7 +795,7 @@ public final class GameObBuilder implements Builder {
                     }
                 }
             } catch (JSONException e) {
-                Log.d("Debug", "Unable to create JsonOB for level: " + level);
+                //Log.d("Debug", "Unable to create JsonOB for level: " + level);
             }
         }
     }

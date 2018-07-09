@@ -20,9 +20,10 @@ public final class GameAudio {
 
     //Map GO to Sound
     public static final Map<GameObject.GameObjectType,AudioObject> AUDIOLIBRARY=new EnumMap<>(GameObject.GameObjectType.class);
-    public static boolean SILENCE=false;
+    public boolean mute=false;
+   // private static boolean LASTSILENCE=false;
 
-    private static boolean LASTSILENCE=false;
+
     private final SoundPool soundPool;
     private final AssetManager assets;
     private static final int SIMULTANEOUS_CHANNELS = 5;
@@ -49,7 +50,7 @@ public final class GameAudio {
             sounds.append(sounds.size(),sound.soundId);
             return sound;
         } catch (IOException e) {
-            Log.d("Debug","Couldn't load sound '"+filename+"'" );
+            //Log.d("Debug","Couldn't load sound '"+filename+"'" );
         }
         return null;
     }
@@ -66,7 +67,7 @@ public final class GameAudio {
             musics.append(musics.size(),music);
             return music;
         } catch (IOException e) {
-            Log.d("Debug","Couldn't load music '"+filename+"'" );
+            //Log.d("Debug","Couldn't load music '"+filename+"'" );
         }
         return null;
     }
@@ -81,34 +82,21 @@ public final class GameAudio {
 
     private void unMute(){
         for (int i = 0; i < sounds.size(); i++) {
-            soundPool.setVolume(sounds.get(i),AudioObject.SoundObject.VOLUME,AudioObject.SoundObject.VOLUME);
+            soundPool.setVolume(sounds.get(i),AudioObject.SoundObject.MAXVOLUME,AudioObject.SoundObject.MAXVOLUME);
         }
         for (int i = 0; i < musics.size(); i++) {
-            musics.get(i).player.setVolume(AudioObject.MusicObject.VOLUME, AudioObject.MusicObject.VOLUME);
+            musics.get(i).player.setVolume(AudioObject.MusicObject.MAXVOLUME, AudioObject.MusicObject.MAXVOLUME);
         }
     }
 
     public void checkAudio(){
-        //Log.d("Debug","silence: "+SILENCE+"--last"+LASTSILENCE);
-        if (SILENCE && !LASTSILENCE) {
+        if (mute)
             mute();
-            LASTSILENCE=true;
-        }
-        else if(!SILENCE && LASTSILENCE){
+        else
             unMute();
-            LASTSILENCE=false;
-        }
-    }
-
-    public static void resumeAudio(){
-        boolean temp=SILENCE;
-        SILENCE=LASTSILENCE;
-        LASTSILENCE=temp;
     }
 
     public void pauseAudio(){
-        LASTSILENCE=SILENCE;
-        SILENCE=true;
         mute();
     }
 }

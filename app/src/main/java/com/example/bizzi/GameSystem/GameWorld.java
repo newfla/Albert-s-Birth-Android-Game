@@ -2,10 +2,8 @@ package com.example.bizzi.GameSystem;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioObject;
 import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.AnimatedComponent;
@@ -28,22 +26,18 @@ public final class GameWorld {
             BUFFERHEIGHT = 1080;
 
     //Reference time
-    private static final long REDMINOTE4TIME=632188;
+    private static final long REDMINOTE4TIME=405886;
 
     public void tunePhysic(long timePrime){
         if (timePrime>REDMINOTE4TIME){
-            float scale=2.5f* timePrime/REDMINOTE4TIME;
+            //Log.d("Debug","time"+timePrime);
+            float scale= timePrime/REDMINOTE4TIME;
             TIMESTEP*=scale;
-            int scaleInt=(int)scale;
-            if (scale<POSITIONITERATION && scaleInt>0){
-                POSITIONITERATION/=scaleInt;
-                PARTICLEITERATION/=scaleInt; //we don't really need it
-            }
         };
     }
 
     //Game status
-    public byte gameStatus; //0=home, 1=level, 2=endGame, 3=loadingScreen, 4=launchWaitingRoom, 5=inWaitingRoom, 6=initMultiplayer, 7=sendResult, 8=leaveRoom
+    public byte gameStatus; //0=home, 1=level, 2=endGame, 3=loadingScreen, 4=launchWaitingRoom, 5=inWaitingRoom, 6=initMultiplayer1, 7=buildControlSchema, 8=showControl, 9=sendResult, 10=leaveRoom
     public GameObject.GameObjectType endGameType = null;
 
     public final Bitmap frameBuffer;
@@ -92,6 +86,7 @@ public final class GameWorld {
         menuMusic = GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU);
         gameNetworking.setGameWorld(this);
         ControllableComponent.setGameWorld(this);
+        ControllableComponent.setGameAudio(gameAudio);
     }
 
     public void updateWorld() {
@@ -102,7 +97,7 @@ public final class GameWorld {
                 break;
             case 1:
                 //singlePlayer
-                //levelScreen(gameInput.getAccelerometerEvent());
+              //  levelScreen(gameInput.getAccelerometerEvent());
 
                 //MultiPlayer
                levelScreen();
@@ -276,10 +271,10 @@ public final class GameWorld {
     private void initMultiplayer2(){
         AudioObject.MusicObject musicObject=(AudioObject.MusicObject) GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.SCHEMA);
         musicObject.play();
-        while (musicObject.isPlaying()){}
-        gameStatus=5;
+        if (!gameNetworking.server)
+            while (musicObject.isPlaying()){}
         //Build Level in server
-        if (gameNetworking.server) {
+       else{
             tunePhysic(gameNetworking.timePrime);
             world = new World(XGRAVITY, YGRAVITY);
             world.setContactListener(myContactListener);
@@ -291,8 +286,9 @@ public final class GameWorld {
             updatePhysicsPosition();
             gameNetworking.level=level;
             gameNetworking.firstSend();
-            gameStatus=1;
+            while (musicObject.isPlaying()){}
         }
+        gameStatus=1;
     }
 
     private void levelScreen(InputObject.AccelerometerObject accelerometer) {
@@ -324,6 +320,12 @@ public final class GameWorld {
     }
 
     private void levelScreen() {
+        if (mainMenu != null) {
+            for (int i = 0; i < mainMenu.size(); i++)
+                mainMenu.get(i).recycle();
+            mainMenu = null;
+            toBeRendered=level;
+        }
         //Update accelerometer
         InputObject.AccelerometerObject accelerometerObject = gameInput.getAccelerometerEvent();
         gameNetworking.myAccelerometer.x = accelerometerObject.x;
@@ -341,7 +343,7 @@ public final class GameWorld {
 
     private void sendResult(){
         gameNetworking.lastSend(endGameType);
-        gameStatus=9;
+        gameStatus=10;
     }
 
     private void leaveRoom(){
@@ -354,7 +356,7 @@ public final class GameWorld {
 
         GameObject gameObject;
 
-        if (gameStatus < 5) {
+        if (gameStatus < 5 || gameStatus==8) {
             synchronized (toBeRendered) {
                 canvas.drawARGB(255, 0, 0, 0);
                 for (int i = 0; i < toBeRendered.size(); i++) {
@@ -373,5 +375,4 @@ public final class GameWorld {
         }
 
     }
-
 }

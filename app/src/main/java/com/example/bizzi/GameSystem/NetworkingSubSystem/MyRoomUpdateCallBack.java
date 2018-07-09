@@ -58,7 +58,7 @@ final class MyRoomUpdateCallBack extends RoomUpdateCallback {
     }
 
     private void issue(int i){
-        Log.d("Debug", "Issue with Online Room " + i);
+        //Log.d("Debug", "Issue with Online Room " + i);
         gameNetworking.room = null;
         gameNetworking.roomId=null;
     }

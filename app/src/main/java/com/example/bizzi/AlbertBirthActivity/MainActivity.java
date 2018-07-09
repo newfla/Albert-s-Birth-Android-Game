@@ -161,7 +161,7 @@ public final class MainActivity extends AppCompatActivity{
             try {
                 GoogleSignInAccount account= task.getResult(ApiException.class);
             } catch (ApiException apiException) {
-                Log.d("Debug","Activity signIn failure ", apiException.fillInStackTrace());
+                //Log.d("Debug","Activity signIn failure ", apiException.fillInStackTrace());
             }
         }
         else if (requestCode == GameNetworking.RCWAITINGROOM) {

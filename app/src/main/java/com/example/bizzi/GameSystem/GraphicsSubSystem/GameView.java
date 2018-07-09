@@ -58,7 +58,7 @@ public final class GameView extends SurfaceView implements Runnable {
 
             frameCounter++;
             if (fpsDeltaTime > 1) {
-              //  Log.d("GameView", "Current FPS = " + frameCounter);
+              //  //Log.d("GameView", "Current FPS = " + frameCounter);
                 frameCounter = 0;
                 fpsTime = currentTime;
             }
@@ -66,7 +66,6 @@ public final class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume() {
-        GameAudio.resumeAudio();
         running = true;
         renderThread = new Thread(this);
         renderThread.start();

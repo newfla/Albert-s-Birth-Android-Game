@@ -15,8 +15,14 @@ public abstract class ControllableComponent extends Component {
 
     private static GameWorld gameWorld;
 
+    private static GameAudio gameAudio;
+
     public static void setGameWorld(GameWorld gameWorld) {
         ControllableComponent.gameWorld = gameWorld;
+    }
+
+    public static void setGameAudio(GameAudio gameAudio) {
+        ControllableComponent.gameAudio = gameAudio;
     }
 
     private ControllableComponent(GameObject owner) {
@@ -77,7 +83,7 @@ public abstract class ControllableComponent extends Component {
                         break;
 
                     case SOUNDBUTTON:
-                        GameAudio.SILENCE = !GameAudio.SILENCE;
+                        gameAudio.mute =!gameAudio.mute;
                         if (animated.animation == 2)
                             animated.animation = 1;
                         else

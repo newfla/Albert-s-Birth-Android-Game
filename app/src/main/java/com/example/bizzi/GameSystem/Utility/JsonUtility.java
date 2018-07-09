@@ -23,7 +23,7 @@ public final class JsonUtility {
             }
             result = sb.toString();
         } catch (IOException e) {
-            Log.d("Debug", "Unable open description file");
+            //Log.d("Debug", "Unable open description file");
         }
         return result;
     }

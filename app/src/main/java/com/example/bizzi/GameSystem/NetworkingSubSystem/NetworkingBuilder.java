@@ -39,10 +39,10 @@ final public class NetworkingBuilder implements Builder {
            @Override
            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
                if (task.isSuccessful()) {
-                   Log.d("Debug", " Networking-Builder signIn success");
+                   //Log.d("Debug", " Networking-Builder signIn success");
                    onConnected(task.getResult());
                } else {
-                   Log.d("Debug", "Networking-Builder signIn failure", task.getException());
+                   //Log.d("Debug", "Networking-Builder signIn failure", task.getException());
                    onDisconnected();
                }
            }
@@ -72,13 +72,13 @@ final public class NetworkingBuilder implements Builder {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("Debug", "There was a problem getting the player id!");
+                        //Log.d("Debug", "There was a problem getting the player id!");
                     }
                 });
     }
 
     private void onDisconnected(){
-        Log.d("Debug","Disconnected");
+        //Log.d("Debug","Disconnected");
         gameNetworking.realTimeMultiplayerClient=null;
     }
 }

@@ -41,11 +41,10 @@ public final class MyContactListener extends ContactListener {
                         || b.getType() == GameObject.GameObjectType.SPERMATOZOON && (a.getType() == GameObject.GameObjectType.WALL || a.getType()== GameObject.GameObjectType.ENCLOSURE))
                     type=b.getType();
                 if (type!=null) {
-                    GameAudio.AUDIOLIBRARY.get(type).play();
-                   // Log.d("Debug","sound:"+type.ordinal());
                      synchronized (gameWorld.audio){
                        gameWorld.audio.put(gameWorld.audio.size(),type.ordinal());
                      }
+                    GameAudio.AUDIOLIBRARY.get(type).play();
                 }
 
                 if (a.getType() == GameObject.GameObjectType.EGGCELL || b.getType() == GameObject.GameObjectType.EGGCELL) {
@@ -55,24 +54,28 @@ public final class MyContactListener extends ContactListener {
                         pretender = b;
                     else
                         pretender = a;
+
+                    synchronized (gameWorld.audio){
+                        gameWorld.audio.put(gameWorld.audio.size(), GameObject.GameObjectType.EGGCELL.ordinal());
+                    }
                     switch (pretender.getType()) {
 
                         case PILL:
                             //NESSUN FIGLIO;
                             //
-                            Log.d("Debug", "Nessun figlio");
+                            //Log.d("Debug", "Nessun figlio");
                             gameWorld.endGameType = GameObject.GameObjectType.DEFEAT2;
                             break;
                         case SPERMATOZOON:
                             //Hitler
                             //
                             gameWorld.endGameType= GameObject.GameObjectType.DEFEAT1;
-                            Log.d("Debug", "Hitler");
+                            //Log.d("Debug", "Hitler");
                             break;
                         case EINSTEIN:
                             //Vittoria
                             //
-                            Log.d("Debug", "Mexicooo");
+                            //Log.d("Debug", "Mexicooo");
                             gameWorld.endGameType = GameObject.GameObjectType.VICTORY;
                             break;
 

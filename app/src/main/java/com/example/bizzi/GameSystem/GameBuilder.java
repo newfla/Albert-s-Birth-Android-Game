@@ -2,6 +2,7 @@ package com.example.bizzi.GameSystem;
 
 import com.example.bizzi.AlbertBirthActivity.MainActivity;
 import com.example.bizzi.GameSystem.AudioSubSystem.AudioBuilder;
+import com.example.bizzi.GameSystem.AudioSubSystem.GameAudio;
 import com.example.bizzi.GameSystem.GameObSubSystem.GameObBuilder;
 import com.example.bizzi.GameSystem.GraphicsSubSystem.GraphicsBuilder;
 import com.example.bizzi.GameSystem.InputSubSystem.InputBuilder;
@@ -40,7 +41,7 @@ public final  class GameBuilder implements Builder {
         inputFactory.build();
 
         //init GameOB
-        GameObBuilder gameObFactory=new GameObBuilder(mainActivity);
+        GameObBuilder gameObFactory=new GameObBuilder(mainActivity, audioFactory.gameAudio);
         gameObFactory.build();
 
         //init multiplayer

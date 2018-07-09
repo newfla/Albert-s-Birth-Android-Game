@@ -22,7 +22,7 @@ public final class GameAudioNetworking {
         GameObject.GameObjectType[] values=GameObject.GameObjectType.values();
         for (int i = 1; i < n; i++) {
            AudioObject audioObject= GameAudio.AUDIOLIBRARY.get(values[array[i]]);
-         //   Log.d("Debug","sound:"+i);
+         //   //Log.d("Debug","sound:"+i);
            if (audioObject!=null)
                audioObject.play();
         }

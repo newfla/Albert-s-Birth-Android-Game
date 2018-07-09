@@ -7,26 +7,29 @@ import com.example.bizzi.GameSystem.Utility.Recyclable;
 
 import java.io.IOException;
 
-public interface AudioObject extends Recyclable {
+public  abstract class AudioObject implements Recyclable {
 
-    void play();
+    public abstract void play();
 
-    void stop();
+    public abstract void stop();
 
+    static GameAudio gameAudio;
 
+    public static void setGameAudio(GameAudio gameAudio) {
+        AudioObject.gameAudio = gameAudio;
+    }
 
-    final class SoundObject implements AudioObject{
+    final static class SoundObject extends AudioObject{
 
         private final SoundPool soundPool;
         final int soundId;
-        static float VOLUME=1;
-        private float volume;
+        static final float MAXVOLUME =1;
+
         @Override
         public void play() {
-            if (!GameAudio.SILENCE)
-                volume=VOLUME;
-            else
-                volume=0;
+            float volume=0;
+            if (!gameAudio.mute)
+                volume=MAXVOLUME;
             soundPool.play(soundId,volume,volume,0,0,1);
         }
 
@@ -46,20 +49,18 @@ public interface AudioObject extends Recyclable {
         }
     }
 
-    final class MusicObject implements AudioObject{
+    public final static class MusicObject extends AudioObject{
         final MediaPlayer player;
-        static float VOLUME=0.6f;
-        private float volume;
+        static final float MAXVOLUME=0.6f;
          MusicObject(MediaPlayer player){
             this.player=player;
         }
 
         @Override
         public void play() {
-            if (!GameAudio.SILENCE)
-                volume=VOLUME;
-            else
-                volume=0;
+             float volume=0;
+            if (!gameAudio.mute)
+                volume=MAXVOLUME;
             player.setVolume(volume,volume);
                 if (player.isPlaying())
                     return;

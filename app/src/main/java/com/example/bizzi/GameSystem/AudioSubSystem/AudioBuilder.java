@@ -24,6 +24,7 @@ public final class AudioBuilder implements Builder {
 
     @Override
     public void build(){
+        AudioObject.setGameAudio(gameAudio);
         try {
             JSONObject jsonObject=new JSONObject(JsonUtility.readJsonFromFile(assets,"audio.json"));
             String gameObject, type, sound;
@@ -43,7 +44,7 @@ public final class AudioBuilder implements Builder {
             }
             GameAudio.AUDIOLIBRARY.get(GameObject.GameObjectType.MENU).play();
         } catch (JSONException e) {
-            Log.d("Debug", "Unable to create JsonOB for audio");
+            //Log.d("Debug", "Unable to create JsonOB for audio");
         }
     }
 }
